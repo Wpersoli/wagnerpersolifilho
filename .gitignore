@@ -1,0 +1,33 @@
+# Dependências
+node_modules/
+
+# Variáveis e credenciais locais
+.env
+.env.*
+!.env.example
+
+# Metadados locais da Vercel
+.vercel/
+
+# Logs e relatórios locais
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+coverage/
+
+# Arquivos temporários e pacotes locais
+*.zip
+*.tar
+*.gz
+*.tmp
+*.bak
+*.old
+
+# Sistema operacional e editores
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/

@@ -1,0 +1,161 @@
+{
+  "profile": {
+    "name": "Wagner Persoli F.",
+"age": "36 Anos, bem vividos",
+    "title": "IT Specialist | Full-Stack Developer | AI Developer | Digital Founder",
+    "location": "Guarulhos - SP, Brasil",
+    "contact": {
+      "phone": "+55 11 98150-4061",
+      "email": "wagnerpersoli@hotmail.com",
+      "linkedin": "https://linkedin.com/in/wagner-persoli-f-3004bb91",
+      "website": "https://wagnerpersolifilho.vercel.app"
+    }
+  },
+  "summary": "Profissional de TI com mais de 12 anos de experiência em ambientes corporativos críticos e outsourcing (Apple, TIVIT, Infoplus, ConnectCom). Atuação em suporte técnico N1/N2/N3, infraestrutura (Windows Server, Active Directory, redes, DNS), ITIL (incidentes, problemas, mudanças, SLA/KPI), cloud (Azure, M365), desenvolvimento Full-Stack e automação com IA. Perfil híbrido entre infraestrutura, desenvolvimento e inteligência artificial, com forte capacidade analítica e foco em eficiência operacional e inovação.",
+  "core_skills": {
+    "it_support": ["N1", "N2", "N3", "Service Desk", "Helpdesk"],
+    "infrastructure": ["Windows Server", "Active Directory", "DNS", "Networks", "VPN", "Virtualization", "Hardware"],
+    "cloud": ["Microsoft Azure", "Microsoft 365", "Office 365"],
+    "itil": ["Incident Management", "Problem Management", "Change Management", "SLA", "KPI", "TMA", "FCR"],
+    "development": ["Python", "JavaScript", "React", "Node.js", "HTML", "CSS", "REST APIs", "Git", "Docker"],
+    "ai_automation": ["LLMs integration", "RPA", "Automation workflows", "AI APIs"],
+    "security": ["Information Security", "LGPD"]
+  },
+  "experience": [
+    {
+      "company": "INFOPLUS",
+      "role": "IT Specialist",
+      "period": "2022 - 2026",
+      "highlights": [
+        "Suporte técnico corporativo de alta complexidade",
+        "Administração de Active Directory e O365",
+        "Gestão ITIL completa (incidentes, problemas, mudanças)",
+        "Monitoramento de SLA e KPIs (TMA, FCR)",
+        "Redes, VPN e servidores físicos/virtuais"
+      ]
+    },
+    {
+      "company": "APPLE INC.",
+      "role": "Advisor - Technical Support",
+      "period": "2020 - 2021",
+      "highlights": [
+        "Suporte Apple (macOS, iOS, iCloud)",
+        "Atendimento multicanal (chat, voz, email)",
+        "Alta performance em CSAT",
+        "Escalonamento global de incidentes críticos"
+      ]
+    },
+    {
+      "company": "AUTÔNOMO",
+      "role": "Full-Stack Developer & AI Consultant",
+      "period": "2018 - Presente",
+      "highlights": [
+        "Desenvolvimento full-stack de aplicações web",
+        "Criação de soluções com IA e automação",
+        "Deploy, CI/CD, hospedagem e infraestrutura",
+        "Construção de MVPs e produtos digitais"
+      ]
+    },
+    {
+      "company": "CONNECTCOM BPO",
+      "role": "Help Desk Analyst",
+      "period": "2016 - 2019",
+      "highlights": [
+        "Suporte N1/N2 corporativo",
+        "Gestão de chamados e SLA",
+        "Atendimento multicanal",
+        "Escalonamento N3"
+      ]
+    },
+    {
+      "company": "IT2B",
+      "role": "Service Desk Analyst",
+      "period": "2015 - 2016",
+      "highlights": [
+        "Suporte corporativo e usuários",
+        "Configuração de endpoints",
+        "Suporte a aplicações internas"
+      ]
+    },
+    {
+      "company": "TIVIT",
+      "role": "Help Desk Analyst",
+      "period": "2012 - 2014",
+      "highlights": [
+        "Suporte outsourcing corporativo",
+        "Registro e resolução de incidentes",
+        "Atendimento remoto e presencial"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "Centro Universitário ENIAC",
+      "course": "Análise e Desenvolvimento de Sistemas",
+      "period": "2012 - 2015"
+    }
+  ],
+  "certifications": [
+    "ITIL Foundations",
+    "Segurança da Informação",
+    "Lógica de Programação (ICS)",
+    "Fundamentos de Redes",
+    "Microsoft Certified (MCP)",
+    "Client Support Analyst (UOL)"
+  ],
+  "languages": {
+    "portuguese": "native",
+    "english": "professional",
+    "spanish": "intermediate"
+  },
+  "recruitment_faq": [
+    {
+      "question": "Estado civil / solteiro?",
+      "answer": "Sim, Wagner é solteiro."
+    },
+    {
+      "question": "Qual a idade?",
+      "answer": "Wagner tem 36 anos."
+    },
+    {
+      "question": "Qual o WhatsApp / contato direto?",
+      "answer": "O WhatsApp para contato direto é (11) 98150-4061.",
+      "answer_complement": "Você pode falar diretamente com o Wagner pelo WhatsApp através do link: https://api.whatsapp.com/send/?phone=5511981504061&text&type=phone_number&app_absent=0"
+    },
+    {
+      "question": "Tem filhos?",
+      "answer": "Não, Wagner não possui filhos."
+    },
+    {
+      "question": "Como chegaria até a empresa? Tem veículo próprio?",
+      "answer": "É necessário avaliar a remuneração oferecida; caso o deslocamento seja via transporte público, seria necessário 1 ônibus intermunicipal de Guarulhos até o metrô Tucuruvi, totalizando 2 conduções na ida e 2 na volta.",
+      "answer_complement": "O trajeto até a empresa dependeria da proposta de remuneração, considerando um deslocamento via transporte público com 2 conduções de ida e 2 de volta (ônibus intermunicipal até o metrô Tucuruvi)."
+    },
+    {
+      "question": "Qual a disponibilidade de início?",
+      "answer": "A disponibilidade de início é de 1 dia, a depender do que for combinado com a empresa."
+    },
+    {
+      "question": "Qual a preferência de horário ou jornada (manhã, tarde, noite)?",
+      "answer": "Wagner é indiferente quanto ao turno, ficando sujeito ao que for combinado com a empresa."
+    },
+    {
+      "question": "Prefere home office ou presencial?",
+      "answer": "Há preferência por home office, mas o modelo presencial também é aceito."
+    },
+    {
+      "question": "Qual o tipo de contrato (CLT ou PJ)?",
+      "answer": "Wagner aceita tanto contratação CLT quanto PJ, a depender do que for combinado contratualmente."
+    },
+    {
+      "question": "Qual a remuneração mínima aceita (real ou dólar)?",
+      "answer": "A remuneração mínima aceita é de R$ 20 a R$ 30 por hora.",
+      "answer_complement": "Para propostas em dólar, o valor aceito é de US$ 15 a US$ 25 por hora."
+    },
+    {
+      "question": "Pratica algum esporte? Hobbies? Lazer?",
+      "answer": "Com certeza: desenvolver sistemas e atuar como \"alquimista de IA\", criando e inventando inovações, é uma paixão pessoal do Wagner.",
+      "answer_complement": "Nos momentos de lazer, gosta de futebol aos finais de semana, confraternizações com amigos e familiares, viagens, filmes e passar tempo com a namorada, entre outros interesses diversos."
+    }
+  ]
+}

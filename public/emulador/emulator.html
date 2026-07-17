@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brutal Dev Emulator | Responsive Testing</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div class="bg-overlay"></div>
+
+    <!-- HEADER -->
+    <header class="top-header">
+        <div class="brand">
+            <span class="brand-dot"></span>
+            <h1>BRUTAL DEV EMULATOR</h1>
+        </div>
+        <div class="status">
+            <span class="pulse"></span>
+            <span>SYSTEM ONLINE</span>
+        </div>
+    </header>
+
+    <!-- Barra de Controle -->
+    <header class="control-bar">
+        <div class="control-group url-group">
+            <input type="text" id="urlInput" placeholder="https://seudominio.com" />
+            <button id="loadBtn">CARREGAR</button>
+        </div>
+
+        <div class="control-group device-group">
+            <div class="dropdown">
+                <button id="deviceToggle" class="toggle-btn">
+                    <span id="toggleText">iPhone 16 Pro Max</span> ▼
+                </button>
+
+                <div id="deviceDropdown" class="dropdown-content">
+                    <div class="dropdown-header">
+                        <input type="text" id="searchDevice" placeholder="Buscar dispositivo..." />
+                        <button id="closeDropdown" class="close-btn">×</button>
+                    </div>
+
+                    <div class="dropdown-body">
+                        <div class="category">
+                            <h4>📱 Smartphones</h4>
+                            <div id="smartphones" class="device-list"></div>
+                        </div>
+
+                        <div class="category">
+                            <h4>📲 Tablets</h4>
+                            <div id="tablets" class="device-list"></div>
+                        </div>
+
+                        <div class="category">
+                            <h4>💻 Laptops</h4>
+                            <div id="laptops" class="device-list"></div>
+                        </div>
+
+                        <div class="category">
+                            <h4>🖥️ Desktops</h4>
+                            <div id="desktops" class="device-list"></div>
+                        </div>
+
+                        <div class="category custom-res">
+                            <h4>⚙ RESOLUÇÃO CUSTOM</h4>
+                            <div class="custom-inputs">
+                                <input type="number" id="customWidth" placeholder="Largura" min="100" />
+                                <span>×</span>
+                                <input type="number" id="customHeight" placeholder="Altura" min="100" />
+                                <button id="applyCustom">Aplicar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="control-group actions">
+            <button id="rotateBtn">⟲ Girar</button>
+            <button id="zoomOut">−</button>
+            <span id="zoomValue">100%</span>
+            <button id="zoomIn">+</button>
+            <button id="resetZoom">⟳</button>
+        </div>
+    </header>
+
+    <!-- EMULADOR -->
+    <main class="emulator-stage" id="deviceContainer">
+        <div class="device-info" id="deviceInfo">iPhone 16 Pro Max - 440×956</div>
+
+        <div class="device-stage">
+            <div class="device-frame" id="deviceFrame">
+                <div class="device-screen" id="deviceScreen">
+                    <div id="loading" class="loading-overlay">
+                        <div class="spinner"></div>
+                        <p>Inicializando emulação...</p>
+                    </div>
+
+                    <iframe id="previewFrame" src="about:blank" frameborder="0" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals" referrerpolicy="no-referrer"></iframe>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

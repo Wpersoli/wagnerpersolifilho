@@ -8,7 +8,7 @@
    - All external URLs validated before navigation
    - No eval(), no Function(), no document.write()
    ───────────────────────────────────────────── */
-var MAX_RENDERED_TEXT_LENGTH = 6000;
+var MAX_RENDERED_TEXT_LENGTH = 10000;
 function sanitizeText(str, maxLength) {
   // Pure text — no HTML entities needed since textContent or an escaped markdown subset is used.
   var limit = Number.isFinite(maxLength) ? maxLength : MAX_RENDERED_TEXT_LENGTH;
@@ -292,6 +292,13 @@ var chatSuggest= document.getElementById('chatSuggest');
 var chatOpened = false;
 var chatHistory = [];
 var chatBusy   = false;
+var CHAT_HISTORY_LIMIT = 24;
+
+function trimChatHistory() {
+  if (chatHistory.length > CHAT_HISTORY_LIMIT) {
+    chatHistory = chatHistory.slice(-CHAT_HISTORY_LIMIT);
+  }
+}
 
 function openChat() {
   chatPanel.classList.add('open');
@@ -302,7 +309,7 @@ function openChat() {
   if (!chatOpened) {
     chatOpened = true;
     setTimeout(function() {
-      addMsg('Olá! Sou o assistente do WAGNER PERS. F., powered by Gemini AI 🤖 — posso falar sobre os projetos, stack e experiência do Wagner, e também ajudar com perguntas gerais. Como posso ajudar?', 'bot');
+      addMsg('Olá! Sou o assistente do WAGNER.OS, powered by Gemini AI. Posso responder sobre a trajetória, projetos e stack do Wagner, além de ajudar com perguntas gerais. Como posso ajudar?', 'bot');
     }, 350);
   }
   setTimeout(function() { if (chatInput) chatInput.focus(); }, 350);
@@ -320,13 +327,56 @@ if (fabChat) fabChat.addEventListener('click', function() {
 });
 if (chatClose) chatClose.addEventListener('click', closeChat);
 
+function escapeChatHtml(raw) {
+  return String(raw || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function renderBotInline(raw) {
+  return escapeChatHtml(raw)
+    .replace(/`([^`\n]+)`/g, '<code>$1</code>')
+    .replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+}
+
 function renderBotText(raw) {
-  // Safe markdown subset: bold, line breaks
-  var esc = raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  return esc
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    .replace(/\n/g, '<br>');
+  // Safe markdown subset: paragraphs, hyphen bullets, bold and inline code.
+  // Single asterisks are intentionally not parsed, preventing malformed italics.
+  var lines = String(raw || '').split(/\r?\n/);
+  var html = [];
+  var inList = false;
+
+  function closeList() {
+    if (inList) {
+      html.push('</ul>');
+      inList = false;
+    }
+  }
+
+  lines.forEach(function(line) {
+    var bullet = line.match(/^\s*[-•]\s+(.+)$/);
+    if (bullet) {
+      if (!inList) {
+        html.push('<ul>');
+        inList = true;
+      }
+      html.push('<li>' + renderBotInline(bullet[1]) + '</li>');
+      return;
+    }
+
+    closeList();
+    if (!line.trim()) {
+      html.push('<span class="msg-gap" aria-hidden="true"></span>');
+      return;
+    }
+    html.push('<p>' + renderBotInline(line.trim()) + '</p>');
+  });
+
+  closeList();
+  return html.join('');
 }
 
 function addMsg(text, who, options) {
@@ -367,6 +417,7 @@ async function sendUserMsg(text) {
   if (chatSend) chatSend.disabled = true;
 
   chatHistory.push({ role: 'user', content: text });
+  trimChatHistory();
   showTyping();
 
   try {
@@ -404,6 +455,7 @@ async function sendUserMsg(text) {
     if (!reply) reply = 'Não consegui uma resposta agora. Tente novamente ou fale direto com o Wagner no WhatsApp!';
 
     chatHistory.push({ role: 'assistant', content: reply });
+    trimChatHistory();
     hideTyping();
     addMsg(reply, 'bot');
 

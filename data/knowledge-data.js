@@ -1,9 +1,258 @@
 // data/knowledge-data.js
-// Conteudo da base de conhecimento embutido diretamente no modulo JS.
-// Isso garante que o Vercel SEMPRE inclua esses dados no bundle da funcao serverless,
-// independente do file-tracing/includeFiles funcionar corretamente em runtime.
-// (fs.readFileSync com caminho dinamico nem sempre e rastreado pelo bundler da Vercel.)
-// Nota: apenas cvText e consumido por api/chat.js (o JSON completo vive em data/knowledge.json).
+// Cópia embutida da base oficial para contingência no bundle serverless.
+// Gerado a partir de data/cv.txt e data/knowledge.json.
 module.exports = {
-  cvText: "WAGNER PERSOLI F.IT Specialist • Full-Stack Developer • AI Dev • Digital Founder\n\nGuarulhos, Vila Galvão - SP, Brasil(11) 98150-4061wagnerpersoli@hotmail.comlinkedin.com/in/wagner-persoli-f-3004bb91wagnerpersolifilho.vercel.app\n\nProfissional de TI com mais de 12 anos de experiência, atuando em ambientes de missão crítica como Analista de TI, Helpdesk N1/N2/N3, Desenvolvedor Full-Stack e Consultor de IA. Histórico sólido em empresas de grande porte (Apple, TIVIT, Infoplus, ConnectCom BPO), com ampla expertise em suporte técnico avançado, gestão de incidentes, administração de sistemas Windows/Active Directory, infraestrutura de redes, DNS, Azure, SLA e ITIL. Experiência paralela de 8+ anos como desenvolvedor autônomo Full-Stack e especialista em automação e inteligência artificial. Perfil analítico, orientado a resultados, com forte capacidade comunicativa e foco em melhoria contínua, qualidade e eficiência operacional.\n\nSuporte N1 / N2 / N3\n\nService Desk / Helpdesk\n\nITIL v3 / v4\n\nWindows Server\n\nActive Directory\n\nMicrosoft Azure\n\nGestão de Incidentes\n\nSLA / TMA / KPIs\n\nRedes & DNS\n\nFull-Stack Dev\n\nPython / JavaScript\n\nReact / Node.js\n\nHTML / CSS\n\nREST APIs\n\nAutomação & IA\n\nDocker / Git\n\nHardware & Firmware\n\nSegurança da Informação\n\nGestão de Projetos\n\nAtendimento Corporativo\n\nLGPD\n\nApple Ecosystem\n\nOffice 365 / M365\n\nVirtualização\n\nINFOPLUSIT SpecialistMarço 2022 – 2026 | Brasil\n\n• Suporte técnico especializado em ambientes corporativos de alta complexidade.• Administração de usuários, acessos, Active Directory, Office 365 e sistemas internos.• Gerenciamento de incidentes, problemas e mudanças seguindo boas práticas ITIL.• Monitoramento de SLA, elaboração de relatórios de desempenho e indicadores (TMA/FCR).• Configuração e manutenção de redes, VPN, DNS, servidores físicos e virtuais.\n\nAPPLE INC. (via parceiro autorizado)Advisor – Suporte AppleJaneiro 2020 – Novembro 2021 | Brasil\n\n• Suporte técnico avançado a produtos e serviços Apple (macOS, iOS, iCloud, AppleCare).• Atendimento multicanal (voz, chat e e-mail) com alto índice de satisfação do cliente (CSAT).• Diagnóstico, triagem e resolução de falhas de software, hardware e configurações de rede.• Colaboração com equipes globais para escalonamento e resolução de casos críticos.\n\nAUTÔNOMODesenvolvedor Full-Stack & Consultor de IAJaneiro 2018 – Presente | Brasil (Remoto)\n\n• Desenvolvimento de aplicações web completas (Front-end + Back-end) para clientes diversos.• Criação e integração de soluções de inteligência artificial e automação de processos (RPA/LLM).• Gestão de projetos, levantamento de requisitos, documentação técnica e entrega de MVPs.• Administração de servidores (Linux/Windows), hospedagem, domínios e pipelines CI/CD.• Portfólio: wagnerpersolifilho.vercel.app\n\nCONNECTCOM BPOHelp Desk AnalystNovembro 2016 – Março 2019 | São Paulo, SP\n\n• Suporte técnico N1/N2 para clientes corporativos em ambiente de alta demanda (BPO).• Triagem, registro e resolução de chamados via sistema de ticketing, respeitando SLAs.• Atendimento multicanal e encaminhamento de casos complexos ao N3.\n\nIT2B – TECNOLOGIAPleno Service Desk AnalystJaneiro 2015 – Março 2016 | São Paulo, SP\n\n• Análise e resolução de incidentes de TI em ambiente de service desk corporativo.• Administração de usuários e acessos, configuração de endpoints e suporte a aplicações.\n\nTIVITHelp Desk AnalystMaio 2012 – Maio 2014 | São Paulo, SP\n\n• Suporte técnico em ambiente de grande porte com múltiplos clientes (outsourcing de TI).• Registro e gerenciamento de chamados, diagnóstico de falhas e suporte presencial/remoto.\n\nORBITALL (GRUPO ITAÚ)Investment Banking AnalystJaneiro 2008 – Agosto 2009 | São Paulo, SP\n\n• Suporte a operações de back-office em ambiente de serviços financeiros.• Análise de processos, geração de relatórios e apoio a equipes de atendimento corporativo.\n\nCentro Universitário EniacEnsino Superior • Análise e Desenvolvimento de Sistemas • 2012 – 2015\n\n✔ Gestão Estratégica de TI – ITIL (Fundamentos)✔ Segurança da Informação✔ Lógica de Programação – Certificação ICS✔ Fundamentos de Redes✔ Microsoft Certified (MCP)✔ Client Support Analyst – UOL\n\nPortuguês  — Nativo / BilíngueInglês     — Proficiência Profissional CompletaEspanhol   — Proficiência Profissional Intermediária\n\nlinkedin.com/in/wagner-persoli-f-3004bb91wagnerpersoli@hotmail.com(11) 98150-4061\n\n=== PERGUNTAS FREQUENTES DE RECRUTAMENTO (RESPONDER SEMPRE COM BASE NESTA SEÇÃO) ===\nSe a pergunta do usuário se referir a qualquer um dos tópicos abaixo (estado civil, idade, WhatsApp/contato direto, filhos, deslocamento até a empresa, disponibilidade para início, horário/turno preferido, modelo de trabalho home office ou presencial, tipo de contrato CLT ou PJ, pretensão salarial), utilize exatamente as informações a seguir como base factual. Responda sempre de forma formal, direta e profissional.\nQuando uma pergunta tiver tanto \"RESPOSTA\" quanto \"RESPOSTA COMPLEMENTAR\", as DUAS frases devem ser incluídas juntas na mesma resposta, uma logo em seguida da outra, pois são informações complementares e não alternativas — nunca escolha apenas uma das duas.\n\nPERGUNTA: Solteiro?\nRESPOSTA: Sim, Wagner é solteiro.\n\nPERGUNTA: Qual a idade?\nRESPOSTA: Wagner tem 36 anos.\n\nPERGUNTA: Qual o WhatsApp / contato direto?\nRESPOSTA: O WhatsApp para contato direto é (11) 98150-4061.\nRESPOSTA COMPLEMENTAR: Você pode falar diretamente com o Wagner pelo WhatsApp através do link: https://api.whatsapp.com/send/?phone=5511981504061&text&type=phone_number&app_absent=0\n\nPERGUNTA: Tem filhos?\nRESPOSTA: Não, Wagner não possui filhos.\n\nPERGUNTA: Como chegaria até a empresa? Tem carro, moto ou veículo próprio?\nRESPOSTA: É necessário avaliar a remuneração oferecida; caso o deslocamento seja via transporte público, seria necessário 1 ônibus intermunicipal de Guarulhos até o metrô Tucuruvi, totalizando 2 conduções na ida e 2 na volta.\nRESPOSTA COMPLEMENTAR: O trajeto até a empresa dependeria da proposta de remuneração, considerando um deslocamento via transporte público com 2 conduções de ida e 2 de volta (ônibus intermunicipal até o metrô Tucuruvi).\n\nPERGUNTA: Qual a disponibilidade de início?\nRESPOSTA: A disponibilidade de início é de 1 dia, a depender do que for combinado com a empresa.\n\nPERGUNTA: Qual a preferência de horário ou jornada de trabalho (manhã, tarde, noite)?\nRESPOSTA: Wagner é indiferente quanto ao turno, ficando sujeito ao que for combinado com a empresa.\n\nPERGUNTA: Prefere home office ou presencial?\nRESPOSTA: Há preferência por home office, mas o modelo presencial também é aceito.\n\nPERGUNTA: Qual o tipo de contrato e modalidade de remuneração (CLT ou PJ)?\nRESPOSTA: Wagner aceita tanto contratação CLT quanto PJ, a depender do que for combinado contratualmente.\n\nPERGUNTA: Qual a remuneração mínima aceita, ou pagamento por hora, em real ou dólar?\nRESPOSTA: A remuneração mínima aceita é de R$ 20 a R$ 30 por hora.\nRESPOSTA COMPLEMENTAR: Para propostas em dólar, o valor aceito é de US$ 15 a US$ 25 por hora.\n\nPERGUNTA: Pratica algum esporte? Hobbies? Lazer?\nRESPOSTA: Com certeza: desenvolver sistemas e atuar como \"alquimista de IA\", criando e inventando inovações, é uma paixão pessoal do Wagner.\nRESPOSTA COMPLEMENTAR: Nos momentos de lazer, gosta de futebol aos finais de semana, confraternizações com amigos e familiares, viagens, filmes e passar tempo com a namorada, entre outros interesses diversos.\n=== FIM DA SEÇÃO DE PERGUNTAS FREQUENTES ==="
+  "cvText": "WAGNER PERSOLI FILHO\nNome de exibição: Wagner Persoli F.\nIT Specialist | Full-Stack Developer | AI Developer | Digital Founder\n\nCONTATO PÚBLICO\nLocalização: Vila Galvão, Guarulhos - SP, Brasil\nTelefone/WhatsApp: +55 11 98150-4061\nE-mail: wagnerpersoli@hotmail.com\nLinkedIn: linkedin.com/in/wagner-persoli-f-3004bb91\nGitHub: github.com/Wpersoli\nPortfólio: wagnerpersolifilho.vercel.app\n\nRESUMO PROFISSIONAL\nProfissional de TI com mais de 12 anos de experiência em ambientes corporativos críticos e outsourcing. Atua em suporte técnico N1/N2/N3, infraestrutura, gestão de serviços, desenvolvimento Full-Stack, automação e inteligência artificial. Possui histórico em empresas como Apple, TIVIT, Infoplus, ConnectCom BPO e IT2B, além de atuação autônoma em desenvolvimento e IA desde 2018.\n\nCOMPETÊNCIAS\n- Suporte N1/N2/N3, Service Desk e Helpdesk\n- ITIL v3/v4, gestão de incidentes, problemas e mudanças\n- SLA, TMA, FCR e KPIs\n- Windows Server, Active Directory, Microsoft 365 e Office 365\n- Microsoft Azure, redes, DNS, VPN e virtualização\n- HTML, CSS, JavaScript, React, Node.js e Python\n- APIs REST, Git, Docker e CI/CD\n- Automação, RPA, integração de LLMs e APIs de IA\n- Segurança da Informação, LGPD e documentação técnica\n- Ecossistema Apple: macOS, iOS, iCloud e AppleCare\n- Gestão de projetos, processos, requisitos e atendimento corporativo\n\nEXPERIÊNCIA PROFISSIONAL\n\nINFOPLUS\nCargo: IT Specialist\nPeríodo informado: março de 2022 a 2026\n- Suporte técnico especializado em ambientes corporativos de alta complexidade.\n- Administração de usuários, acessos, Active Directory, Office 365 e sistemas internos.\n- Gestão de incidentes, problemas e mudanças com práticas ITIL.\n- Monitoramento de SLA e indicadores como TMA e FCR.\n- Configuração e manutenção de redes, VPN, DNS e servidores físicos e virtuais.\nObservação: o mês de encerramento e o motivo de saída não estão documentados.\n\nAPPLE INC. (VIA PARCEIRO AUTORIZADO)\nCargo: Advisor - Suporte Apple\nPeríodo: janeiro de 2020 a novembro de 2021\n- Suporte técnico avançado a macOS, iOS, iCloud e AppleCare.\n- Atendimento por voz, chat e e-mail.\n- Diagnóstico de falhas de software, hardware e rede.\n- Colaboração com equipes globais em casos críticos.\n\nAUTÔNOMO\nCargo: Desenvolvedor Full-Stack e Consultor de IA\nPeríodo: janeiro de 2018 ao presente\n- Desenvolvimento de aplicações web completas.\n- Criação e integração de soluções de IA e automação.\n- Levantamento de requisitos, documentação e entrega de MVPs.\n- Administração de servidores, hospedagem, domínios e pipelines CI/CD.\n\nCONNECTCOM BPO\nCargo: Help Desk Analyst\nPeríodo: novembro de 2016 a março de 2019\n- Suporte N1/N2 corporativo.\n- Gestão de chamados e SLA.\n- Atendimento multicanal e escalonamento ao N3.\n\nIT2B TECNOLOGIA\nCargo: Pleno Service Desk Analyst\nPeríodo: janeiro de 2015 a março de 2016\n- Análise e resolução de incidentes.\n- Administração de usuários e acessos.\n- Configuração de endpoints e suporte a aplicações.\n\nTIVIT\nCargo: Help Desk Analyst\nPeríodo: maio de 2012 a maio de 2014\n- Suporte em ambiente corporativo de grande porte.\n- Registro e gerenciamento de chamados.\n- Diagnóstico de falhas e suporte presencial e remoto.\n\nORBITALL (GRUPO ITAÚ)\nCargo: Investment Banking Analyst\nPeríodo: janeiro de 2008 a agosto de 2009\n- Apoio a operações de back-office em serviços financeiros.\n- Análise de processos e geração de relatórios.\n- Apoio a equipes de atendimento corporativo.\n\nFORMAÇÃO\nCentro Universitário ENIAC\nAnálise e Desenvolvimento de Sistemas\nPeríodo: 2012 a 2015\n\nCERTIFICAÇÕES E CURSOS INFORMADOS\n- Gestão Estratégica de TI - ITIL (Fundamentos)\n- Segurança da Informação\n- Lógica de Programação - Certificação ICS\n- Fundamentos de Redes\n- Microsoft Certified (MCP)\n- Client Support Analyst - UOL\n\nIDIOMAS\n- Português: nativo\n- Inglês: proficiência profissional completa\n- Espanhol: proficiência profissional intermediária\n\nPROJETOS DOCUMENTADOS NO PORTFÓLIO\n- Device Simulator Engine (Brutal Dev Emulator): plataforma de emulação responsiva multi-device em tempo real.\n- AI Systems & Automation: motor de automação com inteligência artificial integrada.\n- Automation Engine: sistemas de automação de processos e fluxos digitais.\n- Premium Dashboards: painéis analíticos avançados, em desenvolvimento.\n\nINFORMAÇÕES DE RECRUTAMENTO\nAtualização: 17 de julho de 2026\n- Nome completo: Wagner Persoli Filho.\n- Idade informada: 36 anos. Não recalcular sem data de nascimento.\n- Estado civil: solteiro.\n- Filhos: não possui.\n- Disponibilidade de início: 1 dia, dependendo do alinhamento com a empresa.\n- Turno: sem preferência fixa; sujeito ao combinado.\n- Modelo de trabalho: preferência por home office, com disponibilidade para presencial.\n- Contratação: aceita CLT ou PJ.\n- Remuneração informada: R$ 20 a R$ 30 por hora.\n- Remuneração em dólar informada: US$ 15 a US$ 25 por hora.\n- Deslocamento: por transporte público, considera um ônibus intermunicipal de Guarulhos até o metrô Tucuruvi, totalizando duas conduções na ida e duas na volta. A viabilidade depende da proposta e do local da empresa.\n\nINTERESSES E LAZER\n- Desenvolvimento de sistemas.\n- Inteligência artificial e automação.\n- Futebol aos finais de semana.\n- Viagens e filmes.\n- Confraternizações com amigos e familiares.\n\nINFORMAÇÕES NÃO DOCUMENTADAS\n- Data de nascimento.\n- Endereço residencial completo.\n- Motivo de saída do último emprego.\n- Mês exato de encerramento na Infoplus.\n- Referências profissionais.\n- Documentos pessoais.\n- Informações médicas, religiosas ou políticas.\n",
+  "knowledge": {
+    "metadata": {
+      "schema_version": "2.0",
+      "last_updated": "2026-07-17",
+      "language": "pt-BR",
+      "purpose": "Base pública do assistente profissional WAGNER.OS",
+      "source_policy": "Responder sobre Wagner somente com fatos explicitamente registrados nesta base."
+    },
+    "profile": {
+      "full_name": "Wagner Persoli Filho",
+      "display_name": "Wagner Persoli F.",
+      "age": {
+        "value": 36,
+        "as_of": "2026-07-17",
+        "note": "Idade informada no perfil; não recalcular sem data de nascimento."
+      },
+      "title": "IT Specialist | Full-Stack Developer | AI Developer | Digital Founder",
+      "location": {
+        "city": "Guarulhos",
+        "district": "Vila Galvão",
+        "state": "São Paulo",
+        "country": "Brasil"
+      },
+      "civil_status": "Solteiro",
+      "children": "Não possui filhos",
+      "contact": {
+        "phone": "+55 11 98150-4061",
+        "whatsapp": "https://api.whatsapp.com/send/?phone=5511981504061&text&type=phone_number&app_absent=0",
+        "email": "wagnerpersoli@hotmail.com",
+        "linkedin": "https://linkedin.com/in/wagner-persoli-f-3004bb91",
+        "github": "https://github.com/Wpersoli",
+        "website": "https://wagnerpersolifilho.vercel.app"
+      }
+    },
+    "summary": "Profissional de TI com mais de 12 anos de experiência em ambientes corporativos críticos e outsourcing, com atuação em suporte técnico N1/N2/N3, infraestrutura, gestão de serviços, desenvolvimento Full-Stack, automação e inteligência artificial. A trajetória combina operação de TI, atendimento corporativo, administração de sistemas e construção de soluções digitais.",
+    "core_skills": {
+      "it_support": [
+        "Suporte N1",
+        "Suporte N2",
+        "Suporte N3",
+        "Service Desk",
+        "Helpdesk",
+        "Atendimento corporativo"
+      ],
+      "infrastructure": [
+        "Windows Server",
+        "Active Directory",
+        "DNS",
+        "Redes",
+        "VPN",
+        "Virtualização",
+        "Hardware e firmware"
+      ],
+      "cloud_and_productivity": [
+        "Microsoft Azure",
+        "Microsoft 365",
+        "Office 365"
+      ],
+      "service_management": [
+        "ITIL v3/v4",
+        "Gestão de incidentes",
+        "Gestão de problemas",
+        "Gestão de mudanças",
+        "SLA",
+        "TMA",
+        "FCR",
+        "KPIs"
+      ],
+      "development": [
+        "HTML",
+        "CSS",
+        "JavaScript",
+        "React",
+        "Node.js",
+        "Python",
+        "APIs REST",
+        "Git",
+        "Docker",
+        "CI/CD"
+      ],
+      "ai_and_automation": [
+        "Integração de LLMs",
+        "APIs de inteligência artificial",
+        "RPA",
+        "Automação de processos",
+        "Webhooks e fluxos digitais"
+      ],
+      "security_and_governance": [
+        "Segurança da Informação",
+        "LGPD",
+        "Documentação técnica",
+        "Gestão de projetos e processos"
+      ],
+      "ecosystems": [
+        "Apple macOS",
+        "iOS",
+        "iCloud",
+        "AppleCare"
+      ]
+    },
+    "experience": [
+      {
+        "company": "Infoplus",
+        "role": "IT Specialist",
+        "period": "Março de 2022 a 2026",
+        "current_status": "O mês de encerramento e o motivo de saída não estão documentados.",
+        "highlights": [
+          "Suporte técnico especializado em ambientes corporativos de alta complexidade",
+          "Administração de usuários, acessos, Active Directory, Office 365 e sistemas internos",
+          "Gestão de incidentes, problemas e mudanças com práticas ITIL",
+          "Monitoramento de SLA e indicadores como TMA e FCR",
+          "Configuração e manutenção de redes, VPN, DNS e servidores físicos e virtuais"
+        ]
+      },
+      {
+        "company": "Apple Inc. (via parceiro autorizado)",
+        "role": "Advisor - Suporte Apple",
+        "period": "Janeiro de 2020 a novembro de 2021",
+        "highlights": [
+          "Suporte técnico avançado a macOS, iOS, iCloud e AppleCare",
+          "Atendimento por voz, chat e e-mail",
+          "Diagnóstico de falhas de software, hardware e rede",
+          "Colaboração com equipes globais em casos críticos"
+        ]
+      },
+      {
+        "company": "Autônomo",
+        "role": "Desenvolvedor Full-Stack e Consultor de IA",
+        "period": "Janeiro de 2018 ao presente",
+        "highlights": [
+          "Desenvolvimento de aplicações web completas",
+          "Criação e integração de soluções de IA e automação",
+          "Levantamento de requisitos, documentação e entrega de MVPs",
+          "Administração de servidores, hospedagem, domínios e pipelines CI/CD"
+        ]
+      },
+      {
+        "company": "ConnectCom BPO",
+        "role": "Help Desk Analyst",
+        "period": "Novembro de 2016 a março de 2019",
+        "highlights": [
+          "Suporte N1/N2 corporativo",
+          "Gestão de chamados e SLA",
+          "Atendimento multicanal",
+          "Escalonamento de casos complexos ao N3"
+        ]
+      },
+      {
+        "company": "IT2B Tecnologia",
+        "role": "Pleno Service Desk Analyst",
+        "period": "Janeiro de 2015 a março de 2016",
+        "highlights": [
+          "Análise e resolução de incidentes",
+          "Administração de usuários e acessos",
+          "Configuração de endpoints e suporte a aplicações"
+        ]
+      },
+      {
+        "company": "TIVIT",
+        "role": "Help Desk Analyst",
+        "period": "Maio de 2012 a maio de 2014",
+        "highlights": [
+          "Suporte em ambiente corporativo de grande porte",
+          "Registro e gerenciamento de chamados",
+          "Diagnóstico de falhas e suporte presencial e remoto"
+        ]
+      },
+      {
+        "company": "Orbitall (Grupo Itaú)",
+        "role": "Investment Banking Analyst",
+        "period": "Janeiro de 2008 a agosto de 2009",
+        "highlights": [
+          "Apoio a operações de back-office em serviços financeiros",
+          "Análise de processos e geração de relatórios",
+          "Apoio a equipes de atendimento corporativo"
+        ]
+      }
+    ],
+    "education": [
+      {
+        "institution": "Centro Universitário ENIAC",
+        "course": "Análise e Desenvolvimento de Sistemas",
+        "period": "2012 a 2015"
+      }
+    ],
+    "certifications_and_courses": [
+      "Gestão Estratégica de TI - ITIL (Fundamentos)",
+      "Segurança da Informação",
+      "Lógica de Programação - Certificação ICS",
+      "Fundamentos de Redes",
+      "Microsoft Certified (MCP)",
+      "Client Support Analyst - UOL"
+    ],
+    "languages": {
+      "portuguese": "Nativo",
+      "english": "Proficiência profissional completa",
+      "spanish": "Proficiência profissional intermediária"
+    },
+    "projects": [
+      {
+        "name": "Device Simulator Engine (Brutal Dev Emulator)",
+        "description": "Plataforma de emulação responsiva multi-device em tempo real.",
+        "status": "Projeto principal documentado no laboratório."
+      },
+      {
+        "name": "AI Systems & Automation",
+        "description": "Motor de automação com inteligência artificial integrada."
+      },
+      {
+        "name": "Automation Engine",
+        "description": "Sistemas de automação de processos e fluxos digitais."
+      },
+      {
+        "name": "Premium Dashboards",
+        "description": "Painéis analíticos avançados.",
+        "status": "Em desenvolvimento."
+      }
+    ],
+    "recruitment": {
+      "availability_to_start": "1 dia, dependendo do alinhamento com a empresa.",
+      "preferred_shift": "Sem preferência fixa; sujeito ao combinado com a empresa.",
+      "work_model": "Preferência por home office, com disponibilidade para presencial.",
+      "contract_types": [
+        "CLT",
+        "PJ"
+      ],
+      "compensation": {
+        "as_of": "2026-07-17",
+        "brl_hourly": "R$ 20 a R$ 30 por hora",
+        "usd_hourly": "US$ 15 a US$ 25 por hora",
+        "note": "Faixas informadas no perfil e sujeitas a negociação conforme escopo e contrato."
+      },
+      "commute": "Para deslocamento por transporte público, o trajeto informado considera um ônibus intermunicipal de Guarulhos até o metrô Tucuruvi, totalizando duas conduções na ida e duas na volta. A viabilidade depende da proposta e do local da empresa."
+    },
+    "interests": [
+      "Desenvolvimento de sistemas",
+      "Inteligência artificial e automação",
+      "Futebol aos finais de semana",
+      "Viagens",
+      "Filmes",
+      "Confraternizações com amigos e familiares"
+    ],
+    "not_documented": [
+      "Data de nascimento",
+      "Endereço residencial completo",
+      "Motivo de saída do último emprego",
+      "Mês exato de encerramento na Infoplus",
+      "Referências profissionais",
+      "Documentos pessoais",
+      "Informações médicas, religiosas ou políticas"
+    ]
+  }
 };

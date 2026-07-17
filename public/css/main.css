@@ -1906,3 +1906,19 @@ body.pmode-active.pmode-visible::before { opacity: 1; }
   header { padding-left: 16px; padding-right: 16px; }
   section { padding-left: 16px; padding-right: 16px; }
 }
+
+/* Chat v3.0: markdown seguro e legível em respostas extensas */
+.msg.bot { white-space: normal; }
+.msg.bot p { margin: 0 0 8px; }
+.msg.bot p:last-child { margin-bottom: 0; }
+.msg.bot ul { margin: 4px 0 8px; padding-left: 18px; }
+.msg.bot li { margin: 3px 0; }
+.msg.bot code {
+  font-family: var(--mono);
+  font-size: .92em;
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.08);
+}
+.msg.bot .msg-gap { display: block; height: 4px; }

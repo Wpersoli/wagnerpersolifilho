@@ -1,14 +1,15 @@
 {
   "name": "wagnerpersolifilho",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
-  "description": "WAGNER.OS — portfólio profissional com assistente AI (Google Gemini) em serverless function na Vercel.",
+  "description": "WAGNER.OS — portfólio profissional com assistente Gemini resiliente, factual e de propósito geral.",
   "type": "commonjs",
   "engines": {
     "node": "22.x"
   },
   "scripts": {
-    "check": "node --check public/js/main.js && node --check public/emulador/script.js && node --check api/chat.js",
-    "test": "npm run check"
+    "check": "node --check public/js/main.js && node --check public/emulador/script.js && node --check api/chat.js && node --check tests/chat.test.js",
+    "test": "node --test tests/chat.test.js",
+    "validate": "npm run check && npm test"
   }
 }

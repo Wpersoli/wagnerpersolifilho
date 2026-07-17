@@ -1,90 +1,178 @@
 {
+  "metadata": {
+    "schema_version": "2.0",
+    "last_updated": "2026-07-17",
+    "language": "pt-BR",
+    "purpose": "Base pública do assistente profissional WAGNER.OS",
+    "source_policy": "Responder sobre Wagner somente com fatos explicitamente registrados nesta base."
+  },
   "profile": {
-    "name": "Wagner Persoli F.",
-"age": "36 Anos, bem vividos",
+    "full_name": "Wagner Persoli Filho",
+    "display_name": "Wagner Persoli F.",
+    "age": {
+      "value": 36,
+      "as_of": "2026-07-17",
+      "note": "Idade informada no perfil; não recalcular sem data de nascimento."
+    },
     "title": "IT Specialist | Full-Stack Developer | AI Developer | Digital Founder",
-    "location": "Guarulhos - SP, Brasil",
+    "location": {
+      "city": "Guarulhos",
+      "district": "Vila Galvão",
+      "state": "São Paulo",
+      "country": "Brasil"
+    },
+    "civil_status": "Solteiro",
+    "children": "Não possui filhos",
     "contact": {
       "phone": "+55 11 98150-4061",
+      "whatsapp": "https://api.whatsapp.com/send/?phone=5511981504061&text&type=phone_number&app_absent=0",
       "email": "wagnerpersoli@hotmail.com",
       "linkedin": "https://linkedin.com/in/wagner-persoli-f-3004bb91",
+      "github": "https://github.com/Wpersoli",
       "website": "https://wagnerpersolifilho.vercel.app"
     }
   },
-  "summary": "Profissional de TI com mais de 12 anos de experiência em ambientes corporativos críticos e outsourcing (Apple, TIVIT, Infoplus, ConnectCom). Atuação em suporte técnico N1/N2/N3, infraestrutura (Windows Server, Active Directory, redes, DNS), ITIL (incidentes, problemas, mudanças, SLA/KPI), cloud (Azure, M365), desenvolvimento Full-Stack e automação com IA. Perfil híbrido entre infraestrutura, desenvolvimento e inteligência artificial, com forte capacidade analítica e foco em eficiência operacional e inovação.",
+  "summary": "Profissional de TI com mais de 12 anos de experiência em ambientes corporativos críticos e outsourcing, com atuação em suporte técnico N1/N2/N3, infraestrutura, gestão de serviços, desenvolvimento Full-Stack, automação e inteligência artificial. A trajetória combina operação de TI, atendimento corporativo, administração de sistemas e construção de soluções digitais.",
   "core_skills": {
-    "it_support": ["N1", "N2", "N3", "Service Desk", "Helpdesk"],
-    "infrastructure": ["Windows Server", "Active Directory", "DNS", "Networks", "VPN", "Virtualization", "Hardware"],
-    "cloud": ["Microsoft Azure", "Microsoft 365", "Office 365"],
-    "itil": ["Incident Management", "Problem Management", "Change Management", "SLA", "KPI", "TMA", "FCR"],
-    "development": ["Python", "JavaScript", "React", "Node.js", "HTML", "CSS", "REST APIs", "Git", "Docker"],
-    "ai_automation": ["LLMs integration", "RPA", "Automation workflows", "AI APIs"],
-    "security": ["Information Security", "LGPD"]
+    "it_support": [
+      "Suporte N1",
+      "Suporte N2",
+      "Suporte N3",
+      "Service Desk",
+      "Helpdesk",
+      "Atendimento corporativo"
+    ],
+    "infrastructure": [
+      "Windows Server",
+      "Active Directory",
+      "DNS",
+      "Redes",
+      "VPN",
+      "Virtualização",
+      "Hardware e firmware"
+    ],
+    "cloud_and_productivity": [
+      "Microsoft Azure",
+      "Microsoft 365",
+      "Office 365"
+    ],
+    "service_management": [
+      "ITIL v3/v4",
+      "Gestão de incidentes",
+      "Gestão de problemas",
+      "Gestão de mudanças",
+      "SLA",
+      "TMA",
+      "FCR",
+      "KPIs"
+    ],
+    "development": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "React",
+      "Node.js",
+      "Python",
+      "APIs REST",
+      "Git",
+      "Docker",
+      "CI/CD"
+    ],
+    "ai_and_automation": [
+      "Integração de LLMs",
+      "APIs de inteligência artificial",
+      "RPA",
+      "Automação de processos",
+      "Webhooks e fluxos digitais"
+    ],
+    "security_and_governance": [
+      "Segurança da Informação",
+      "LGPD",
+      "Documentação técnica",
+      "Gestão de projetos e processos"
+    ],
+    "ecosystems": [
+      "Apple macOS",
+      "iOS",
+      "iCloud",
+      "AppleCare"
+    ]
   },
   "experience": [
     {
-      "company": "INFOPLUS",
+      "company": "Infoplus",
       "role": "IT Specialist",
-      "period": "2022 - 2026",
+      "period": "Março de 2022 a 2026",
+      "current_status": "O mês de encerramento e o motivo de saída não estão documentados.",
       "highlights": [
-        "Suporte técnico corporativo de alta complexidade",
-        "Administração de Active Directory e O365",
-        "Gestão ITIL completa (incidentes, problemas, mudanças)",
-        "Monitoramento de SLA e KPIs (TMA, FCR)",
-        "Redes, VPN e servidores físicos/virtuais"
+        "Suporte técnico especializado em ambientes corporativos de alta complexidade",
+        "Administração de usuários, acessos, Active Directory, Office 365 e sistemas internos",
+        "Gestão de incidentes, problemas e mudanças com práticas ITIL",
+        "Monitoramento de SLA e indicadores como TMA e FCR",
+        "Configuração e manutenção de redes, VPN, DNS e servidores físicos e virtuais"
       ]
     },
     {
-      "company": "APPLE INC.",
-      "role": "Advisor - Technical Support",
-      "period": "2020 - 2021",
+      "company": "Apple Inc. (via parceiro autorizado)",
+      "role": "Advisor - Suporte Apple",
+      "period": "Janeiro de 2020 a novembro de 2021",
       "highlights": [
-        "Suporte Apple (macOS, iOS, iCloud)",
-        "Atendimento multicanal (chat, voz, email)",
-        "Alta performance em CSAT",
-        "Escalonamento global de incidentes críticos"
+        "Suporte técnico avançado a macOS, iOS, iCloud e AppleCare",
+        "Atendimento por voz, chat e e-mail",
+        "Diagnóstico de falhas de software, hardware e rede",
+        "Colaboração com equipes globais em casos críticos"
       ]
     },
     {
-      "company": "AUTÔNOMO",
-      "role": "Full-Stack Developer & AI Consultant",
-      "period": "2018 - Presente",
+      "company": "Autônomo",
+      "role": "Desenvolvedor Full-Stack e Consultor de IA",
+      "period": "Janeiro de 2018 ao presente",
       "highlights": [
-        "Desenvolvimento full-stack de aplicações web",
-        "Criação de soluções com IA e automação",
-        "Deploy, CI/CD, hospedagem e infraestrutura",
-        "Construção de MVPs e produtos digitais"
+        "Desenvolvimento de aplicações web completas",
+        "Criação e integração de soluções de IA e automação",
+        "Levantamento de requisitos, documentação e entrega de MVPs",
+        "Administração de servidores, hospedagem, domínios e pipelines CI/CD"
       ]
     },
     {
-      "company": "CONNECTCOM BPO",
+      "company": "ConnectCom BPO",
       "role": "Help Desk Analyst",
-      "period": "2016 - 2019",
+      "period": "Novembro de 2016 a março de 2019",
       "highlights": [
         "Suporte N1/N2 corporativo",
         "Gestão de chamados e SLA",
         "Atendimento multicanal",
-        "Escalonamento N3"
+        "Escalonamento de casos complexos ao N3"
       ]
     },
     {
-      "company": "IT2B",
-      "role": "Service Desk Analyst",
-      "period": "2015 - 2016",
+      "company": "IT2B Tecnologia",
+      "role": "Pleno Service Desk Analyst",
+      "period": "Janeiro de 2015 a março de 2016",
       "highlights": [
-        "Suporte corporativo e usuários",
-        "Configuração de endpoints",
-        "Suporte a aplicações internas"
+        "Análise e resolução de incidentes",
+        "Administração de usuários e acessos",
+        "Configuração de endpoints e suporte a aplicações"
       ]
     },
     {
       "company": "TIVIT",
       "role": "Help Desk Analyst",
-      "period": "2012 - 2014",
+      "period": "Maio de 2012 a maio de 2014",
       "highlights": [
-        "Suporte outsourcing corporativo",
-        "Registro e resolução de incidentes",
-        "Atendimento remoto e presencial"
+        "Suporte em ambiente corporativo de grande porte",
+        "Registro e gerenciamento de chamados",
+        "Diagnóstico de falhas e suporte presencial e remoto"
+      ]
+    },
+    {
+      "company": "Orbitall (Grupo Itaú)",
+      "role": "Investment Banking Analyst",
+      "period": "Janeiro de 2008 a agosto de 2009",
+      "highlights": [
+        "Apoio a operações de back-office em serviços financeiros",
+        "Análise de processos e geração de relatórios",
+        "Apoio a equipes de atendimento corporativo"
       ]
     }
   ],
@@ -92,70 +180,73 @@
     {
       "institution": "Centro Universitário ENIAC",
       "course": "Análise e Desenvolvimento de Sistemas",
-      "period": "2012 - 2015"
+      "period": "2012 a 2015"
     }
   ],
-  "certifications": [
-    "ITIL Foundations",
+  "certifications_and_courses": [
+    "Gestão Estratégica de TI - ITIL (Fundamentos)",
     "Segurança da Informação",
-    "Lógica de Programação (ICS)",
+    "Lógica de Programação - Certificação ICS",
     "Fundamentos de Redes",
     "Microsoft Certified (MCP)",
-    "Client Support Analyst (UOL)"
+    "Client Support Analyst - UOL"
   ],
   "languages": {
-    "portuguese": "native",
-    "english": "professional",
-    "spanish": "intermediate"
+    "portuguese": "Nativo",
+    "english": "Proficiência profissional completa",
+    "spanish": "Proficiência profissional intermediária"
   },
-  "recruitment_faq": [
+  "projects": [
     {
-      "question": "Estado civil / solteiro?",
-      "answer": "Sim, Wagner é solteiro."
+      "name": "Device Simulator Engine (Brutal Dev Emulator)",
+      "description": "Plataforma de emulação responsiva multi-device em tempo real.",
+      "status": "Projeto principal documentado no laboratório."
     },
     {
-      "question": "Qual a idade?",
-      "answer": "Wagner tem 36 anos."
+      "name": "AI Systems & Automation",
+      "description": "Motor de automação com inteligência artificial integrada."
     },
     {
-      "question": "Qual o WhatsApp / contato direto?",
-      "answer": "O WhatsApp para contato direto é (11) 98150-4061.",
-      "answer_complement": "Você pode falar diretamente com o Wagner pelo WhatsApp através do link: https://api.whatsapp.com/send/?phone=5511981504061&text&type=phone_number&app_absent=0"
+      "name": "Automation Engine",
+      "description": "Sistemas de automação de processos e fluxos digitais."
     },
     {
-      "question": "Tem filhos?",
-      "answer": "Não, Wagner não possui filhos."
-    },
-    {
-      "question": "Como chegaria até a empresa? Tem veículo próprio?",
-      "answer": "É necessário avaliar a remuneração oferecida; caso o deslocamento seja via transporte público, seria necessário 1 ônibus intermunicipal de Guarulhos até o metrô Tucuruvi, totalizando 2 conduções na ida e 2 na volta.",
-      "answer_complement": "O trajeto até a empresa dependeria da proposta de remuneração, considerando um deslocamento via transporte público com 2 conduções de ida e 2 de volta (ônibus intermunicipal até o metrô Tucuruvi)."
-    },
-    {
-      "question": "Qual a disponibilidade de início?",
-      "answer": "A disponibilidade de início é de 1 dia, a depender do que for combinado com a empresa."
-    },
-    {
-      "question": "Qual a preferência de horário ou jornada (manhã, tarde, noite)?",
-      "answer": "Wagner é indiferente quanto ao turno, ficando sujeito ao que for combinado com a empresa."
-    },
-    {
-      "question": "Prefere home office ou presencial?",
-      "answer": "Há preferência por home office, mas o modelo presencial também é aceito."
-    },
-    {
-      "question": "Qual o tipo de contrato (CLT ou PJ)?",
-      "answer": "Wagner aceita tanto contratação CLT quanto PJ, a depender do que for combinado contratualmente."
-    },
-    {
-      "question": "Qual a remuneração mínima aceita (real ou dólar)?",
-      "answer": "A remuneração mínima aceita é de R$ 20 a R$ 30 por hora.",
-      "answer_complement": "Para propostas em dólar, o valor aceito é de US$ 15 a US$ 25 por hora."
-    },
-    {
-      "question": "Pratica algum esporte? Hobbies? Lazer?",
-      "answer": "Com certeza: desenvolver sistemas e atuar como \"alquimista de IA\", criando e inventando inovações, é uma paixão pessoal do Wagner.",
-      "answer_complement": "Nos momentos de lazer, gosta de futebol aos finais de semana, confraternizações com amigos e familiares, viagens, filmes e passar tempo com a namorada, entre outros interesses diversos."
+      "name": "Premium Dashboards",
+      "description": "Painéis analíticos avançados.",
+      "status": "Em desenvolvimento."
     }
+  ],
+  "recruitment": {
+    "availability_to_start": "1 dia, dependendo do alinhamento com a empresa.",
+    "preferred_shift": "Sem preferência fixa; sujeito ao combinado com a empresa.",
+    "work_model": "Preferência por home office, com disponibilidade para presencial.",
+    "contract_types": [
+      "CLT",
+      "PJ"
+    ],
+    "compensation": {
+      "as_of": "2026-07-17",
+      "brl_hourly": "R$ 20 a R$ 30 por hora",
+      "usd_hourly": "US$ 15 a US$ 25 por hora",
+      "note": "Faixas informadas no perfil e sujeitas a negociação conforme escopo e contrato."
+    },
+    "commute": "Para deslocamento por transporte público, o trajeto informado considera um ônibus intermunicipal de Guarulhos até o metrô Tucuruvi, totalizando duas conduções na ida e duas na volta. A viabilidade depende da proposta e do local da empresa."
+  },
+  "interests": [
+    "Desenvolvimento de sistemas",
+    "Inteligência artificial e automação",
+    "Futebol aos finais de semana",
+    "Viagens",
+    "Filmes",
+    "Confraternizações com amigos e familiares"
+  ],
+  "not_documented": [
+    "Data de nascimento",
+    "Endereço residencial completo",
+    "Motivo de saída do último emprego",
+    "Mês exato de encerramento na Infoplus",
+    "Referências profissionais",
+    "Documentos pessoais",
+    "Informações médicas, religiosas ou políticas"
   ]
 }

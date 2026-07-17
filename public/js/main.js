@@ -1448,4 +1448,125 @@ document.querySelectorAll('.footer-year').forEach(function(el){ el.textContent=n
 
 })();
 
+
+/* ─────────────────────────────────────────────
+   CONTACT FORM — creative in-site email channel
+   ───────────────────────────────────────────── */
+var contactForm = document.getElementById('contactForm');
+var contactSubmit = document.getElementById('contactSubmit');
+var contactInlineStatus = document.getElementById('contactInlineStatus');
+var contactToast = document.getElementById('contactToast');
+var contactToastTitle = contactToast ? contactToast.querySelector('.contact-toast-title') : null;
+var contactToastSub = contactToast ? contactToast.querySelector('.contact-toast-sub') : null;
+var contactToastIcon = contactToast ? contactToast.querySelector('.contact-toast-icon') : null;
+var contactToastTimer = 0;
+
+function setContactStatus(message, kind) {
+  if (!contactInlineStatus) return;
+  contactInlineStatus.textContent = sanitizeText(message || '', 220);
+  contactInlineStatus.classList.remove('ok', 'err');
+  if (kind === 'ok') contactInlineStatus.classList.add('ok');
+  if (kind === 'err') contactInlineStatus.classList.add('err');
+}
+
+function setContactLoading(isLoading) {
+  if (!contactSubmit) return;
+  contactSubmit.disabled = Boolean(isLoading);
+  var label = contactSubmit.querySelector('span');
+  if (label) label.textContent = isLoading ? 'ENVIANDO...' : 'ENVIAR MENSAGEM';
+}
+
+function showContactToast(title, subtitle, isError) {
+  if (!contactToast) return;
+  if (contactToastTitle) contactToastTitle.textContent = sanitizeText(title || '', 120);
+  if (contactToastSub) contactToastSub.textContent = sanitizeText(subtitle || '', 220);
+  if (contactToastIcon) contactToastIcon.textContent = isError ? '⚠' : '✦';
+  contactToast.classList.toggle('error', Boolean(isError));
+  contactToast.classList.add('show');
+  contactToast.setAttribute('aria-hidden', 'false');
+  clearTimeout(contactToastTimer);
+  contactToastTimer = setTimeout(function() {
+    contactToast.classList.remove('show');
+    contactToast.setAttribute('aria-hidden', 'true');
+  }, isError ? 5200 : 4200);
+}
+
+if (contactForm) {
+  contactForm.addEventListener('submit', async function(event) {
+    event.preventDefault();
+    if (contactSubmit && contactSubmit.disabled) return;
+
+    var formData = new FormData(contactForm);
+    var payload = {
+      name: sanitizeText((formData.get('name') || '').trim(), 80),
+      email: sanitizeText((formData.get('email') || '').trim(), 120),
+      subject: sanitizeText((formData.get('subject') || '').trim(), 120),
+      phone: sanitizeText((formData.get('phone') || '').trim(), 40),
+      message: sanitizeText((formData.get('message') || '').trim(), 2000),
+      company: sanitizeText((formData.get('company') || '').trim(), 120)
+    };
+
+    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!payload.name || payload.name.length < 2) {
+      setContactStatus('Informe seu nome para abrir o canal.', 'err');
+      showContactToast('Nome obrigatório.', 'Digite pelo menos 2 caracteres no campo nome.', true);
+      return;
+    }
+    if (!emailRegex.test(payload.email)) {
+      setContactStatus('Informe um e-mail válido para retorno.', 'err');
+      showContactToast('E-mail inválido.', 'Use um endereço de e-mail válido para receber o retorno.', true);
+      return;
+    }
+    if (!payload.subject || payload.subject.length < 3) {
+      setContactStatus('Defina um assunto curto para contextualizar a mensagem.', 'err');
+      showContactToast('Assunto obrigatório.', 'Escreva um assunto com pelo menos 3 caracteres.', true);
+      return;
+    }
+    if (!payload.message || payload.message.length < 12) {
+      setContactStatus('Descreva a demanda com um pouco mais de detalhe.', 'err');
+      showContactToast('Mensagem muito curta.', 'Escreva pelo menos 12 caracteres na mensagem.', true);
+      return;
+    }
+
+    setContactLoading(true);
+    setContactStatus('Transmitindo mensagem para o canal de e-mail...', '');
+
+    try {
+      var response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify(payload)
+      });
+
+      var data = null;
+      try {
+        data = await response.json();
+      } catch (parseError) {
+        data = null;
+      }
+
+      if (!response.ok || !data || !data.ok) {
+        var errorMessage = data && data.message ? data.message : 'O canal de e-mail está indisponível no momento. Tente novamente em instantes.';
+        setContactStatus(errorMessage, 'err');
+        showContactToast('Falha no envio.', errorMessage, true);
+        return;
+      }
+
+      contactForm.reset();
+      setContactStatus(data.message || 'Mensagem enviada com sucesso. Wagner receberá seu contato por e-mail.', 'ok');
+      showContactToast(
+        'Mensagem enviada com sucesso.',
+        data.message || 'O canal foi aberto. Wagner receberá seu contato por e-mail.',
+        false
+      );
+    } catch (error) {
+      setContactStatus('Erro de conexão ao enviar. Tente novamente em instantes.', 'err');
+      showContactToast('Erro de conexão.', 'Não foi possível enviar agora. Tente novamente em alguns instantes.', true);
+    } finally {
+      setContactLoading(false);
+    }
+  });
+}
+
 })(); // end IIFE

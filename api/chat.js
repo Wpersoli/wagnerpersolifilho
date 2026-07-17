@@ -266,7 +266,7 @@ module.exports = async function handler(req, res) {
     // SEGURANÇA: a API key vai no header 'x-goog-api-key' (método recomendado
     // pelo Google), não mais na query string — evita que a chave apareça em
     // logs de acesso/proxy. A URL fica sem o parâmetro ?key=.
-    var url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+    var url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent';
 
     // PERFORMANCE/RESILIÊNCIA: timeout no servidor (25s, abaixo do maxDuration:30
     // do Vercel). Se o Gemini demorar, abortamos e caímos no fallback gracioso —

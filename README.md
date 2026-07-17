@@ -8,7 +8,7 @@ Portfólio profissional de Wagner Persoli F., com frontend estático, modo apres
 
 - Frontend: HTML5, CSS3 e JavaScript puro
 - Backend: Vercel Serverless Function em Node.js 22
-- IA: Google Gemini 2.5 Flash com fallback local
+- IA: Gemini 3.5 Flash, contingência Gemini 3.1 Flash-Lite e fallback local
 - Hospedagem: Vercel
 - Repositório: `Wpersoli/wagnerpersolifilho`
 
@@ -49,7 +49,7 @@ O projeto não possui etapa de compilação. A Vercel publica `public/` e execut
 
 ## Variável de ambiente
 
-Configure `GEMINI_API_KEY` exclusivamente no painel da Vercel.
+Configure `GEMINI_API_KEY` exclusivamente no painel da Vercel. Os modelos padrão são `gemini-3.5-flash` e `gemini-3.1-flash-lite`; `GEMINI_MODEL` e `GEMINI_FALLBACK_MODEL` são opcionais e permitem trocar os modelos sem editar o código.
 
 Para testes locais, uma chave pode ficar em `.env.local`, mas esse arquivo é local, está ignorado pelo Git e nunca deve ser compactado ou enviado.
 
@@ -63,7 +63,7 @@ Para testes locais, uma chave pode ficar em `.env.local`, mas esse arquivo é lo
 
 ## Comportamentos críticos
 
-- O chat normal utiliza `/api/chat`.
+- O chat normal utiliza `/api/chat`, repete falhas transitórias e usa um modelo secundário antes do fallback local.
 - O modo apresentação usa respostas locais simuladas e não consome Gemini.
 - O modo apresentação funciona em desktop, tablet e celular.
 - O menu mobile fecha pelo botão, menu, links e tecla `Escape`.

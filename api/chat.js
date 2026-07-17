@@ -1,5 +1,8 @@
 // api/chat.js — Vercel Serverless Function
 // Proxy seguro para Google Gemini API (conforme a cota do plano configurado)
+// v2.4 — Retry exponencial para erros transitórios do Gemini e modelo
+//        secundário estável antes do fallback local. Modelos configuráveis
+//        por ambiente, sem alterar o frontend ou o modo apresentação.
 // v2.3 — Fallback local com 3 novos buckets (contratação/diferencial,
 //        entrevista/senioridade, infraestrutura). Prompt ganhou regra
 //        de síntese para perguntas analíticas de recrutamento e regra
@@ -119,7 +122,10 @@ var WAGNER_PROFILE = 'Você é o assistente virtual do WAGNER PERS. F., o portf�
 // '/api/chat' via caminho relativo (mesma origem), então isso não
 // afeta o uso legítimo — apenas fecha o endpoint para terceiros.
 // ─────────────────────────────────────────────────────────────
-var ALLOWED_ORIGINS_EXACT = ['https://wagnerpersolifilho.vercel.app'];
+var ALLOWED_ORIGINS_EXACT = [
+  'https://wagnerpersolifilho.vercel.app',
+  'https://wagnerpersoli.vercel.app'
+];
 var ALLOWED_ORIGIN_PATTERN = /^https:\/\/wagnerpersolifilho(?:-[a-z0-9-]+)+\.vercel\.app$/i;
 
 function applyCors(req, res) {
@@ -198,6 +204,79 @@ function sanitizeMessages(rawMessages) {
     });
 }
 
+
+// ─────────────────────────────────────────────────────────────
+// RESILIÊNCIA: modelos configuráveis + retry controlado.
+// O Gemini recomenda espera exponencial para 429/503 e troca temporária
+// de modelo em indisponibilidade. Mantemos o orçamento abaixo dos 30s
+// da função Vercel e do timeout de 30s do frontend.
+// ─────────────────────────────────────────────────────────────
+var PRIMARY_MODEL = String(process.env.GEMINI_MODEL || 'gemini-3.5-flash').trim();
+var SECONDARY_MODEL = String(process.env.GEMINI_FALLBACK_MODEL || 'gemini-3.1-flash-lite').trim();
+var RETRYABLE_HTTP_STATUS = { 429: true, 500: true, 502: true, 503: true, 504: true };
+
+function wait(ms) {
+  return new Promise(function (resolve) { setTimeout(resolve, ms); });
+}
+
+function safeModelName(model, fallback) {
+  var value = String(model || '').trim();
+  return /^[a-z0-9._-]+$/i.test(value) ? value : fallback;
+}
+
+function geminiErrorMessage(data) {
+  var message = data && data.error && data.error.message;
+  return String(message || 'erro sem mensagem').slice(0, 500);
+}
+
+async function callGeminiModel(model, apiKey, requestBody, timeoutMs) {
+  var safeModel = safeModelName(model, 'gemini-3.5-flash');
+  var url = 'https://generativelanguage.googleapis.com/v1beta/models/' +
+    encodeURIComponent(safeModel) + ':generateContent';
+  var controller = new AbortController();
+  var timer = setTimeout(function () { controller.abort(); }, timeoutMs);
+
+  try {
+    var response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-goog-api-key': apiKey
+      },
+      body: JSON.stringify(requestBody),
+      signal: controller.signal
+    });
+
+    var raw = await response.text();
+    var data = {};
+    if (raw) {
+      try {
+        data = JSON.parse(raw);
+      } catch (parseErr) {
+        data = { error: { message: 'Resposta não JSON da API Gemini' } };
+      }
+    }
+
+    return {
+      ok: response.ok,
+      status: response.status,
+      data: data,
+      model: safeModel,
+      networkError: false
+    };
+  } catch (err) {
+    return {
+      ok: false,
+      status: 0,
+      data: { error: { message: err && err.name === 'AbortError' ? 'timeout' : String(err && err.message || err) } },
+      model: safeModel,
+      networkError: true
+    };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 module.exports = async function handler(req, res) {
   applyCors(req, res);
 
@@ -263,65 +342,87 @@ module.exports = async function handler(req, res) {
       return { role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] };
     });
 
-    // SEGURANÇA: a API key vai no header 'x-goog-api-key' (método recomendado
-    // pelo Google), não mais na query string — evita que a chave apareça em
-    // logs de acesso/proxy. A URL fica sem o parâmetro ?key=.
-    var url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent';
-
-    // PERFORMANCE/RESILIÊNCIA: timeout no servidor (25s, abaixo do maxDuration:30
-    // do Vercel). Se o Gemini demorar, abortamos e caímos no fallback gracioso —
-    // em vez de a função ser encerrada pela plataforma com um erro cru.
-    var apiController = new AbortController();
-    var apiTimeout = setTimeout(function () { apiController.abort(); }, 25000);
-
-    var fetchOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-goog-api-key': apiKey
-      },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: systemPrompt }] },
-        contents: contents,
-        generationConfig: { maxOutputTokens: 1200, temperature: 0.7 }
-      }),
-      signal: apiController.signal
+    var requestBody = {
+      systemInstruction: { parts: [{ text: systemPrompt }] },
+      contents: contents,
+      generationConfig: { maxOutputTokens: 1200, temperature: 0.7 }
     };
 
-    var response;
-    try {
-      response = await fetch(url, fetchOptions);
-    } catch (fetchErr) {
-      clearTimeout(apiTimeout);
-      // Timeout (abort) ou falha de rede ao chamar o Gemini → fallback local.
-      console.error('[chat] Falha/timeout no fetch ao Gemini:', fetchErr.message);
+    // Plano de contingência: duas tentativas no modelo principal com espera
+    // exponencial curta; depois, uma tentativa no modelo secundário estável.
+    // Limites por tentativa mantêm o total dentro do orçamento da função.
+    var primary = safeModelName(PRIMARY_MODEL, 'gemini-3.5-flash');
+    var secondary = safeModelName(SECONDARY_MODEL, 'gemini-3.1-flash-lite');
+    var plan = [
+      { model: primary, attempts: 2, timeoutMs: 7500 }
+    ];
+    if (secondary !== primary) {
+      plan.push({ model: secondary, attempts: 1, timeoutMs: 6500 });
+    }
+
+    var data = null;
+    var selectedModel = '';
+    var stopAllAttempts = false;
+
+    modelLoop:
+    for (var pi = 0; pi < plan.length; pi++) {
+      var item = plan[pi];
+
+      for (var ai = 0; ai < item.attempts; ai++) {
+        var result = await callGeminiModel(item.model, apiKey, requestBody, item.timeoutMs);
+
+        if (result.ok) {
+          data = result.data;
+          selectedModel = result.model;
+          break modelLoop;
+        }
+
+        var retryable = result.networkError || Boolean(RETRYABLE_HTTP_STATUS[result.status]);
+        var modelUnavailable = result.status === 404;
+        var level = retryable || modelUnavailable ? 'warn' : 'error';
+        console[level](
+          '[chat] Gemini', result.model,
+          'tentativa', (ai + 1) + '/' + item.attempts,
+          'status', result.status || 'NETWORK', '-', geminiErrorMessage(result.data)
+        );
+
+        // 400/401/403 e demais falhas permanentes não melhoram com outro modelo.
+        if (!retryable && !modelUnavailable) {
+          stopAllAttempts = true;
+          break modelLoop;
+        }
+
+        // Retry apenas quando ainda há tentativa no mesmo modelo.
+        if (ai + 1 < item.attempts) {
+          var backoff = 750 * Math.pow(2, ai) + Math.floor(Math.random() * 350);
+          await wait(backoff);
+        }
+      }
+
+      if (stopAllAttempts) break;
+
+      // Pequena espera com jitter antes de trocar para o modelo secundário.
+      if (pi + 1 < plan.length) {
+        await wait(350 + Math.floor(Math.random() * 250));
+      }
+    }
+
+    if (!data) {
+      console.error('[chat] Todos os modelos Gemini falharam — usando fallback local');
       return res.status(200).json({ content: [{ type: 'text', text: getFallbackResponse(lastUserMsg) }] });
     }
-    clearTimeout(apiTimeout);
 
-    var data = {};
-
-    try {
-      data = await response.json();
-    } catch (parseErr) {
-      console.error('[chat] Erro ao parsear resposta da API:', parseErr.message);
-      // Fallback quando resposta não é JSON válido
-      return res.status(200).json({ content: [{ type: 'text', text: getFallbackResponse(lastUserMsg) }] });
+    if (selectedModel === secondary && secondary !== primary) {
+      console.warn('[chat] Modelo secundário utilizado:', selectedModel);
     }
 
-    // ── Erro HTTP da API Gemini → fallback amigável ──
-    if (!response.ok) {
-      console.error('[chat] Erro HTTP', response.status, 'da API Gemini:', JSON.stringify(data));
-      var fallbackText = getFallbackResponse(lastUserMsg);
-      return res.status(200).json({ content: [{ type: 'text', text: fallbackText }] });
-    }
-
-    var text = (data.candidates &&
-                data.candidates[0] &&
-                data.candidates[0].content &&
-                data.candidates[0].content.parts &&
-                data.candidates[0].content.parts[0] &&
-                data.candidates[0].content.parts[0].text) || '';
+    var parts = (data.candidates &&
+                 data.candidates[0] &&
+                 data.candidates[0].content &&
+                 data.candidates[0].content.parts) || [];
+    var text = parts.map(function (part) {
+      return part && typeof part.text === 'string' ? part.text : '';
+    }).join('').trim();
 
     // ── Resposta vazia → fallback ──
     if (!text || !text.trim()) {

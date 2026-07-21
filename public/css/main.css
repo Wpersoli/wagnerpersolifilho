@@ -1063,7 +1063,6 @@ body.presenting .hero { transform: scale(1.04); }
   .feature-body { grid-template-columns: 1fr; }
   .device-mock { max-width: 440px; margin: 0 auto; }
   .hero-bg-art { display: none; }
-  .hero-skull-wrap { display: none; }
   nav.mainnav { display: none; }
   .pmode-btn { display: none; }
   .mobile-pmode-btn { display: block; }
@@ -1312,92 +1311,6 @@ header { border-bottom: 1px solid transparent; border-image: linear-gradient(90d
 
 /* Device-mock — sombra levemente mais rica */
 .device-mock { box-shadow: 0 34px 70px -20px rgba(0,0,0,0.85), 0 0 0 1px rgba(255,20,20,0.22), 0 0 70px -8px rgba(255,20,20,0.22); }
-
-/* Caveira decorativa do hero — animações cinematográficas */
-.hero-skull-wrap {
-  position: absolute; right: -20px; top: 50%;
-  width: min(460px, 42vw); height: auto; pointer-events: auto; z-index: 0;
-  opacity: 0;
-  transform: translateY(-40%) scale(0.88);
-  animation:
-    skullEntrance 1.2s 2.5s cubic-bezier(.16,1,.3,1) forwards,
-    skullFloat    6s   3.8s ease-in-out infinite,
-    skullGlow     4s   3.8s ease-in-out infinite,
-    skullFlicker  11s  6s   steps(1)    infinite;
-  transform-origin: center center;
-  perspective: 1000px;
-  cursor: grab;
-}
-.hero-skull-wrap.skull-dragging { cursor: grabbing; }
-/* Camada interna: recebe o tilt 3D controlado pelo mouse via JS (não conflita com as animações da .hero-skull-wrap) */
-.hero-skull-tilt {
-  position: relative; width: 100%;
-  transform-style: preserve-3d;
-  transform: rotateX(0deg) rotateY(0deg);
-  will-change: transform;
-}
-.hero-skull-tilt picture { display: block; width: 100%; }
-.hero-skull-img {
-  display: block; width: 100%; height: auto;
-  mix-blend-mode: screen;              /* funde o fundo preto da imagem com o fundo do site */
-  filter: contrast(1.12) saturate(1.35);
-  transform: translateZ(0);
-  user-select: none; -webkit-user-drag: none;
-}
-.hero-skull-reticle {
-  position: absolute; top: 50%; left: 50%; width: 78%;
-  transform: translate(-50%, -50%) translateZ(40px); /* leve profundidade extra no tilt 3D */
-  pointer-events: none;
-}
-@keyframes skullEntrance {
-  from { opacity: 0; transform: translateY(-40%) scale(0.88); }
-  to   { opacity: 1; transform: translateY(-52%) scale(1);    }
-}
-@keyframes skullFloat {
-  0%, 100% { transform: translateY(-52%) translateY(0px);   }
-  30%       { transform: translateY(-52%) translateY(-14px); }
-  60%       { transform: translateY(-52%) translateY(-6px);  }
-}
-@keyframes skullGlow {
-  0%, 100% { filter: drop-shadow(0 0 30px rgba(255,20,20,0.35)) drop-shadow(0 0 80px rgba(255,20,20,0.12)); }
-  40%      { filter: drop-shadow(0 0 55px rgba(255,20,20,0.75)) drop-shadow(0 0 120px rgba(255,20,20,0.3)) drop-shadow(0 0 6px rgba(255,20,20,0.9)); }
-  70%      { filter: drop-shadow(0 0 35px rgba(255,20,20,0.45)) drop-shadow(0 0 90px rgba(255,20,20,0.18)); }
-}
-
-/* Radar rings rotation */
-.skull-ring-outer { animation: radarSpin 18s linear infinite; transform-origin: 150px 150px; }
-.skull-ring-mid   { animation: radarSpin 12s linear infinite reverse; transform-origin: 150px 150px; }
-.skull-ring-inner { animation: radarSpin 7s linear infinite; transform-origin: 150px 150px; }
-
-/* Scan line dentro do radar */
-.skull-scan-line {
-  animation: skullScan 3s ease-in-out infinite;
-  transform-origin: 150px 150px;
-}
-@keyframes radarSpin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-@keyframes skullScan {
-  0%   { opacity: 0;   transform: rotate(-80deg); }
-  10%  { opacity: 0.7; }
-  50%  { opacity: 0.5; transform: rotate(80deg);  }
-  90%  { opacity: 0.7; }
-  100% { opacity: 0;   transform: rotate(260deg); }
-}
-
-@keyframes skullFlicker {
-  0%,94%,96%,98%,100% { opacity: 1; }
-  95%                  { opacity: 0.6; }
-  97%                  { opacity: 0.85; }
-  99%                  { opacity: 0.7; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero-skull-wrap { animation: none !important; opacity: 1; transform: translateY(-52%); filter: drop-shadow(0 0 30px rgba(255,20,20,0.3)); cursor: default; }
-  .hero-skull-tilt { transform: none !important; }
-  .skull-ring-outer, .skull-ring-mid, .skull-ring-inner, .skull-scan-line { animation: none !important; }
-}
 
 /* Mapa-múndi decorativo dentro do painel de logs — camada isolada, não interativa */
 .terminal-wrap { position: relative; }
@@ -2122,7 +2035,6 @@ h2.section-title {
   z-index: 0;
   pointer-events: none;
 }
-.hero-skull-wrap { display: none !important; }
 .hero-bg-art { opacity: .12; right: -30px; width: min(640px, 54vw); }
 .hero-eyebrow,
 .hero-identity,
@@ -2895,4 +2807,599 @@ h1.hero-title .grad,
 }
 .contact-toast.error .contact-toast-icon {
   background: linear-gradient(135deg, rgba(255,122,160,.2), rgba(123,97,255,.2));
+}
+
+/* ============================================================
+   STAGE 01.1 — TYPED BOOT / NEON PROGRESS / SHADOW SIGNATURE
+   ============================================================ */
+#boot {
+  padding: 26px;
+  justify-content: center;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(46,242,255,.07), transparent 35%),
+    radial-gradient(circle at 76% 62%, rgba(123,97,255,.055), transparent 30%),
+    linear-gradient(180deg, #071019 0%, #080a13 48%, #08090f 100%);
+}
+#boot::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(rgba(46,242,255,.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(46,242,255,.018) 1px, transparent 1px);
+  background-size: 46px 46px;
+  mask-image: radial-gradient(circle at center, black 0%, transparent 67%);
+  -webkit-mask-image: radial-gradient(circle at center, black 0%, transparent 67%);
+  opacity: .52;
+}
+#boot::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(720px, 92vw);
+  height: min(420px, 68vh);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  pointer-events: none;
+  box-shadow:
+    0 0 120px rgba(46,242,255,.035),
+    inset 0 0 100px rgba(123,97,255,.018);
+}
+#boot .boot-shell {
+  position: relative;
+  z-index: 1;
+  width: min(510px, 88vw);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  transform: translateY(-1vh);
+}
+#boot .boot-title {
+  min-height: 1.35em;
+  margin-bottom: 24px;
+  font-family: var(--display);
+  font-size: clamp(14px, 1.6vw, 18px);
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: .085em;
+  color: #2ef2ff;
+  text-shadow:
+    0 0 8px rgba(46,242,255,.58),
+    0 0 24px rgba(46,242,255,.22),
+    0 0 50px rgba(46,242,255,.08);
+}
+#boot .boot-box {
+  width: 100%;
+  padding: 0;
+  min-height: 178px;
+}
+#boot .boot-meta,
+#boot .boot-line {
+  min-height: 1.85em;
+  font-family: var(--mono);
+  font-variant-ligatures: none;
+  white-space: nowrap;
+}
+#boot .boot-meta {
+  font-size: clamp(7.2px, .82vw, 8.8px);
+  line-height: 1.9;
+  letter-spacing: .085em;
+  color: #22f5ba;
+  text-transform: uppercase;
+  text-shadow: 0 0 8px rgba(34,245,186,.22);
+}
+#boot .boot-line {
+  font-size: clamp(7.8px, .88vw, 9.4px);
+  line-height: 1.9;
+  letter-spacing: .045em;
+  color: #6f849c;
+}
+#boot .boot-line b {
+  color: #21ffc0;
+  font-weight: 700;
+  text-shadow: 0 0 9px rgba(33,255,192,.36);
+}
+#boot .boot-cyan {
+  color: #2ef2ff;
+  text-shadow: 0 0 8px rgba(46,242,255,.3);
+}
+#boot .boot-violet {
+  color: #a276ff;
+  text-shadow: 0 0 8px rgba(162,118,255,.28);
+}
+#boot .boot-green {
+  color: #21ffc0;
+  text-shadow: 0 0 8px rgba(33,255,192,.3);
+}
+#boot .boot-type-line {
+  visibility: hidden;
+}
+#boot.is-prepared .boot-type-line {
+  visibility: visible;
+}
+#boot .boot-type-line.is-typing::after {
+  content: '';
+  display: inline-block;
+  width: 1px;
+  height: .95em;
+  margin-left: 4px;
+  vertical-align: -.08em;
+  background: #2ef2ff;
+  box-shadow: 0 0 8px rgba(46,242,255,.72);
+  animation: bootTypingCursor .58s steps(1, end) infinite;
+}
+#boot .boot-progress {
+  position: relative;
+  margin-top: 27px;
+  opacity: 0;
+  transform: translateY(5px);
+  transition: opacity .28s ease, transform .28s ease;
+}
+#boot.is-running .boot-progress {
+  opacity: 1;
+  transform: translateY(0);
+}
+#boot .boot-bar-track {
+  position: relative;
+  width: 100%;
+  height: 2px;
+  margin: 0;
+  overflow: visible;
+  border-radius: 999px;
+  background: rgba(255,255,255,.055);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.012);
+}
+#boot .boot-bar-fill {
+  position: relative;
+  height: 2px;
+  width: 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #23f0ff 0%, #2ef2ff 38%, #776bff 72%, #a674ff 100%);
+  box-shadow:
+    0 0 8px rgba(46,242,255,.72),
+    0 0 22px rgba(46,242,255,.28),
+    0 0 34px rgba(123,97,255,.12);
+}
+#boot .boot-bar-fill::after {
+  content: '';
+  position: absolute;
+  right: -3px;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  transform: translateY(-50%);
+  background: #d8fbff;
+  box-shadow:
+    0 0 8px #2ef2ff,
+    0 0 18px rgba(46,242,255,.78),
+    0 0 28px rgba(123,97,255,.42);
+}
+#boot.is-running .boot-bar-fill {
+  animation: bootProgressFill 2.55s cubic-bezier(.16,.82,.24,1) .18s forwards;
+}
+#boot .boot-progress-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 10px;
+  font-family: var(--mono);
+  font-size: clamp(5.8px, .68vw, 6.8px);
+  line-height: 1;
+  letter-spacing: .24em;
+  color: #465a70;
+  text-transform: uppercase;
+}
+#boot .boot-progress-value {
+  min-width: 42px;
+  text-align: right;
+  color: #668099;
+  letter-spacing: .14em;
+}
+#boot .boot-signature {
+  position: relative;
+  margin-top: 17px;
+  text-align: center;
+  opacity: 0;
+  filter: blur(15px) brightness(.35);
+  transform: translateY(16px) scale(.94);
+  pointer-events: none;
+}
+#boot .boot-signature::before {
+  content: 'WAGNER PERS. F.';
+  position: absolute;
+  left: 50%;
+  top: -3px;
+  transform: translateX(-50%) scaleX(1.04);
+  width: 100%;
+  font-family: var(--display);
+  font-size: clamp(25px, 3vw, 34px);
+  font-weight: 500;
+  letter-spacing: .16em;
+  color: transparent;
+  text-shadow:
+    0 16px 22px rgba(0,0,0,.82),
+    0 0 34px rgba(46,242,255,.14);
+  opacity: .72;
+  filter: blur(7px);
+}
+#boot.is-signature-ready .boot-signature {
+  animation: bootSignatureShadow 1.05s cubic-bezier(.16,1,.3,1) forwards;
+}
+#boot .boot-logo {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(25px, 3vw, 34px);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: .16em;
+  color: #eef5ff;
+  text-shadow:
+    0 0 8px rgba(225,240,255,.16),
+    0 0 26px rgba(46,242,255,.13),
+    0 0 48px rgba(123,97,255,.07);
+  animation: none;
+  opacity: 1;
+}
+#boot .boot-pct {
+  margin: 12px 0 0;
+  padding: 0;
+  font-family: var(--mono);
+  font-size: clamp(5.8px, .67vw, 7px);
+  line-height: 1;
+  letter-spacing: .46em;
+  color: #53657a;
+  text-align: center;
+}
+#boot.is-complete .boot-bar-fill::after {
+  animation: bootNodePulse .7s ease-in-out infinite alternate;
+}
+#boot.hide {
+  animation: bootOut .62s cubic-bezier(.4,0,.2,1) forwards;
+}
+
+@keyframes bootTypingCursor {
+  0%, 48% { opacity: 1; }
+  49%, 100% { opacity: 0; }
+}
+@keyframes bootProgressFill {
+  0% { width: 0; }
+  18% { width: 12%; }
+  48% { width: 47%; }
+  72% { width: 73%; }
+  92% { width: 94%; }
+  100% { width: 100%; }
+}
+@keyframes bootSignatureShadow {
+  0% {
+    opacity: 0;
+    filter: blur(15px) brightness(.3);
+    transform: translateY(17px) scale(.94);
+    letter-spacing: .28em;
+  }
+  52% {
+    opacity: .75;
+    filter: blur(3px) brightness(.86);
+    transform: translateY(3px) scale(1.012);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0) brightness(1);
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes bootNodePulse {
+  from { opacity: .62; transform: translateY(-50%) scale(.8); }
+  to { opacity: 1; transform: translateY(-50%) scale(1.25); }
+}
+
+@media (max-width: 620px) {
+  #boot { padding: 20px; }
+  #boot .boot-shell { width: min(430px, 90vw); }
+  #boot .boot-title { margin-bottom: 20px; }
+  #boot .boot-box { min-height: 164px; }
+  #boot .boot-meta { font-size: clamp(6.6px, 1.72vw, 8px); }
+  #boot .boot-line { font-size: clamp(6.9px, 1.8vw, 8.4px); letter-spacing: .025em; }
+  #boot .boot-progress { margin-top: 22px; }
+  #boot .boot-logo,
+  #boot .boot-signature::before { font-size: clamp(22px, 6.5vw, 30px); letter-spacing: .12em; }
+  #boot .boot-pct { letter-spacing: .38em; }
+}
+
+@media (max-width: 390px) {
+  #boot .boot-shell { width: 94vw; }
+  #boot .boot-box { min-height: 154px; }
+  #boot .boot-meta { font-size: 6.2px; }
+  #boot .boot-line { font-size: 6.35px; letter-spacing: 0; }
+  #boot .boot-progress-label { letter-spacing: .15em; }
+}
+
+@media (max-height: 560px) and (orientation: landscape) {
+  #boot { padding: 14px; }
+  #boot .boot-shell {
+    width: min(500px, 86vw);
+    transform: scale(.82);
+  }
+  #boot .boot-title { margin-bottom: 16px; }
+  #boot .boot-box { min-height: 158px; }
+  #boot .boot-progress { margin-top: 18px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #boot .boot-type-line { visibility: visible; }
+  #boot .boot-progress,
+  #boot .boot-signature { opacity: 1; transform: none; filter: none; }
+  #boot .boot-bar-fill { width: 100%; animation: none !important; }
+  #boot .boot-type-line.is-typing::after,
+  #boot .boot-bar-fill::after { animation: none !important; }
+}
+
+/* ============================================================
+   STAGE 01.2 — CINEMATIC BOOT / SLOW TYPING / SYNCED PROGRESS
+   ============================================================ */
+#boot {
+  animation: bootAmbientPulse 5.6s ease-in-out infinite;
+}
+#boot .boot-shell {
+  opacity: 0;
+  filter: blur(10px);
+  transform: translateY(12px) scale(.985);
+}
+#boot.is-running .boot-shell {
+  animation: bootShellEnter .92s cubic-bezier(.16,1,.3,1) forwards;
+}
+#boot .boot-shell::after {
+  content: '';
+  position: absolute;
+  left: -12%;
+  top: -14px;
+  width: 124%;
+  height: 1px;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(90deg, transparent, rgba(46,242,255,.68), rgba(123,97,255,.48), transparent);
+  box-shadow: 0 0 18px rgba(46,242,255,.22);
+}
+#boot.is-running .boot-shell::after {
+  animation: bootScanPass 3.4s ease-in-out .72s 2;
+}
+#boot .boot-title {
+  letter-spacing: .115em;
+}
+#boot .boot-meta {
+  letter-spacing: .12em;
+  line-height: 2.08;
+}
+#boot .boot-line {
+  letter-spacing: .07em;
+  line-height: 2.08;
+}
+#boot .boot-type-line {
+  opacity: .34;
+  transition: opacity .38s ease, text-shadow .38s ease, transform .38s ease;
+}
+#boot .boot-type-line.is-typing {
+  opacity: 1;
+  transform: translateX(2px);
+  animation: bootTextVoltage 1.18s ease-in-out infinite;
+}
+#boot .boot-type-line.is-typed {
+  animation: bootLineSettle .62s cubic-bezier(.16,1,.3,1) forwards;
+}
+#boot .boot-title.is-typing {
+  animation: bootTitleSignal 1.25s steps(2, end) infinite;
+}
+#boot .boot-type-line.is-typing::after {
+  width: 2px;
+  height: 1.04em;
+  margin-left: 6px;
+  background: #c9fbff;
+  box-shadow: 0 0 10px rgba(46,242,255,.94), 0 0 22px rgba(123,97,255,.48);
+  animation: bootTypingCursor .78s steps(1, end) infinite;
+}
+#boot .boot-progress {
+  margin-top: 31px;
+}
+#boot .boot-bar-track {
+  height: 3px;
+  overflow: hidden;
+  background: rgba(255,255,255,.06);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.02), 0 0 18px rgba(46,242,255,.04);
+}
+#boot .boot-bar-track::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  transform: translateX(-110%);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.45), transparent);
+  animation: bootTrackSweep 2.6s linear .7s infinite;
+  pointer-events: none;
+}
+#boot .boot-bar-fill,
+#boot.is-running .boot-bar-fill {
+  animation: none !important;
+  width: 0;
+  height: 3px;
+  background-size: 220% 100%;
+  transition: width .22s cubic-bezier(.2,.78,.3,1);
+  animation-name: bootGradientFlow !important;
+  animation-duration: 2.8s !important;
+  animation-timing-function: linear !important;
+  animation-iteration-count: infinite !important;
+}
+#boot .boot-bar-fill::after {
+  width: 9px;
+  height: 9px;
+  right: -4px;
+}
+#boot .boot-progress-label {
+  margin-top: 12px;
+  letter-spacing: .29em;
+}
+#boot .boot-progress-value {
+  color: #87a7c3;
+  text-shadow: 0 0 12px rgba(46,242,255,.2);
+}
+#boot .boot-signature {
+  margin-top: 22px;
+  opacity: 0;
+  filter: blur(18px) brightness(.2);
+  transform: translateY(22px) scale(.91);
+}
+#boot.is-signature-ready .boot-signature {
+  animation: bootSignatureShadowSlow 1.72s cubic-bezier(.16,1,.3,1) forwards;
+}
+#boot.is-signature-ready .boot-logo {
+  animation: bootLogoLightPass 1.95s ease-out .12s both;
+}
+#boot.is-signature-ready .boot-pct {
+  animation: bootSubtitleReveal 1.3s ease-out .58s both;
+}
+#boot.is-complete .boot-bar-fill::after {
+  animation: bootNodePulse .8s ease-in-out infinite alternate !important;
+}
+#boot.hide {
+  animation: bootOutCinematic .92s cubic-bezier(.4,0,.2,1) forwards;
+}
+
+@keyframes bootShellEnter {
+  0% { opacity: 0; filter: blur(10px); transform: translateY(12px) scale(.985); }
+  64% { opacity: 1; filter: blur(1.5px); transform: translateY(-2px) scale(1.003); }
+  100% { opacity: 1; filter: blur(0); transform: translateY(0) scale(1); }
+}
+@keyframes bootAmbientPulse {
+  0%,100% { background-position: 50% 50%, 50% 50%, 50% 50%; }
+  50% { background-position: 48% 47%, 54% 55%, 50% 50%; }
+}
+@keyframes bootScanPass {
+  0% { opacity: 0; transform: translateY(0); }
+  12% { opacity: .72; }
+  50% { opacity: .38; }
+  100% { opacity: 0; transform: translateY(300px); }
+}
+@keyframes bootTextVoltage {
+  0%,100% { text-shadow: 0 0 0 rgba(46,242,255,0); }
+  50% { text-shadow: 0 0 10px rgba(46,242,255,.16); }
+}
+@keyframes bootTitleSignal {
+  0%,92%,100% { opacity: 1; filter: brightness(1); }
+  94% { opacity: .7; filter: brightness(1.45); }
+  97% { opacity: .92; filter: brightness(.9); }
+}
+@keyframes bootLineSettle {
+  0% { opacity: 1; transform: translateX(2px); filter: brightness(1.35); }
+  100% { opacity: .82; transform: translateX(0); filter: brightness(1); }
+}
+@keyframes bootTrackSweep {
+  0% { transform: translateX(-110%); }
+  100% { transform: translateX(110%); }
+}
+@keyframes bootGradientFlow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 220% 50%; }
+}
+@keyframes bootSignatureShadowSlow {
+  0% {
+    opacity: 0;
+    filter: blur(18px) brightness(.18);
+    transform: translateY(22px) scale(.91);
+    letter-spacing: .34em;
+  }
+  38% {
+    opacity: .35;
+    filter: blur(10px) brightness(.48);
+    transform: translateY(10px) scale(.96);
+  }
+  72% {
+    opacity: .86;
+    filter: blur(2.6px) brightness(.92);
+    transform: translateY(1px) scale(1.01);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0) brightness(1);
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes bootLogoLightPass {
+  0% {
+    color: #303744;
+    text-shadow: 0 16px 34px rgba(0,0,0,.9);
+  }
+  48% {
+    color: #b8c7d8;
+    text-shadow: 0 0 9px rgba(225,240,255,.1), 0 0 28px rgba(46,242,255,.1);
+  }
+  75% {
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(225,240,255,.36), 0 0 34px rgba(46,242,255,.24), 0 0 72px rgba(123,97,255,.12);
+  }
+  100% {
+    color: #eef5ff;
+    text-shadow: 0 0 8px rgba(225,240,255,.16), 0 0 26px rgba(46,242,255,.13), 0 0 48px rgba(123,97,255,.07);
+  }
+}
+@keyframes bootSubtitleReveal {
+  0% { opacity: 0; transform: translateY(8px); filter: blur(5px); letter-spacing: .65em; }
+  100% { opacity: 1; transform: translateY(0); filter: blur(0); letter-spacing: .46em; }
+}
+@keyframes bootOutCinematic {
+  0% { opacity: 1; filter: blur(0); transform: scale(1); }
+  42% { opacity: .82; filter: blur(1px); transform: scale(1.006); }
+  100% { opacity: 0; filter: blur(8px); transform: scale(1.018); visibility: hidden; pointer-events: none; }
+}
+
+/* A animação do boot permanece visível mesmo quando o Windows está com
+   "reduzir animações" ativo; apenas os deslocamentos são suavizados. */
+@media (prefers-reduced-motion: reduce) {
+  #boot,
+  #boot .boot-shell,
+  #boot .boot-shell::after,
+  #boot .boot-type-line.is-typing,
+  #boot .boot-type-line.is-typed,
+  #boot .boot-title.is-typing,
+  #boot .boot-type-line.is-typing::after,
+  #boot .boot-bar-track::before,
+  #boot .boot-bar-fill,
+  #boot .boot-bar-fill::after,
+  #boot .boot-signature,
+  #boot .boot-logo,
+  #boot .boot-pct {
+    animation-duration: revert !important;
+    animation-iteration-count: revert !important;
+    transition-duration: revert !important;
+  }
+  #boot .boot-progress {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  #boot.is-running .boot-progress {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  #boot .boot-signature {
+    opacity: 0;
+    filter: blur(10px) brightness(.35);
+    transform: translateY(10px) scale(.96);
+  }
+  #boot.is-signature-ready .boot-signature {
+    animation: bootSignatureShadowSlow 1.72s cubic-bezier(.16,1,.3,1) forwards !important;
+  }
+  #boot .boot-type-line.is-typing::after {
+    animation: bootTypingCursor .78s steps(1, end) infinite !important;
+  }
+  #boot .boot-bar-track::before {
+    animation: bootTrackSweep 2.6s linear .7s infinite !important;
+  }
+  #boot .boot-bar-fill {
+    width: 0;
+    animation: bootGradientFlow 2.8s linear infinite !important;
+    transition: width .22s cubic-bezier(.2,.78,.3,1) !important;
+  }
 }

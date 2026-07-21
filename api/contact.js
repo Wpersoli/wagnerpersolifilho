@@ -4,6 +4,13 @@
 var CONTACT_RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 var CONTACT_RATE_LIMIT_MAX = positiveInt(process.env.CONTACT_RATE_LIMIT_MAX, 5, 1, 20);
 var contactRateLimitMap = new Map();
+var MAX_BODY_BYTES = positiveInt(process.env.CONTACT_MAX_BODY_BYTES, 16384, 4096, 65536);
+var ALLOWED_ORIGINS_EXACT = [
+  'https://wagnerpersolifilho.vercel.app',
+  'https://wagnerpersoli.vercel.app'
+];
+var ALLOWED_ORIGIN_PATTERN = /^https:\/\/wagnerpersoli(?:filho)?(?:-[a-z0-9-]+)+\.vercel\.app$/i;
+var LOCAL_ORIGIN_PATTERN = /^http:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?$/i;
 
 function positiveInt(value, fallback, min, max) {
   var parsed = Number.parseInt(value, 10);
@@ -18,8 +25,16 @@ function sendJson(res, statusCode, payload) {
   res.end(JSON.stringify(payload));
 }
 
+function isAllowedOrigin(req) {
+  var origin = req.headers && req.headers.origin;
+  if (!origin) return true;
+  return ALLOWED_ORIGINS_EXACT.indexOf(origin) !== -1 ||
+    ALLOWED_ORIGIN_PATTERN.test(origin) ||
+    LOCAL_ORIGIN_PATTERN.test(origin);
+}
+
 function getClientIp(req) {
-  var forwarded = req.headers['x-forwarded-for'];
+  var forwarded = req.headers && req.headers['x-forwarded-for'];
   if (typeof forwarded === 'string' && forwarded.trim()) {
     return forwarded.split(',')[0].trim();
   }
@@ -67,10 +82,18 @@ function isValidEmail(value) {
 async function parseRequestBody(req) {
   if (req.body && typeof req.body === 'object') return req.body;
   if (typeof req.body === 'string' && req.body) {
+    if (Buffer.byteLength(req.body, 'utf8') > MAX_BODY_BYTES) return { __tooLarge: true };
     try { return JSON.parse(req.body); } catch (_) { return null; }
   }
+
   var chunks = [];
-  for await (var chunk of req) chunks.push(Buffer.from(chunk));
+  var total = 0;
+  for await (var chunk of req) {
+    var buffer = Buffer.from(chunk);
+    total += buffer.length;
+    if (total > MAX_BODY_BYTES) return { __tooLarge: true };
+    chunks.push(buffer);
+  }
   if (!chunks.length) return {};
   var raw = Buffer.concat(chunks).toString('utf8');
   try { return JSON.parse(raw); } catch (_) { return null; }
@@ -130,7 +153,8 @@ async function sendWithResend(data) {
     method: 'POST',
     headers: {
       'Authorization': 'Bearer ' + apiKey,
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'User-Agent': 'WAGNER.OS/2.1.1'
     },
     body: JSON.stringify({
       from: fromEmail,
@@ -160,6 +184,15 @@ async function sendWithResend(data) {
 async function handler(req, res) {
   cleanupRateLimitMap();
 
+  if (!isAllowedOrigin(req)) {
+    return sendJson(res, 403, { ok: false, message: 'Origem não autorizada.' });
+  }
+
+  var declaredLength = Number.parseInt(req.headers && req.headers['content-length'], 10);
+  if (Number.isFinite(declaredLength) && declaredLength > MAX_BODY_BYTES) {
+    return sendJson(res, 413, { ok: false, message: 'Payload muito grande.' });
+  }
+
   if (req.method === 'OPTIONS') {
     res.statusCode = 204;
     res.setHeader('Allow', 'POST, OPTIONS');
@@ -177,6 +210,9 @@ async function handler(req, res) {
   }
 
   var body = await parseRequestBody(req);
+  if (body && body.__tooLarge) {
+    return sendJson(res, 413, { ok: false, message: 'Payload muito grande.' });
+  }
   if (!body || typeof body !== 'object') {
     return sendJson(res, 400, { ok: false, message: 'Payload inválido.' });
   }
@@ -236,6 +272,8 @@ module.exports._internal = {
   buildEmailPayload: buildEmailPayload,
   sanitizeField: sanitizeField,
   isValidEmail: isValidEmail,
+  isAllowedOrigin: isAllowedOrigin,
+  parseRequestBody: parseRequestBody,
   resetState: function() {
     contactRateLimitMap.clear();
   }

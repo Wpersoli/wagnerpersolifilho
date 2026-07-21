@@ -16,20 +16,160 @@ function sanitizeText(str, maxLength) {
 }
 
 /* ─────────────────────────────────────────────
-   BOOT SEQUENCE
+   BOOT SEQUENCE — cinematic typed terminal + synced progress
    ───────────────────────────────────────────── */
-window.addEventListener('load', function() {
-  setTimeout(function() {
-    var boot = document.getElementById('boot');
-    if (boot) {
-      boot.classList.add('hide');
-      boot.addEventListener('animationend', function() {
-        boot.style.display = 'none';
-        boot.setAttribute('aria-hidden', 'true');
-      }, { once: true });
+var bootEl = document.getElementById('boot');
+var bootTypeItems = [];
+var bootStarted = false;
+var bootTotalChars = 0;
+var bootTypedChars = 0;
+
+function waitMs(ms) {
+  return new Promise(function(resolve) { setTimeout(resolve, ms); });
+}
+
+function prepareBootSequence() {
+  if (!bootEl) return;
+  bootTypeItems = Array.prototype.map.call(
+    bootEl.querySelectorAll('.boot-type-line'),
+    function(el) {
+      var template = el.cloneNode(true);
+      var plainText = template.textContent || '';
+      bootTotalChars += plainText.length;
+      el.textContent = '';
+      return {
+        el: el,
+        template: template,
+        kind: el.classList.contains('boot-title') ? 'title' :
+              (el.classList.contains('boot-meta') ? 'meta' : 'line')
+      };
     }
-  }, 2300);
-}, { once: true });
+  );
+  bootEl.classList.add('is-prepared');
+  setBootProgress(0);
+}
+
+function buildBootTypingSegments(item) {
+  var segments = [];
+  item.el.textContent = '';
+
+  function cloneChildren(sourceParent, targetParent) {
+    Array.prototype.forEach.call(sourceParent.childNodes, function(sourceNode) {
+      if (sourceNode.nodeType === Node.TEXT_NODE) {
+        var targetText = document.createTextNode('');
+        targetParent.appendChild(targetText);
+        if (sourceNode.nodeValue) {
+          segments.push({ text: sourceNode.nodeValue, target: targetText });
+        }
+        return;
+      }
+
+      if (sourceNode.nodeType === Node.ELEMENT_NODE) {
+        var targetElement = sourceNode.cloneNode(false);
+        targetParent.appendChild(targetElement);
+        cloneChildren(sourceNode, targetElement);
+      }
+    });
+  }
+
+  cloneChildren(item.template, item.el);
+  return segments;
+}
+
+function setBootProgress(value) {
+  if (!bootEl) return;
+  var progress = Math.max(0, Math.min(100, Math.round(value)));
+  var fillEl = bootEl.querySelector('.boot-bar-fill');
+  var valueEl = bootEl.querySelector('.boot-progress-value');
+  if (fillEl) fillEl.style.width = progress + '%';
+  if (valueEl) valueEl.textContent = String(progress).padStart(3, '0') + '%';
+}
+
+function updateBootProgressFromTyping() {
+  var ratio = bootTotalChars > 0 ? bootTypedChars / bootTotalChars : 1;
+  setBootProgress(3 + ratio * 84);
+}
+
+function bootCharDelay(baseSpeed, char, index) {
+  var delay = baseSpeed;
+  if (/[.:;!?]/.test(char)) delay += 46;
+  else if (/[,·—]/.test(char)) delay += 28;
+  else if (char === ' ') delay += 5;
+  if (index > 0 && index % 11 === 0) delay += 12;
+  return delay;
+}
+
+async function typeBootItem(item, speed) {
+  var segments = buildBootTypingSegments(item);
+  item.el.classList.add('is-typing');
+
+  for (var si = 0; si < segments.length; si++) {
+    var segment = segments[si];
+    for (var ci = 0; ci < segment.text.length; ci++) {
+      var char = segment.text.charAt(ci);
+      segment.target.nodeValue += char;
+      bootTypedChars += 1;
+      updateBootProgressFromTyping();
+      await waitMs(bootCharDelay(speed, char, ci));
+    }
+  }
+
+  item.el.classList.remove('is-typing');
+  item.el.classList.add('is-typed');
+}
+
+function finishBootSequence() {
+  if (!bootEl || bootEl.classList.contains('hide')) return;
+  bootEl.classList.add('hide');
+  bootEl.setAttribute('aria-busy', 'false');
+
+  function removeBoot(event) {
+    if (event && event.target !== bootEl) return;
+    bootEl.style.display = 'none';
+    bootEl.setAttribute('aria-hidden', 'true');
+    bootEl.removeEventListener('animationend', removeBoot);
+  }
+
+  bootEl.addEventListener('animationend', removeBoot);
+  setTimeout(function() { removeBoot(); }, 1050);
+}
+
+async function startBootSequence() {
+  if (!bootEl || bootStarted) return;
+  bootStarted = true;
+
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion) bootEl.classList.add('boot-motion-safe');
+
+  bootEl.classList.add('is-running');
+  setBootProgress(2);
+  await waitMs(520);
+
+  for (var i = 0; i < bootTypeItems.length; i++) {
+    var item = bootTypeItems[i];
+    var speed = item.kind === 'title' ? 42 : (item.kind === 'meta' ? 16 : 14);
+    await typeBootItem(item, speed);
+    await waitMs(item.kind === 'title' ? 230 : (item.kind === 'meta' ? 145 : 115));
+  }
+
+  setBootProgress(90);
+  await waitMs(260);
+  bootEl.classList.add('is-signature-ready');
+  setBootProgress(96);
+  await waitMs(1780);
+
+  bootEl.classList.add('is-complete');
+  setBootProgress(100);
+  await waitMs(1150);
+  finishBootSequence();
+}
+
+prepareBootSequence();
+if (document.readyState === 'complete') {
+  startBootSequence();
+} else {
+  window.addEventListener('load', startBootSequence, { once: true });
+}
 
 /* ─────────────────────────────────────────────
    CLOCK
@@ -282,6 +422,8 @@ if (fabTop) {
    AI CHAT WIDGET — Gemini API powered
    Security: all user output via textContent, no innerHTML injection
    ───────────────────────────────────────────── */
+var assistantPreviewOpen = document.getElementById('assistantPreviewOpen');
+var assistantPreviewChips = document.querySelectorAll('.assistant-preview-chip');
 var chatPanel  = document.getElementById('chatPanel');
 var fabChat    = document.getElementById('fabChat');
 var chatClose  = document.getElementById('chatClose');
@@ -324,6 +466,19 @@ function closeChat() {
 
 if (fabChat) fabChat.addEventListener('click', function() {
   chatPanel.classList.contains('open') ? closeChat() : openChat();
+});
+if (assistantPreviewOpen) assistantPreviewOpen.addEventListener('click', function() {
+  openChat();
+});
+assistantPreviewChips.forEach(function(chip) {
+  chip.addEventListener('click', function() {
+    openChat();
+    var q = chip.getAttribute('data-preview-q') || '';
+    if (chatInput && q) {
+      chatInput.value = q;
+      chatInput.focus();
+    }
+  });
 });
 if (chatClose) chatClose.addEventListener('click', closeChat);
 
@@ -554,7 +709,7 @@ if (canvas && canvas.getContext) {
 
   // Particle count scales with screen area (capped for performance)
   var PCOUNT = Math.min(90, Math.floor((window.innerWidth * window.innerHeight) / 16000));
-  var pColors = ['255,26,74', '204,0,51', '180,20,40'];
+  var pColors = ['53,207,255', '20,123,255', '121,103,255'];
 
   for (var pi = 0; pi < PCOUNT; pi++) {
     particles.push({
@@ -618,7 +773,7 @@ if (canvas && canvas.getContext) {
         if (d2 < 120) {
           ctx.beginPath();
           ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
-          ctx.strokeStyle = 'rgba(120,0,0,' + (0.16 * (1 - d2 / 120)) + ')';
+          ctx.strokeStyle = 'rgba(38,151,220,' + (0.18 * (1 - d2 / 120)) + ')';
           ctx.lineWidth = 0.8;
           ctx.stroke();
         }
@@ -645,7 +800,7 @@ function updateActiveNav() {
   navLinks.forEach(function(link) {
     var href = link.getAttribute('href').replace('#','');
     link.style.color = href === activeId ? 'var(--accent-teal-bright)' : '';
-    link.style.background = href === activeId ? 'rgba(255,20,20,0.08)' : '';
+    link.style.background = href === activeId ? 'rgba(53,207,255,0.07)' : '';
   });
 }
 
@@ -1255,199 +1410,6 @@ document.querySelectorAll('.footer-year').forEach(function(el){ el.textContent=n
 })();
 
 })();
-
-/* ═══════════════════════════════════════════════════════════════
-   HERO SKULL — rotação 360° com drag + hover tilt + auto-spin
-   ── Modos:
-      1. DRAG  (mousedown/touchstart no wrap) → gira livremente 360° X e Y
-      2. HOVER (mouse sobre a página, sem drag) → tilt suave ±22° seguindo cursor
-      3. AUTO-SPIN (idle: sem hover nem drag) → rotação lenta contínua em Y
-   ── Nunca interfere com chat, pmode, scroll ou outros listeners
-   ═══════════════════════════════════════════════════════════════ */
-(function(){
-  var wrap = document.getElementById('heroSkullWrap');
-  var tilt = document.getElementById('heroSkullTilt');
-  if(!wrap || !tilt) return;
-
-  /* Respeita prefers-reduced-motion: desativa tudo */
-  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(reduceMotion) return;
-
-  /* ── Estado acumulado de rotação (drag livre 360°) ── */
-  var rotX = 0, rotY = 0;          // ângulo atual renderizado
-  var velX = 0, velY = 0;          // velocidade (inércia ao soltar)
-
-  /* ── Estado do drag ── */
-  var dragging   = false;
-  var lastPX = 0, lastPY = 0;      // última posição do ponteiro/touch
-
-  /* ── Estado do hover (tilt suave, sem drag) ── */
-  var hoverActive = false;
-  var hoverTargX  = 0, hoverTargY = 0;
-  var HOVER_MAX   = 22;            // graus máximos de tilt por hover
-  var HOVER_EASE  = 0.07;
-
-  /* ── Auto-spin (idle) ── */
-  var AUTO_SPEED  = 0.18;          // graus/frame em Y quando idle
-  var autoSpinOn  = true;          // começa em auto-spin até primeira interação
-
-  /* ── RAF ── */
-  var rafId = null;
-
-  /* ────────────────────────────────────────────
-     Loop de animação único — aplica tudo aqui
-  ──────────────────────────────────────────── */
-  function tick(){
-    rafId = null;
-
-    if(dragging){
-      /* Drag ativo: aplica velocidade acumulada (já aplicada no move) */
-      autoSpinOn = false;
-    } else if(hoverActive && !autoSpinOn){
-      /* Hover sem drag: lerp suave em direção ao target */
-      rotX += (hoverTargX - rotX) * HOVER_EASE;
-      rotY += (hoverTargY - rotY) * HOVER_EASE;
-      velX *= 0.85; velY *= 0.85;
-    } else {
-      /* Idle / auto-spin: aplica inércia e depois spin lento */
-      rotX += velX;
-      rotY += velY + (autoSpinOn ? AUTO_SPEED : 0);
-      velX *= 0.94;
-      velY *= 0.94;
-      /* Quando idle e sem inércia, retorna X ao plano horizontal suavemente */
-      if(!autoSpinOn) rotX += (0 - rotX) * 0.04;
-    }
-
-    tilt.style.transform =
-      'rotateX(' + rotX.toFixed(2) + 'deg) rotateY(' + rotY.toFixed(2) + 'deg)';
-
-    /* Continua o loop enquanto há movimento significativo */
-    var stillMoving =
-      dragging ||
-      hoverActive ||
-      autoSpinOn ||
-      Math.abs(velX) > 0.01 ||
-      Math.abs(velY) > 0.01 ||
-      Math.abs(rotX) > 0.05;
-
-    if(stillMoving) rafId = requestAnimationFrame(tick);
-  }
-
-  function schedTick(){
-    if(!rafId) rafId = requestAnimationFrame(tick);
-  }
-
-  /* ────────────────────────────────────────────
-     DRAG — mouse
-  ──────────────────────────────────────────── */
-  wrap.addEventListener('mousedown', function(e){
-    /* Ignora cliques em filhos interativos (links, botões) */
-    if(e.target.tagName === 'A' || e.target.tagName === 'BUTTON') return;
-    dragging = true;
-    lastPX = e.clientX;
-    lastPY = e.clientY;
-    velX = 0; velY = 0;
-    wrap.classList.add('skull-dragging');
-    e.preventDefault();
-  }, {passive: false});
-
-  window.addEventListener('mousemove', function(e){
-    if(dragging){
-      var dx = e.clientX - lastPX;
-      var dy = e.clientY - lastPY;
-      velX = -dy * 0.45;
-      velY =  dx * 0.45;
-      rotX += velX;
-      rotY += velY;
-      lastPX = e.clientX;
-      lastPY = e.clientY;
-      schedTick();
-    } else {
-      /* Hover tilt quando não está arrastando */
-      var r = wrap.getBoundingClientRect();
-      var nx = (e.clientX - (r.left + r.width  * 0.5)) / (window.innerWidth  * 0.5);
-      var ny = (e.clientY - (r.top  + r.height * 0.5)) / (window.innerHeight * 0.5);
-      nx = Math.max(-1, Math.min(1, nx));
-      ny = Math.max(-1, Math.min(1, ny));
-      hoverTargY = nx * HOVER_MAX;
-      hoverTargX = -ny * HOVER_MAX;
-      hoverActive = true;
-      schedTick();
-    }
-  }, {passive: true});
-
-  window.addEventListener('mouseup', function(){
-    if(!dragging) return;
-    dragging = false;
-    wrap.classList.remove('skull-dragging');
-    /* Inércia: velX/velY já têm o último delta — continuam no tick */
-    schedTick();
-  }, {passive: true});
-
-  window.addEventListener('mouseleave', function(){
-    if(dragging){
-      dragging = false;
-      wrap.classList.remove('skull-dragging');
-    }
-    hoverActive = false;
-    hoverTargX = 0; hoverTargY = 0;
-    autoSpinOn = true;
-    schedTick();
-  }, {passive: true});
-
-  /* ────────────────────────────────────────────
-     DRAG — touch (mobile/tablet coarse pointer)
-  ──────────────────────────────────────────── */
-  wrap.addEventListener('touchstart', function(e){
-    if(e.touches.length !== 1) return;
-    dragging = true;
-    lastPX = e.touches[0].clientX;
-    lastPY = e.touches[0].clientY;
-    velX = 0; velY = 0;
-    autoSpinOn = false;
-    wrap.classList.add('skull-dragging');
-    /* NÃO chama preventDefault aqui para não bloquear o scroll da página */
-  }, {passive: true});
-
-  wrap.addEventListener('touchmove', function(e){
-    if(!dragging || e.touches.length !== 1) return;
-    var dx = e.touches[0].clientX - lastPX;
-    var dy = e.touches[0].clientY - lastPY;
-    velX = -dy * 0.45;
-    velY =  dx * 0.45;
-    rotX += velX;
-    rotY += velY;
-    lastPX = e.touches[0].clientX;
-    lastPY = e.touches[0].clientY;
-    schedTick();
-  }, {passive: true});
-
-  wrap.addEventListener('touchend', function(){
-    dragging = false;
-    wrap.classList.remove('skull-dragging');
-    schedTick();
-  }, {passive: true});
-
-  /* ────────────────────────────────────────────
-     Pause quando aba fica oculta
-  ──────────────────────────────────────────── */
-  document.addEventListener('visibilitychange', function(){
-    if(document.hidden){
-      dragging = false;
-      hoverActive = false;
-      wrap.classList.remove('skull-dragging');
-      if(rafId){ cancelAnimationFrame(rafId); rafId = null; }
-    } else {
-      autoSpinOn = true;
-      schedTick();
-    }
-  });
-
-  /* Inicia auto-spin */
-  schedTick();
-
-})();
-
 
 /* ─────────────────────────────────────────────
    CONTACT FORM — creative in-site email channel

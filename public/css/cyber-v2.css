@@ -1,5 +1,5 @@
 /* ============================================================
-   WAGNER.OS — CYBER METALLIC UI v2
+   WAGNER.OS — CYBER METALLIC UI v2.1.1
    Camada visual complementar. Preserva os contratos funcionais.
    ============================================================ */
 :root {
@@ -18,7 +18,8 @@
   --cyber-shadow: 0 0 10px rgba(53,207,255,.6), 0 0 34px rgba(20,123,255,.22);
 }
 
-html { background: var(--cyber-bg); }
+html { background: var(--cyber-bg); max-width: 100%; overflow-x: clip; }
+body { max-width: 100%; overflow-x: clip; }
 body {
   background:
     radial-gradient(circle at 15% 10%, rgba(31,148,211,.16), transparent 30%),

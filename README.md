@@ -1,10 +1,13 @@
 # WAGNER.OS — AI Systems Lab
 
-Portfólio profissional de Wagner Persoli F., com frontend estático, modo apresentação responsivo e assistente Gemini integrado por função Serverless.
+Portfólio profissional de Wagner Persoli F. com interface Cyber Metal, modo apresentação, assistente Gemini e formulário de contato por e-mail.
 
 **Produção principal:** https://wagnerpersolifilho.vercel.app
-
 **Domínio autorizado:** https://wagnerpersoli.vercel.app
+
+## Versão
+
+`2.1.1` — auditoria, limpeza e endurecimento do release Cyber Metal v2.1.
 
 ## Stack
 
@@ -12,96 +15,72 @@ Portfólio profissional de Wagner Persoli F., com frontend estático, modo apres
 - Backend: Vercel Serverless Functions em Node.js 22
 - IA principal: `gemini-3.5-flash`
 - Contingência: `gemini-3.1-flash-lite`
+- E-mail: endpoint `/api/contact`
 - Hospedagem: Vercel
-- Repositório: `Wpersoli/wagnerpersolifilho`
 
-## Chat v3.0
+## Interface Cyber Metal
 
-O endpoint `/api/chat` opera em três modos:
+- monograma WP vetorial com acabamento metálico e neon
+- hero cinematográfico, plataforma luminosa e HUDs
+- tipografia dimensional e painéis técnicos
+- projetos, stack, terminal, assistente, contato e footer integrados
+- fundo Canvas/JavaScript preservado
+- responsividade para desktop, tablet e celular
+- camada visual complementar em `public/css/cyber-v2.css`
 
-1. **Perfil profissional:** responde sobre Wagner exclusivamente com base nos arquivos oficiais em `data/`.
-2. **Perguntas gerais:** usa o conhecimento geral do modelo e adapta profundidade e criatividade ao tipo de pergunta.
-3. **Contexto de runtime:** responde data e hora de São Paulo diretamente pelo servidor, sem consumir a API Gemini.
+## Chat
 
-Controles implementados:
+O endpoint `/api/chat` combina uma base profissional oficial com respostas gerais do modelo. A implementação inclui retry, modelo secundário, circuit breaker, rate limit, sanitização, respostas locais de data/hora de São Paulo e fallback profissional.
 
-- Prompt estruturado com separação entre fatos do perfil e conhecimento geral
-- Prioridade para `knowledge.json`, com `cv.txt` como contexto complementar
-- Proibição explícita de inventar fatos pessoais, motivo de desligamento ou dados não documentados
-- Temperatura adaptativa: baixa para perfil/fatos e maior para criação de conteúdo
-- Retry exponencial com jitter para erros transitórios
-- Modelo secundário antes do fallback local
-- Circuit breaker temporário quando o modelo principal apresenta sobrecarga
-- Fallback local contextual para perguntas profissionais
-- Rate limit best-effort por IP
-- CORS restrito aos domínios do projeto
-- Histórico e tamanho de mensagens limitados no frontend e no backend
-- Renderização segura de parágrafos, listas, negrito e código inline
-- Cabeçalhos de diagnóstico `X-Wagner-Chat-Source` e `X-Wagner-Chat-Model`
+## Formulário de contato
 
-O assistente não possui navegação web. Para notícias, preços, clima, cotações ou outros dados ao vivo, ele deve informar que não consegue verificar em tempo real. Data e hora de São Paulo são fornecidas pelo próprio servidor.
+O endpoint `/api/contact` usa validação no frontend e backend, honeypot, rate limit, limite de payload, sanitização HTML, proteção de origem e envio pelo provider configurado no ambiente.
 
-## Contato criativo por formulário
-
-A seção `#contact` agora possui um formulário visual neon que envia a mensagem sem tirar o visitante do site.
-
-- Frontend: `public/index.html`, `public/css/main.css` e `public/js/main.js`
-- Backend: `api/contact.js`
-- Provider de e-mail: Resend via REST API
-- Segurança: honeypot, validação de campos, rate limit best-effort e resposta JSON controlada
-
-Quando `RESEND_API_KEY` estiver configurada na Vercel, o formulário envia o contato diretamente para o e-mail definido em `CONTACT_TO_EMAIL`.
-
-## Estrutura versionada
+## Estrutura
 
 ```text
 wagnerpersolifilho/
-├── api/chat.js
-├── api/contact.js
+├── api/
+│   ├── chat.js
+│   └── contact.js
 ├── data/
 │   ├── cv.txt
 │   ├── knowledge-data.js
 │   └── knowledge.json
 ├── public/
-│   ├── css/main.css
+│   ├── css/
+│   │   ├── main.css
+│   │   └── cyber-v2.css
 │   ├── emulador/
-│   ├── img/
+│   ├── img/wp-monogram.svg
 │   ├── js/main.js
 │   ├── index.html
 │   └── og-image.jpg
-├── tests/chat.test.js
+├── tests/
+│   ├── chat.test.js
+│   └── contact.test.js
+├── AUDITORIA.md
 ├── .env.example
-├── .gitattributes
-├── .gitignore
 ├── package.json
 ├── package-lock.json
-├── vercel.json
-└── README.md
+└── vercel.json
 ```
 
 ## Validação local
 
 ```powershell
-npm install
+npm ci
 npm run validate
 npm audit --audit-level=high
+vercel dev
 ```
 
-`npm run validate` executa a verificação sintática e sete testes automatizados do chat, incluindo base factual, prompt, horário de São Paulo, fallback, failover e circuit breaker.
-
-O projeto não possui etapa de compilação. A Vercel publica `public/` e executa `api/chat.js` e `api/contact.js` como funções Serverless.
+Abra `http://localhost:3000`.
 
 ## Variáveis de ambiente
 
-Obrigatória:
-
 ```env
 GEMINI_API_KEY=
-```
-
-Opcionais:
-
-```env
 GEMINI_MODEL=gemini-3.5-flash
 GEMINI_FALLBACK_MODEL=gemini-3.1-flash-lite
 GEMINI_PRIMARY_COOLDOWN_MS=120000
@@ -111,22 +90,17 @@ RESEND_API_KEY=
 CONTACT_TO_EMAIL=wagnerpersoli@hotmail.com
 CONTACT_FROM_EMAIL=WAGNER.OS <onboarding@resend.dev>
 CONTACT_RATE_LIMIT_MAX=5
+CONTACT_MAX_BODY_BYTES=16384
 ```
 
-Na Vercel, marque como sensíveis pelo menos `GEMINI_API_KEY` e `RESEND_API_KEY`. Mudanças nas variáveis da Vercel exigem um novo deployment para entrarem em vigor.
-
-Para testes locais, uma chave pode ficar em `.env.local`, mas esse arquivo é local, está ignorado pelo Git e nunca deve ser compactado ou enviado.
-
-## Arquivos que permanecem locais
-
-- `.env.local` e qualquer `.env` com credenciais reais
-- `.vercel/`
-- `node_modules/`
-- ZIPs, backups, logs e relatórios de auditoria
+Marque `GEMINI_API_KEY` e `RESEND_API_KEY` como sensíveis. Nunca compacte `.env.local`, `.vercel`, `.git`, `node_modules` ou credenciais.
 
 ## Comportamentos preservados
 
-- O modo apresentação usa respostas locais simuladas e não consome Gemini.
-- O modo apresentação funciona em desktop, tablet e celular.
-- O menu mobile fecha pelo botão, menu, links e tecla `Escape`.
-- O visual, navegação e emulador não dependem da disponibilidade da API Gemini.
+- modo apresentação sem consumo de Gemini
+- menu desktop e mobile
+- chat real e fallback local
+- formulário e confirmação visual
+- emulador responsivo
+- fundo animado
+- botões, navegação e acessibilidade por teclado

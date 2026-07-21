@@ -17,15 +17,17 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:alt" content="WAGNER.OS — portfólio cyber metálico de Wagner Persoli F.">
 <meta property="og:locale" content="pt_BR">
 <meta property="og:site_name" content="Wagner Persoli F. — AI Systems Lab">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Wagner Persoli F. — IT Specialist & AI Developer">
 <meta name="twitter:description" content="12+ anos em TI. Full-Stack Developer e AI Specialist. Build. Automate. Dominate.">
 <meta name="twitter:image" content="https://wagnerpersolifilho.vercel.app/og-image.jpg">
+<meta name="twitter:image:alt" content="WAGNER.OS — portfólio cyber metálico de Wagner Persoli F.">
 <meta name="theme-color" content="#050b16">
 <link rel="canonical" href="https://wagnerpersolifilho.vercel.app/">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%230c0a10'/><text y='72' x='50' text-anchor='middle' font-size='62' font-family='monospace' fill='%23ff2020'>W</text></svg>">
+<link rel="icon" type="image/svg+xml" href="img/wp-monogram.svg">
 
 
 <!-- Schema.org structured data for recruiters/search engines -->
@@ -64,21 +66,33 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/cyber-v2.css">
 </head>
 <body>
 
 <!-- ===== BOOT SEQUENCE ===== -->
-<div id="boot" role="status" aria-live="polite" aria-label="Carregando sistema">
-  <div class="boot-logo">WAGNER PERS. F.</div>
-  <div class="boot-box">
-    <div class="boot-line" style="animation-delay:.1s">$ booting <b>wagner.pers.f</b> — ai systems kernel v4.2</div>
-    <div class="boot-line" style="animation-delay:.45s">$ mounting modules: <span style="color:#2ef2ff">fullstack</span> · <span style="color:#9b6dff">ai</span> · <span style="color:#11ffb7">automation</span></div>
-    <div class="boot-line" style="animation-delay:.9s">$ checking dependencies... <b>ok</b></div>
-    <div class="boot-line" style="animation-delay:1.25s">$ loading ai_systems_engine... <b>ok</b></div>
-    <div class="boot-line" style="animation-delay:1.6s">$ security_scan... <b>PASSED</b></div>
-    <div class="boot-line" style="animation-delay:1.9s">$ status: <b>READY TO DEPLOY</b></div>
-    <div class="boot-bar-track"><div class="boot-bar-fill"></div></div>
-    <div class="boot-pct">INITIALIZING EXPERIENCE — WAGNER PERS. F. v4.2 · NEON SYSTEMS ONLINE</div>
+<div id="boot" role="status" aria-live="polite" aria-label="Carregando sistema" aria-busy="true">
+  <div class="boot-shell">
+    <div class="boot-title boot-type-line">INITIALIZING EXPERIENCE...</div>
+    <div class="boot-box" aria-label="Terminal de inicialização">
+      <div class="boot-meta boot-type-line">OPERATING EXPERIENCE: PORTFOLIO</div>
+      <div class="boot-meta boot-type-line">PROTOCOL 01 · AI SYSTEMS LAB · STATUS: ONLINE</div>
+      <div class="boot-line boot-type-line">$ booting <b>wagner.pers.f</b> — ai systems kernel v4.2</div>
+      <div class="boot-line boot-type-line">$ mounting modules: <span class="boot-cyan">fullstack</span> · <span class="boot-violet">ai</span> · <span class="boot-green">automation</span></div>
+      <div class="boot-line boot-type-line">$ checking dependencies... <b>ok</b></div>
+      <div class="boot-line boot-type-line">$ loading ai_systems_engine... <b>ok</b></div>
+      <div class="boot-line boot-type-line">$ security_scan... <b>PASSED</b></div>
+    </div>
+    <div class="boot-progress" aria-hidden="true">
+      <div class="boot-bar-track">
+        <div class="boot-bar-fill"></div>
+      </div>
+      <div class="boot-progress-label"><span>LOADING SYSTEM</span><span class="boot-progress-value">000%</span></div>
+    </div>
+    <div class="boot-signature">
+      <div class="boot-logo">WAGNER PERS. F.</div>
+      <div class="boot-pct">AI SYSTEMS LAB</div>
+    </div>
   </div>
 </div>
 
@@ -92,15 +106,16 @@
 
 <!-- ===== HEADER ===== -->
 <header role="banner">
-  <div class="brand" aria-label="Wagner Pers. F. — AI Systems Lab">
-    <span class="dot" aria-hidden="true"></span>
-    <div>
-      WAGNER PERS. F.
-      <small>AI SYSTEMS LAB</small>
+  <a class="brand cyber-brand" href="#top" aria-label="Wagner Persoli — início">
+    <img src="img/wp-monogram.svg" alt="" aria-hidden="true" class="brand-mark">
+    <div class="brand-copy">
+      <strong>WAGNER<span>.OS</span></strong>
+      <small>FULL-STACK · AI SYSTEMS</small>
     </div>
-  </div>
+  </a>
 
   <nav class="mainnav" role="navigation" aria-label="Menu principal">
+    <a href="#top">HOME</a>
     <a href="#featured">SIMULATOR</a>
     <a href="#projects">SYSTEMS</a>
     <a href="#stack">STACK</a>
@@ -121,6 +136,7 @@
 <!-- Mobile Nav -->
 <nav id="mobileNav" class="mobile-nav" role="navigation" aria-label="Menu mobile" aria-hidden="true">
   <button class="mobile-nav-close" id="mobileNavClose" aria-label="Fechar menu">✕</button>
+  <a href="#top" class="mobile-nav-link">HOME</a>
   <a href="#featured" class="mobile-nav-link">SIMULATOR</a>
   <a href="#projects" class="mobile-nav-link">SYSTEMS</a>
   <a href="#stack" class="mobile-nav-link">STACK</a>
@@ -133,148 +149,61 @@
 <main>
 
   <!-- HERO -->
-  <section class="hero" id="top" aria-label="Hero — Apresentação">
-    <!-- SVG Art: AI neural network illustration -->
-    <svg class="hero-bg-art" aria-hidden="true" viewBox="0 0 600 600" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <!-- Neural nodes -->
-      <circle cx="300" cy="300" r="4" fill="#ff1414" opacity="0.8"/>
-      <circle cx="180" cy="200" r="3" fill="#e00000" opacity="0.7"/>
-      <circle cx="420" cy="200" r="3" fill="#ff1414" opacity="0.6"/>
-      <circle cx="120" cy="350" r="3" fill="#b30000" opacity="0.6"/>
-      <circle cx="480" cy="350" r="3" fill="#ff1414" opacity="0.7"/>
-      <circle cx="200" cy="450" r="3" fill="#e00000" opacity="0.6"/>
-      <circle cx="400" cy="450" r="3" fill="#ff1414" opacity="0.6"/>
-      <circle cx="60"  cy="150" r="2.5" fill="#8f0000" opacity="0.5"/>
-      <circle cx="540" cy="150" r="2.5" fill="#e00000" opacity="0.5"/>
-      <circle cx="300" cy="80"  r="2.5" fill="#ff1414" opacity="0.6"/>
-      <circle cx="300" cy="520" r="2.5" fill="#e00000" opacity="0.5"/>
-      <!-- Connections -->
-      <line x1="300" y1="300" x2="180" y2="200" stroke="#ff1414" stroke-width="0.8" opacity="0.4"/>
-      <line x1="300" y1="300" x2="420" y2="200" stroke="#e00000" stroke-width="0.8" opacity="0.4"/>
-      <line x1="300" y1="300" x2="120" y2="350" stroke="#ff1414" stroke-width="0.8" opacity="0.3"/>
-      <line x1="300" y1="300" x2="480" y2="350" stroke="#e00000" stroke-width="0.8" opacity="0.3"/>
-      <line x1="300" y1="300" x2="200" y2="450" stroke="#ff1414" stroke-width="0.8" opacity="0.3"/>
-      <line x1="300" y1="300" x2="400" y2="450" stroke="#e00000" stroke-width="0.8" opacity="0.3"/>
-      <line x1="180" y1="200" x2="60"  y2="150" stroke="#e00000" stroke-width="0.6" opacity="0.25"/>
-      <line x1="420" y1="200" x2="540" y2="150" stroke="#ff1414" stroke-width="0.6" opacity="0.25"/>
-      <line x1="180" y1="200" x2="300" y2="80"  stroke="#ff1414" stroke-width="0.6" opacity="0.25"/>
-      <line x1="420" y1="200" x2="300" y2="80"  stroke="#b30000" stroke-width="0.6" opacity="0.25"/>
-      <line x1="200" y1="450" x2="300" y2="520" stroke="#ff1414" stroke-width="0.6" opacity="0.2"/>
-      <line x1="400" y1="450" x2="300" y2="520" stroke="#e00000" stroke-width="0.6" opacity="0.2"/>
-      <line x1="120" y1="350" x2="60"  y2="150" stroke="#b30000" stroke-width="0.5" opacity="0.15"/>
-      <line x1="480" y1="350" x2="540" y2="150" stroke="#e00000" stroke-width="0.5" opacity="0.15"/>
-      <!-- Outer ring -->
-      <circle cx="300" cy="300" r="250" stroke="#ff1414" stroke-width="0.5" opacity="0.08" stroke-dasharray="8 12"/>
-      <circle cx="300" cy="300" r="180" stroke="#e00000" stroke-width="0.5" opacity="0.06" stroke-dasharray="4 8"/>
-    </svg>
+  <section class="hero cyber-hero" id="top" aria-label="Apresentação profissional">
+    <div class="hero-hud hero-hud-left" aria-hidden="true">
+      <span>SYSTEM ONLINE</span><span>VERSION 2.0</span><span>NODE SA-EAST-1</span>
+    </div>
+    <div class="hero-hud hero-hud-right" aria-hidden="true">
+      <span>FOCUS: AI + AUTOMATION</span><span>STATUS: AVAILABLE</span><span>UPTIME: 24/7</span>
+    </div>
 
-    <!-- Caveira real (imagem enviada) com tilt 3D que segue o mouse + reticle de HUD sci-fi -->
-    <div class="hero-skull-wrap" id="heroSkullWrap">
-      <div class="hero-skull-tilt" id="heroSkullTilt">
-        <picture>
-          <source srcset="img/skull-neon.webp" type="image/webp">
-          <img class="hero-skull-img" src="img/skull-neon.png" alt="Caveira vermelha neon — identidade visual do sistema" width="496" height="488" loading="eager" decoding="async" fetchpriority="high" draggable="false">
-        </picture>
-        <svg class="hero-skull-reticle" aria-hidden="true" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- scope / reticle sobre a caveira -->
-          <circle class="skull-ring-mid" cx="150" cy="150" r="112" stroke="#ff1414" stroke-width="0.9" opacity="0.4" stroke-dasharray="6 10"/>
-          <circle class="skull-ring-inner" cx="150" cy="150" r="72" stroke="#ff1414" stroke-width="0.7" opacity="0.35" stroke-dasharray="3 6"/>
-          <line x1="150" y1="18" x2="150" y2="282" stroke="#ff1414" stroke-width="0.6" opacity="0.4"/>
-          <line x1="18" y1="150" x2="282" y2="150" stroke="#ff1414" stroke-width="0.6" opacity="0.4"/>
-          <line x1="150" y1="38" x2="150" y2="62" stroke="#ff1414" stroke-width="1.4" opacity="0.55"/>
-          <line x1="150" y1="238" x2="150" y2="262" stroke="#ff1414" stroke-width="1.4" opacity="0.55"/>
-          <line x1="38" y1="150" x2="62" y2="150" stroke="#ff1414" stroke-width="1.4" opacity="0.55"/>
-          <line x1="238" y1="150" x2="262" y2="150" stroke="#ff1414" stroke-width="1.4" opacity="0.55"/>
-          <!-- radar sweep line animada -->
-          <line class="skull-scan-line" x1="150" y1="150" x2="150" y2="38" stroke="#ff1414" stroke-width="1.5" opacity="0.8" stroke-linecap="round"/>
-          <!-- outer targeting ring -->
-          <circle class="skull-ring-outer" cx="150" cy="150" r="140" stroke="#b30000" stroke-width="0.6" opacity="0.18" stroke-dasharray="10 14"/>
-          <!-- radar sweep glow trail -->
-          <path class="skull-scan-line" d="M150 150 L150 38 A112 112 0 0 1 261 150" stroke="url(#sweepGrad)" stroke-width="1" opacity="0.25" fill="none"/>
-          <defs>
-            <radialGradient id="sweepGrad" cx="150" cy="150" r="112" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#ff1414" stop-opacity="0.5"/>
-              <stop offset="100%" stop-color="#ff1414" stop-opacity="0"/>
-            </radialGradient>
-          </defs>
-        </svg>
+    <div class="cyber-hero-grid">
+      <div class="hero-brand-stage reveal">
+        <div class="logo-orbit orbit-a" aria-hidden="true"></div>
+        <div class="logo-orbit orbit-b" aria-hidden="true"></div>
+        <div class="logo-particles" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <img src="img/wp-monogram.svg" class="hero-monogram" alt="Monograma WP de Wagner Persoli">
+        <div class="logo-platform" aria-hidden="true">
+          <span class="platform-ring ring-one"></span>
+          <span class="platform-ring ring-two"></span>
+          <span class="platform-core"></span>
+        </div>
+        <div class="hero-stage-caption" aria-hidden="true">BUILDING THE FUTURE WITH CODE</div>
+      </div>
+
+      <div class="hero-copy-panel reveal">
+        <div class="hero-eyebrow"><span class="blink" aria-hidden="true"></span> DEVELOPER · INNOVATOR · PROBLEM SOLVER</div>
+        <h1 class="hero-title metallic-title">
+          <span>WAGNER</span>
+          <span class="metallic-accent">PERS. F.</span>
+        </h1>
+        <div class="hero-role-line"><span></span>FULL-STACK &amp; AI DEVELOPER<span></span></div>
+        <p class="hero-desc">Construo aplicações web escaláveis, automações e soluções com inteligência artificial que resolvem problemas reais, elevam performance e geram impacto mensurável.</p>
+        <div class="hero-actions">
+          <a href="#projects" class="btn btn-primary cyber-btn"><span>VER PROJETOS</span><b aria-hidden="true">↗</b></a>
+          <a href="#contact" class="btn btn-ghost cyber-btn"><span>ABRIR CONTATO</span><b aria-hidden="true">→</b></a>
+        </div>
+        <div class="hero-socials" aria-label="Redes profissionais">
+          <a href="https://github.com/Wpersoli" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GH</a>
+          <a href="https://www.linkedin.com/in/wagner-persoli-f-3004bb91" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">in</a>
+          <a href="mailto:wagnerpersoli@hotmail.com" aria-label="E-mail">@</a>
+        </div>
+        <div class="hero-availability"><span class="avail-dot" aria-hidden="true"></span> DISPONÍVEL PARA PROJETOS, VAGAS E PARCERIAS</div>
       </div>
     </div>
 
-    <div class="hero-eyebrow"><span class="blink" aria-hidden="true"></span> FULLSTACK · AI · AUTOMATION · SYSTEMS ENGINE</div>
-
-    <div class="hero-identity" aria-label="Identificação profissional">
-      <span class="hero-name">WAGNER PERSOLI F.</span>
-      <div class="hero-roles">
-        <span class="role-badge">IT Specialist</span>
-        <span class="role-sep" aria-hidden="true">/</span>
-        <span class="role-badge">Full-Stack Dev</span>
-        <span class="role-sep" aria-hidden="true">/</span>
-        <span class="role-badge">AI Developer</span>
-      </div>
-      <div class="hero-avail" aria-label="Status de disponibilidade">
-        <span class="avail-dot" aria-hidden="true"></span>
-        <span>Disponível para projetos &amp; oportunidades</span>
-      </div>
-    </div>
-
-    <h1 class="hero-title">
-      <span style="animation-delay:2.7s">BUILD.</span>
-      <span style="animation-delay:2.85s" class="grad">AUTOMATE.</span>
-      <span style="animation-delay:3.0s">DOMINATE.</span>
-    </h1>
-
-    <p class="hero-desc">
-      Engenheiro fullstack com <strong>12+ anos</strong> em TI corporativo e desenvolvimento de sistemas.
-      Projeto e implanto software premium, motores de automação e soluções de IA que operam em produção — não em slides.
-      Guarulhos, SP · aberto a remoto e internacional.
-    </p>
-
-    <div class="hero-actions">
-      <a href="#projects" class="btn btn-primary"><span>VER PROJETOS DEPLOYADOS →</span></a>
-      <a href="#contact" class="btn btn-ghost">ABRIR CANAL DE CONTATO</a>
-    </div>
-
-    <div class="hero-terminal glass" aria-hidden="true">
-      <div class="hero-terminal-top">
-        <span class="hero-terminal-dot"></span><span class="hero-terminal-dot"></span><span class="hero-terminal-dot"></span>
-        <div class="hero-terminal-title">wagner@systems-lab • production console</div>
-      </div>
-      <div class="hero-terminal-body">
-        <div class="hero-terminal-line"><span class="prompt">wagner@lab:~$</span> python ai_pipeline.py --mode=production</div>
-        <div class="hero-terminal-line ok">[ok] neural runtime active</div>
-        <div class="hero-terminal-line ok">[ok] automations online · webhooks synced</div>
-        <div class="hero-terminal-line info">[sys] stack: react · node · python · llm</div>
-        <div class="hero-terminal-line info">[net] latency 12ms · uptime 99.99%</div>
-        <div class="hero-terminal-line typing"><span class="prompt">wagner@lab:~$</span> deploy --target=global --strategy=brutal</div>
-      </div>
-      <div class="hero-terminal-meta">
-        <span class="hero-terminal-pill">12+ anos de exp</span>
-        <span class="hero-terminal-pill">50+ projetos</span>
-        <span class="hero-terminal-pill">IA em produção</span>
-      </div>
-    </div>
-
-    <div class="hero-stats" role="list" aria-label="Estatísticas">
-      <div class="glass stat-card reveal" role="listitem">
-        <div class="stat-num" data-count="20" data-suffix="+">0</div>
-        <div class="stat-label">Projetos</div>
-      </div>
-      <div class="glass stat-card reveal" role="listitem" style="transition-delay:.07s">
-        <div class="stat-num" data-count="100" data-suffix="K+">0</div>
-        <div class="stat-label">Linhas de código</div>
-      </div>
-      <div class="glass stat-card reveal" role="listitem" style="transition-delay:.14s">
-        <div class="stat-num" data-plain="24/7">24/7</div>
-        <div class="stat-label">Building</div>
-      </div>
+    <div class="hero-stats cyber-stats" role="list" aria-label="Indicadores profissionais">
+      <div class="glass stat-card reveal" role="listitem"><div class="stat-num" data-count="12" data-suffix="+">0</div><div class="stat-label">Anos em TI</div></div>
+      <div class="glass stat-card reveal" role="listitem" style="transition-delay:.07s"><div class="stat-num" data-count="20" data-suffix="+">0</div><div class="stat-label">Projetos</div></div>
+      <div class="glass stat-card reveal" role="listitem" style="transition-delay:.14s"><div class="stat-num" data-plain="24/7">24/7</div><div class="stat-label">Systems online</div></div>
+      <div class="glass stat-card reveal" role="listitem" style="transition-delay:.21s"><div class="stat-num" data-count="100" data-suffix="K+">0</div><div class="stat-label">Linhas versionadas</div></div>
     </div>
   </section>
 
   <!-- FEATURED / DEVICE SIMULATOR ENGINE -->
   <section id="featured" aria-label="Projeto destaque">
     <div class="eyebrow reveal">FEATURED SYSTEM</div>
-    <h2 class="section-title reveal">Device Simulator Engine</h2>
+    <h2 class="section-title reveal"><span>Device Simulator Engine</span></h2>
     <p class="section-sub reveal">O projeto mais completo do laboratório: um motor de emulação responsiva multi-device, construído para testes reais de interface em tempo real.</p>
 
     <div class="glass feature-panel reveal">
@@ -334,7 +263,7 @@
     </svg>
 
     <div class="eyebrow reveal">SELECTED WORK</div>
-    <h2 class="section-title reveal">Sistemas Implantados</h2>
+    <h2 class="section-title reveal"><span>Sistemas Implantados</span></h2>
     <p class="section-sub reveal">Uma seleção dos sistemas que representam minha experiência em software, IA e automação — cada um rodando em produção ou em desenvolvimento ativo.</p>
 
     <div class="proj-grid">
@@ -343,6 +272,7 @@
           <div class="proj-status live"><span class="dot" aria-hidden="true"></span> LIVE</div>
           <div class="proj-pin" aria-label="Projeto fixado">📌 PINNED</div>
         </div>
+        <div class="project-visual visual-ai" aria-hidden="true"><div class="visual-grid"></div><div class="neural-core"><i></i><i></i><i></i></div><span class="visual-label">AI CORE / ACTIVE</span></div>
         <div class="proj-name">AI Systems &amp; Automation</div>
         <div class="proj-desc">Soluções inteligentes com foco em automação, análise preditiva e tomada de decisão baseada em dados em escala real.</div>
         <div class="proj-tags" aria-label="Tecnologias">
@@ -357,6 +287,7 @@
         <div class="proj-head">
           <div class="proj-status live"><span class="dot" aria-hidden="true"></span> LIVE</div>
         </div>
+        <div class="project-visual visual-flow" aria-hidden="true"><div class="flow-node n1"></div><div class="flow-node n2"></div><div class="flow-node n3"></div><div class="flow-node n4"></div><span class="flow-line l1"></span><span class="flow-line l2"></span><span class="flow-line l3"></span><span class="visual-label">WORKFLOW / SYNC</span></div>
         <div class="proj-name">Automation Engine</div>
         <div class="proj-desc">Automação de processos e integrações escaláveis para operações modernas em nuvem com alta disponibilidade.</div>
         <div class="proj-tags" aria-label="Tecnologias">
@@ -371,6 +302,7 @@
         <div class="proj-head">
           <div class="proj-status dev"><span class="dot" aria-hidden="true"></span> EM DEV</div>
         </div>
+        <div class="project-visual visual-data" aria-hidden="true"><div class="data-bars"><i></i><i></i><i></i><i></i><i></i></div><svg viewBox="0 0 300 120"><polyline points="8,100 46,80 82,91 120,48 155,58 195,30 230,42 292,12"/></svg><span class="visual-label">DATA STREAM / LIVE</span></div>
         <div class="proj-name">Premium Dashboards</div>
         <div class="proj-desc">Visualização de dados em tempo real com interfaces modernas, alta performance e UX de nível enterprise.</div>
         <div class="proj-tags" aria-label="Tecnologias">
@@ -394,7 +326,7 @@
     </svg>
 
     <div class="eyebrow reveal">SYSTEM MODULES</div>
-    <h2 class="section-title reveal">Stack</h2>
+    <h2 class="section-title reveal"><span>Stack Tecnológico</span></h2>
     <p class="section-sub reveal">Os módulos que compõem o motor. Cada camada é escolhida por desempenho e capacidade de escalar em produção.</p>
 
     <div class="stack-groups">
@@ -451,10 +383,11 @@
     </svg>
 
     <div class="eyebrow reveal">SESSION LOGS</div>
-    <h2 class="section-title reveal">Modo Terminal Hacker</h2>
+    <h2 class="section-title reveal"><span>Modo Terminal Hacker</span></h2>
     <p class="section-sub reveal">Um log real das sessões deste laboratório — histórico do sistema em vez de uma bio comum.</p>
 
-    <div class="glass terminal-wrap reveal" role="log" aria-live="polite" aria-label="Terminal de histórico">
+    <div class="terminal-ai-grid reveal">
+    <div class="glass terminal-wrap" role="log" aria-live="polite" aria-label="Terminal de histórico">
       <div class="term-top" aria-hidden="true">
         <i></i><i></i><i></i>
         <span class="term-title">wagner@systems-lab: ~/session_logs</span>
@@ -482,6 +415,29 @@
         </g>
       </svg>
       <div class="term-body" id="termBody"></div>
+    </div>
+
+    <aside class="assistant-console-preview glass" aria-label="Prévia do assistente Wagner AI">
+      <div class="assistant-preview-head">
+        <img src="img/wp-monogram.svg" alt="" aria-hidden="true">
+        <div>
+          <strong>WAGNER AI</strong>
+          <span><i aria-hidden="true"></i> ASSISTENTE ONLINE</span>
+        </div>
+      </div>
+      <div class="assistant-preview-core" aria-hidden="true">
+        <div class="assistant-core-ring ring-a"></div>
+        <div class="assistant-core-ring ring-b"></div>
+        <img src="img/wp-monogram.svg" alt="">
+      </div>
+      <div class="assistant-preview-message">Olá! Sou o assistente virtual do Wagner. Posso apresentar projetos, experiência, stack e disponibilidade.</div>
+      <div class="assistant-preview-actions">
+        <button type="button" class="assistant-preview-chip" data-preview-q="Quais são os projetos do Wagner?">Conhecer projetos</button>
+        <button type="button" class="assistant-preview-chip" data-preview-q="Qual o stack técnico do Wagner?">Explorar stack</button>
+        <button type="button" class="assistant-preview-chip" data-preview-q="Como falar com o Wagner?">Abrir contato</button>
+      </div>
+      <button type="button" class="assistant-preview-open" id="assistantPreviewOpen">ABRIR ASSISTENTE <span aria-hidden="true">↗</span></button>
+    </aside>
     </div>
   </section>
 
@@ -582,7 +538,28 @@
 </main>
 
 <!-- ===== FOOTER ===== -->
-<footer role="contentinfo" class="footer-carousel-wrap">
+<footer role="contentinfo" class="footer-carousel-wrap cyber-footer">
+  <div class="cyber-footer-grid">
+    <div class="cyber-footer-brand">
+      <img src="img/wp-monogram.svg" alt="" aria-hidden="true">
+      <div><strong>WAGNER<span>.OS</span></strong><small>CODE · CREATE · EVOLVE</small></div>
+    </div>
+    <div class="cyber-footer-col">
+      <strong>NAVEGAÇÃO</strong>
+      <a href="#top">Home</a><a href="#projects">Projetos</a><a href="#stack">Stack</a><a href="#logs">Terminal</a>
+    </div>
+    <div class="cyber-footer-col">
+      <strong>CONEXÕES</strong>
+      <a href="https://github.com/Wpersoli" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a href="https://www.linkedin.com/in/wagner-persoli-f-3004bb91" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+      <a href="mailto:wagnerpersoli@hotmail.com">E-mail</a>
+    </div>
+    <div class="cyber-footer-cta">
+      <span>READY TO BUILD</span>
+      <strong>Ideias viram sistemas.</strong>
+      <a href="#contact" class="cyber-footer-button">LET'S CONNECT <b aria-hidden="true">↗</b></a>
+    </div>
+  </div>
   <div class="footer-marquee" aria-label="Rodapé animado" aria-hidden="true">
     <div class="footer-track">
       <span class="footer-item">© <span class="footer-year"></span> WAGNER PERS. F.</span>
@@ -636,7 +613,7 @@
   <span class="sep">/</span>
   <span>NODE <b>sa-east-1</b></span>
   <span class="sep">/</span>
-  <span>BUILD <b>v4.2.0</b></span>
+  <span>BUILD <b>v2.1.0</b></span>
   <span class="sep">/</span>
   <span class="live-badge">● OPERATIONAL</span>
 </div>

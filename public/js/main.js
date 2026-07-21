@@ -302,7 +302,7 @@ var logLines = [
   { t: '> 2023 — mergulho em IA aplicada: modelos preditivos, pipelines de dados.' },
   { t: '> 2024 — integração de LLMs em produtos internos. Automação vira inteligência.' },
   { t: '> 2025 — Premium Dashboards e Device Simulator Engine entram em desenvolvimento.' },
-  { t: '> 2026 — este console. wagner.pers.f v4.2 — status: em constante deploy.' },
+  { t: '> 2026 — este console. wagner.pers.f v2.2.0 — status: em constante deploy.' },
   { p: 'system', t: 'log --status' },
   { t: '> 20+ sistemas publicados · 100K+ linhas versionadas · uptime 24/7.' },
 ];
@@ -1184,7 +1184,7 @@ function goToStep(i, cb){
 }
 
 function setPresentationButtonState(isActive){
-  var label=isActive?'SAIR DO MODO':'MODO APRESENTAÇÃO';
+  var label=isActive?'SAIR':'APRESENTAR';
   [document.getElementById('pmodeBtn'),document.getElementById('pmodeMobileBtn')].forEach(function(btn){
     if(!btn) return;
     btn.setAttribute('data-active',isActive?'true':'false');

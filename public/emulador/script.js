@@ -269,6 +269,7 @@ class App {
                     width,
                     height
                 };
+                this.state.rotated = false;
 
                 this.updateDevice();
                 this.toggleDropdown(false);

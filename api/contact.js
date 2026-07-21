@@ -154,7 +154,7 @@ async function sendWithResend(data) {
     headers: {
       'Authorization': 'Bearer ' + apiKey,
       'Content-Type': 'application/json',
-      'User-Agent': 'WAGNER.OS/2.1.1'
+      'User-Agent': 'WAGNER.OS/2.2.0'
     },
     body: JSON.stringify({
       from: fromEmail,

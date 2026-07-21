@@ -1,44 +1,94 @@
-# Auditoria do release 2.1.1
+# Auditoria do release 2.2.0
 
-Data da auditoria: julho de 2026.
+Data da auditoria: 21 de julho de 2026.
 
 ## Escopo
 
 - sintaxe JavaScript do frontend, emulador e funções Serverless
 - testes automatizados do chat e do formulário
-- dependências e vulnerabilidades conhecidas
-- estrutura HTML, IDs, âncoras, arquivos locais e nomes acessíveis
-- CSS, responsividade e overflow horizontal
-- chat, formulário, menu mobile e modo apresentação em navegador headless
-- higiene do pacote e busca por credenciais
+- dependências e vulnerabilidades conhecidas pelo npm
+- estrutura HTML, IDs obrigatórios, âncoras e referências locais
+- parsing das três folhas CSS e verificação de overflow horizontal
+- boot, menu, terminal, chat, formulário e modo apresentação em navegador Chromium headless
+- emulador: dispositivos, busca, rotação, zoom, reset, resolução personalizada e validação de URL
+- nomes acessíveis de botões, atributos `alt`, caracteres inválidos e higiene do pacote
+- busca por chaves, tokens e arquivos locais proibidos
 
-## Correções aplicadas
+## Evolução visual aplicada
 
-- remoção de `.git`, `.vercel`, `.env.local`, `node_modules` e metadados locais do pacote final
-- exclusão dos ativos e do código legado da caveira, que não eram utilizados pela interface Cyber Metal
-- correção de overflow horizontal no documento
-- favicon alinhado ao monograma WP
-- imagem Open Graph atualizada para a interface atual
-- endpoint de contato com limite de payload e verificação de origem
-- rota e configuração explícitas de `/api/contact` na Vercel
-- testes automatizados do formulário adicionados
-- `.gitignore` normalizado e sem regras duplicadas
-- versão atualizada para `2.1.1`
+- novo refinamento `cyber-v3.css` sobre a base funcional existente
+- header compacto com navegação técnica e acesso ao terminal
+- hero reequilibrado com monograma dominante, plataforma, HUD e bloco tipográfico metálico
+- projetos consolidados em quatro cards e stack em quatro módulos operacionais
+- terminal e Wagner AI reorganizados em grade técnica
+- contato convertido em composição de três painéis
+- footer, HUD, textos de versão e imagem Open Graph atualizados
+- versão do frontend e identificador do e-mail alinhados para `2.2.0`
 
-## Resultado
+## Correções funcionais
 
-- testes automatizados: 13 aprovados
-- navegador desktop 1440 px: aprovado, sem overflow horizontal
-- navegador tablet 1024 px: aprovado, sem overflow horizontal
-- navegador mobile 390 px: aprovado, menu e modo apresentação operacionais
-- chat e formulário com respostas simuladas: aprovados
-- emulador: zoom, rotação e seletor de dispositivo aprovados
-- vulnerabilidades npm em nível alto ou superior: 0
-- referências locais ausentes: 0
-- IDs HTML duplicados: 0
-- erros de parsing CSS: 0
-- credenciais incluídas no pacote final: 0
+- modo apresentação confirmado em desktop, tablet e celular
+- controle mobile de apresentação mantido disponível no drawer
+- resolução personalizada do emulador agora remove o estado de rotação anterior antes de aplicar novas dimensões
+- inconsistências de versão visual removidas do boot, hero e terminal
+- nenhuma alteração regressiva no chat, formulário, botões ou endpoints
 
-## Observação de segurança
+## Resultado automatizado
 
-O ZIP recebido para auditoria continha um arquivo `.env.local` com um token local da Vercel. Esse arquivo foi excluído integralmente do release. Tokens e arquivos de ambiente nunca devem ser enviados ou versionados.
+- testes Node.js: **13 aprovados, 0 falhas**
+- `npm audit --audit-level=high`: **0 vulnerabilidades**
+- sintaxe JavaScript: **aprovada em 6 arquivos**
+- CSS: **0 erros de parsing**
+- referências locais ausentes: **0**
+- IDs HTML duplicados: **0**
+- IDs funcionais obrigatórios ausentes: **0**
+- imagens sem atributo `alt`: **0**
+- botões sem nome acessível: **0**
+- uso executável de `eval` ou `new Function`: **0**
+- credenciais detectadas: **0**
+- arquivos proibidos no release: **0**
+
+## Navegador e responsividade
+
+### Desktop — 1440 × 900
+
+- boot completo: aprovado
+- overflow horizontal: 0 px
+- navegação desktop: aprovada
+- terminal digitado: aprovado
+- chat com resposta simulada: aprovado
+- formulário com resposta simulada: aprovado
+- modo apresentação e saída confirmada: aprovados
+- erros JavaScript/console: 0
+
+### Tablet — 1024 × 768
+
+- overflow horizontal: 0 px
+- navegação desktop compacta: aprovada
+- terminal, chat, formulário e modo apresentação: aprovados
+- erros JavaScript/console: 0
+
+### Mobile — 390 × 844
+
+- overflow horizontal: 0 px
+- menu abre e fecha corretamente
+- terminal, chat e formulário: aprovados
+- modo apresentação pelo controle mobile: aprovado
+- erros JavaScript/console: 0
+
+Os testes de interface utilizaram respostas simuladas para `/api/chat` e `/api/contact`, evitando consumo de API e envio de e-mail durante a auditoria. A lógica real dos endpoints foi validada pelos testes Node.js.
+
+## Emulador
+
+- 10 dispositivos carregados
+- busca de dispositivos: aprovada
+- seleção e troca de dimensões: aprovada
+- rotação: aprovada
+- zoom `+`, `−` e reset: aprovados
+- resolução personalizada: aprovada
+- rejeição de URL inválida: aprovada
+- erros JavaScript: 0
+
+## Higiene e segurança do pacote
+
+O release final não contém `.git`, `.vercel`, `.env.local`, `node_modules`, caches, chaves Gemini, chaves Resend, tokens GitHub, tokens Vercel ou chaves privadas. O arquivo `.env.example` contém apenas nomes e valores de exemplo.

@@ -1,13 +1,14 @@
 # WAGNER.OS — AI Systems Lab
 
-Portfólio profissional de Wagner Persoli F. com interface Cyber Metal, modo apresentação, assistente Gemini e formulário de contato por e-mail.
+Portfólio profissional de Wagner Persoli F. com interface Cyber Metal, modo apresentação, assistente Gemini, emulador responsivo e formulário de contato por e-mail.
 
 **Produção principal:** https://wagnerpersolifilho.vercel.app
+
 **Domínio autorizado:** https://wagnerpersoli.vercel.app
 
 ## Versão
 
-`2.1.1` — auditoria, limpeza e endurecimento do release Cyber Metal v2.1.
+`2.2.0` — refinamento visual Cyber Metal, reorganização dos painéis e auditoria funcional completa sem regressão dos recursos existentes.
 
 ## Stack
 
@@ -18,15 +19,28 @@ Portfólio profissional de Wagner Persoli F. com interface Cyber Metal, modo apr
 - E-mail: endpoint `/api/contact`
 - Hospedagem: Vercel
 
-## Interface Cyber Metal
+## Interface Cyber Metal 2.2
 
-- monograma WP vetorial com acabamento metálico e neon
-- hero cinematográfico, plataforma luminosa e HUDs
-- tipografia dimensional e painéis técnicos
-- projetos, stack, terminal, assistente, contato e footer integrados
-- fundo Canvas/JavaScript preservado
-- responsividade para desktop, tablet e celular
-- camada visual complementar em `public/css/cyber-v2.css`
+- monograma WP vetorial com acabamento metálico, neon e plataforma luminosa
+- hero cinematográfico com composição mais próxima da identidade visual aprovada
+- header técnico com acesso rápido ao terminal
+- quatro cards de projetos e quatro módulos consolidados de stack
+- terminal e painel Wagner AI integrados em um dashboard operacional
+- contato em três painéis: canais, formulário e identidade
+- footer técnico, HUD e imagem Open Graph atualizados
+- responsividade validada em desktop, tablet e celular
+- camadas visuais em `public/css/main.css`, `public/css/cyber-v2.css` e `public/css/cyber-v3.css`
+
+## Funcionalidades preservadas
+
+- chat real com Gemini e fallback local
+- modo apresentação em desktop, tablet e celular
+- formulário com envio por e-mail e confirmação visual
+- menu desktop e drawer mobile
+- botões, links externos e navegação por âncoras
+- emulador responsivo com dispositivos, rotação, zoom e resolução personalizada
+- boot cinematográfico, Canvas, terminal digitado, HUD e animações
+- acessibilidade básica por teclado, nomes acessíveis e estados ARIA
 
 ## Chat
 
@@ -50,7 +64,8 @@ wagnerpersolifilho/
 ├── public/
 │   ├── css/
 │   │   ├── main.css
-│   │   └── cyber-v2.css
+│   │   ├── cyber-v2.css
+│   │   └── cyber-v3.css
 │   ├── emulador/
 │   ├── img/wp-monogram.svg
 │   ├── js/main.js
@@ -60,6 +75,7 @@ wagnerpersolifilho/
 │   ├── chat.test.js
 │   └── contact.test.js
 ├── AUDITORIA.md
+├── CHECKSUMS.sha256
 ├── .env.example
 ├── package.json
 ├── package-lock.json
@@ -94,13 +110,3 @@ CONTACT_MAX_BODY_BYTES=16384
 ```
 
 Marque `GEMINI_API_KEY` e `RESEND_API_KEY` como sensíveis. Nunca compacte `.env.local`, `.vercel`, `.git`, `node_modules` ou credenciais.
-
-## Comportamentos preservados
-
-- modo apresentação sem consumo de Gemini
-- menu desktop e mobile
-- chat real e fallback local
-- formulário e confirmação visual
-- emulador responsivo
-- fundo animado
-- botões, navegação e acessibilidade por teclado

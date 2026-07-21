@@ -1,5 +1,5 @@
 /* ============================================================
-   WAGNER.OS — CYBER METALLIC UI v2.1.1
+   WAGNER.OS — CYBER METALLIC UI base v2.2.0
    Camada visual complementar. Preserva os contratos funcionais.
    ============================================================ */
 :root {
@@ -254,7 +254,7 @@ h2.section-title::after { content:"////"; margin-left:16px; font-family:var(--mo
 }
 
 /* ============================================================
-   CYBER METAL v2.1 — density, section frames and AI console
+   CYBER METAL base — density, section frames and AI console
    ============================================================ */
 main {
   width: min(100%, 1560px);

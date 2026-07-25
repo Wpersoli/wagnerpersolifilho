@@ -408,8 +408,16 @@ function toggleFabs() {
   if (fabWhats) { fabWhats.classList.toggle('show', visible); }
 }
 
-window.addEventListener('scroll', toggleFabs, { passive: true });
-window.addEventListener('resize', toggleFabs, { passive: true });
+var fabFrame = 0;
+function requestFabUpdate() {
+  if (fabFrame) return;
+  fabFrame = window.requestAnimationFrame(function() {
+    fabFrame = 0;
+    toggleFabs();
+  });
+}
+window.addEventListener('scroll', requestFabUpdate, { passive: true });
+window.addEventListener('resize', requestFabUpdate, { passive: true });
 toggleFabs();
 
 if (fabTop) {
@@ -680,108 +688,155 @@ if (deviceArtEl) {
 }
 
 /* ─────────────────────────────────────────────
-   BACKGROUND PARTICLES CANVAS
+   BACKGROUND PARTICLES CANVAS — adaptive and scroll-safe
    ───────────────────────────────────────────── */
 var canvas = document.getElementById('bgCanvas');
 if (canvas && canvas.getContext) {
-  var ctx = canvas.getContext('2d');
-  var W, H, particles = [];
+  var ctx = canvas.getContext('2d', { alpha: true, desynchronized: true });
+  var W = 1, H = 1, dpr = 1, particles = [];
+  var bgRaf = 0;
+  var bgLastFrame = 0;
+  var bgPageVisible = !document.hidden;
+  var bgScrollPaused = false;
+  var bgReduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var bgColors = ['53,207,255', '20,123,255', '121,103,255'];
+  var mouse = { x: -9999, y: -9999 };
 
-  function resize() {
-    W = canvas.width  = window.innerWidth;
-    H = canvas.height = window.innerHeight;
-    // Adjust devicePixelRatio for Retina
-    var dpr = window.devicePixelRatio || 1;
-    canvas.width  = W * dpr;
-    canvas.height = H * dpr;
-    canvas.style.width  = W + 'px';
-    canvas.style.height = H + 'px';
-    ctx.scale(dpr, dpr);
+  function buildBackgroundParticles() {
+    var area = W * H;
+    var maxCount = W < 760 ? 32 : 56;
+    var count = Math.max(18, Math.min(maxCount, Math.floor(area / 26000)));
+    particles = [];
+    for (var pi = 0; pi < count; pi++) {
+      particles.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        vx: (Math.random() - 0.5) * 0.22,
+        vy: (Math.random() - 0.5) * 0.22,
+        r: Math.random() * 1.35 + 0.55,
+        c: bgColors[pi % 7 === 0 ? 1 : (pi % 5 === 0 ? 2 : 0)]
+      });
+    }
   }
 
-  // Throttled resize
+  function resizeBackgroundCanvas() {
+    W = Math.max(1, window.innerWidth);
+    H = Math.max(1, window.innerHeight);
+    var dprCap = W < 760 ? 1 : 1.25;
+    dpr = Math.min(dprCap, window.devicePixelRatio || 1);
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    buildBackgroundParticles();
+  }
+
   var resizeTimer;
   window.addEventListener('resize', function() {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(function() { resize(); }, 150);
+    resizeTimer = setTimeout(resizeBackgroundCanvas, 160);
   }, { passive: true });
-  resize();
 
-  // Particle count scales with screen area (capped for performance)
-  var PCOUNT = Math.min(90, Math.floor((window.innerWidth * window.innerHeight) / 16000));
-  var pColors = ['53,207,255', '20,123,255', '121,103,255'];
-
-  for (var pi = 0; pi < PCOUNT; pi++) {
-    particles.push({
-      x:  Math.random() * W, y:  Math.random() * H,
-      vx: (Math.random() - 0.5) * 0.25,
-      vy: (Math.random() - 0.5) * 0.25,
-      r:  Math.random() * 1.6 + 0.6,
-      c:  pColors[pi % 7 === 0 ? 1 : (pi % 5 === 0 ? 2 : 0)]
-    });
-  }
-
-  // Mouse/touch tracking
-  var mouse = { x: -9999, y: -9999 };
   window.addEventListener('mousemove', function(e) {
-    mouse.x = e.clientX; mouse.y = e.clientY;
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
   }, { passive: true });
   window.addEventListener('touchmove', function(e) {
-    if (e.touches[0]) { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; }
+    if (e.touches[0]) {
+      mouse.x = e.touches[0].clientX;
+      mouse.y = e.touches[0].clientY;
+    }
   }, { passive: true });
   window.addEventListener('touchend', function() {
-    mouse.x = -9999; mouse.y = -9999;
+    mouse.x = -9999;
+    mouse.y = -9999;
   }, { passive: true });
 
-  // Visibility API — pause when tab is hidden (battery/perf)
-  var animating = true;
-  document.addEventListener('visibilitychange', function() {
-    animating = !document.hidden;
-    if (animating) draw();
-  });
+  function scheduleBackgroundFrame() {
+    if (!bgRaf && bgPageVisible && !bgScrollPaused && !bgReduceMotion) {
+      bgRaf = window.requestAnimationFrame(drawBackground);
+    }
+  }
 
-  function draw() {
-    if (!animating) return;
+  function drawBackground(now) {
+    bgRaf = 0;
+    if (!bgPageVisible || bgScrollPaused || bgReduceMotion) return;
+    if (now - bgLastFrame < 1000 / 36) {
+      scheduleBackgroundFrame();
+      return;
+    }
+    bgLastFrame = now;
     ctx.clearRect(0, 0, W, H);
 
+    var connectionLimit = 112;
+    var connectionLimitSq = connectionLimit * connectionLimit;
     for (var i = 0; i < particles.length; i++) {
-      var p = particles[i];
-      p.x += p.vx; p.y += p.vy;
-      if (p.x < 0 || p.x > W) p.vx *= -1;
-      if (p.y < 0 || p.y > H) p.vy *= -1;
+      var particle = particles[i];
+      particle.x += particle.vx;
+      particle.y += particle.vy;
+      if (particle.x < 0 || particle.x > W) particle.vx *= -1;
+      if (particle.y < 0 || particle.y > H) particle.vy *= -1;
 
-      // Mouse repulsion
-      var dx = p.x - mouse.x, dy = p.y - mouse.y;
-      var dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 140 && dist > 0) {
-        var f = (140 - dist) / 140;
-        p.x += (dx / dist) * f * 0.7;
-        p.y += (dy / dist) * f * 0.7;
+      var dx = particle.x - mouse.x;
+      var dy = particle.y - mouse.y;
+      var distanceSq = dx * dx + dy * dy;
+      if (distanceSq < 19600 && distanceSq > 0) {
+        var distance = Math.sqrt(distanceSq);
+        var force = (140 - distance) / 140;
+        particle.x += (dx / distance) * force * 0.6;
+        particle.y += (dy / distance) * force * 0.6;
       }
 
-      // Draw particle
       ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(' + p.c + ',0.65)';
+      ctx.arc(particle.x, particle.y, particle.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(' + particle.c + ',0.62)';
       ctx.fill();
 
-      // Draw connections
       for (var j = i + 1; j < particles.length; j++) {
-        var q = particles[j];
-        var ddx = p.x - q.x, ddy = p.y - q.y;
-        var d2 = Math.sqrt(ddx * ddx + ddy * ddy);
-        if (d2 < 120) {
+        var other = particles[j];
+        var ddx = particle.x - other.x;
+        var ddy = particle.y - other.y;
+        var pairDistanceSq = ddx * ddx + ddy * ddy;
+        if (pairDistanceSq < connectionLimitSq) {
+          var ratio = 1 - pairDistanceSq / connectionLimitSq;
           ctx.beginPath();
-          ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
-          ctx.strokeStyle = 'rgba(38,151,220,' + (0.18 * (1 - d2 / 120)) + ')';
-          ctx.lineWidth = 0.8;
+          ctx.moveTo(particle.x, particle.y);
+          ctx.lineTo(other.x, other.y);
+          ctx.strokeStyle = 'rgba(38,151,220,' + (0.16 * ratio).toFixed(3) + ')';
+          ctx.lineWidth = 0.75;
           ctx.stroke();
         }
       }
     }
-    requestAnimationFrame(draw);
+    scheduleBackgroundFrame();
   }
-  draw();
+
+  document.addEventListener('visibilitychange', function() {
+    bgPageVisible = !document.hidden;
+    if (!bgPageVisible && bgRaf) {
+      window.cancelAnimationFrame(bgRaf);
+      bgRaf = 0;
+    }
+    if (bgPageVisible) {
+      bgLastFrame = 0;
+      scheduleBackgroundFrame();
+    }
+  });
+
+  document.addEventListener('wagner:scroll-start', function() {
+    bgScrollPaused = true;
+    if (bgRaf) window.cancelAnimationFrame(bgRaf);
+    bgRaf = 0;
+  });
+  document.addEventListener('wagner:scroll-end', function() {
+    bgScrollPaused = false;
+    bgLastFrame = 0;
+    scheduleBackgroundFrame();
+  });
+
+  resizeBackgroundCanvas();
+  scheduleBackgroundFrame();
 }
 
 /* ─────────────────────────────────────────────
@@ -804,7 +859,16 @@ function updateActiveNav() {
   });
 }
 
-window.addEventListener('scroll', updateActiveNav, { passive: true });
+var activeNavFrame = 0;
+function requestActiveNavUpdate() {
+  if (activeNavFrame) return;
+  activeNavFrame = window.requestAnimationFrame(function() {
+    activeNavFrame = 0;
+    updateActiveNav();
+  });
+}
+window.addEventListener('scroll', requestActiveNavUpdate, { passive: true });
+window.addEventListener('resize', requestActiveNavUpdate, { passive: true });
 updateActiveNav();
 
 /* ─────────────────────────────────────────────
@@ -1333,12 +1397,17 @@ window.addEventListener('resize',function(){
     if(t){ positionSpotlight(t); positionBalloon(t); }
   },150);
 });
-// Re-sync clip-path on scroll (fixed vs scrollY offset)
+// Re-sync clip-path on scroll (fixed vs scrollY offset), once per frame.
+var presentationScrollFrame=0;
 window.addEventListener('scroll',function(){
-  if(!active) return;
-  var t=getTourTarget(TOUR[step]);
-  if(!t) return;
-  positionSpotlight(t);
+  if(!active || presentationScrollFrame) return;
+  presentationScrollFrame=window.requestAnimationFrame(function(){
+    presentationScrollFrame=0;
+    if(!active) return;
+    var t=getTourTarget(TOUR[step]);
+    if(!t) return;
+    positionSpotlight(t);
+  });
 }, {passive:true});
 
 /* ── Wire presentation buttons (desktop + mobile drawer) ── */

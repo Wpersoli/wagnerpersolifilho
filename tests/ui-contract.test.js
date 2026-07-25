@@ -12,6 +12,8 @@ const html = read('public/index.html');
 const css = read('public/css/main.css');
 const responsiveCss = read('public/css/hero-responsive-approved.css');
 const mainJs = read('public/js/main.js');
+const performanceJs = read('public/js/performance-safe.js');
+const performanceCss = read('public/css/performance-safe.css');
 
 test('contrato visual mantém topo, botões, WhatsApp, chat e apresentação', () => {
   for (const id of [
@@ -59,4 +61,16 @@ test('hero usa arquivo WebP real e dimensões intrínsecas corretas', () => {
   assert.equal(image.subarray(0, 4).toString('ascii'), 'RIFF');
   assert.equal(image.subarray(8, 12).toString('ascii'), 'WEBP');
   assert.match(html, /src=["']img\/hero-fidelity-master\.webp["'][\s\S]*?width=["']1916["'][\s\S]*?height=["']821["']/);
+});
+
+
+test('perfil conservador pausa efeitos durante scroll sem remover controles', () => {
+  assert.match(html, /css\/performance-safe\.css/);
+  assert.match(html, /js\/performance-safe\.js/);
+  assert.match(performanceJs, /wagner:scroll-start/);
+  assert.match(performanceJs, /wagner:scroll-end/);
+  assert.match(performanceCss, /body\.is-scrolling[\s\S]*animation-play-state:\s*paused/);
+  assert.match(mainJs, /bgScrollPaused/);
+  assert.match(mainJs, /requestFabUpdate/);
+  assert.match(mainJs, /requestActiveNavUpdate/);
 });

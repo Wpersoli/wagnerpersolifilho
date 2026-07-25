@@ -18,11 +18,16 @@
   var sparks = [];
   var arcs = [];
   var raf = 0;
-  var visible = true;
+  var heroVisible = true;
+  var pageVisible = !document.hidden;
+  var scrollPaused = false;
   var lastTime = performance.now();
+  var lastPaint = 0;
   var nextBurst = 0;
   var burstTimer = 0;
   var pointer = { x: .31, y: .56 };
+  var pointerFrame = 0;
+  var pointerEvent = null;
 
   var logoBox = { x: .045, y: .084, w: .443, h: .66 };
   var anchors = [
@@ -38,7 +43,7 @@
     var rect = stage.getBoundingClientRect();
     width = Math.max(1, Math.round(rect.width));
     height = Math.max(1, Math.round(rect.height));
-    dpr = Math.min(window.devicePixelRatio || 1, width > 1200 ? 1.35 : 1.1);
+    dpr = Math.min(window.devicePixelRatio || 1, width > 1200 ? 1.2 : 1);
     canvas.width = Math.round(width * dpr);
     canvas.height = Math.round(height * dpr);
     canvas.style.width = width + 'px';
@@ -48,7 +53,7 @@
   }
 
   function buildParticles() {
-    var count = reduceMotion ? 20 : (width > 1100 ? 58 : width > 700 ? 38 : 24);
+    var count = reduceMotion ? 16 : (width > 1100 ? 46 : width > 700 ? 32 : 20);
     particles = [];
     for (var i = 0; i < count; i += 1) {
       particles.push({
@@ -222,11 +227,29 @@
     arcs = alive;
   }
 
+  function engineVisible() {
+    return heroVisible && pageVisible && !scrollPaused;
+  }
+
+  function stopLoop() {
+    if (raf) window.cancelAnimationFrame(raf);
+    raf = 0;
+  }
+
+  function ensureLoop() {
+    if (!raf && engineVisible()) raf = window.requestAnimationFrame(frame);
+  }
+
   function frame(now) {
-    raf = window.requestAnimationFrame(frame);
-    if (!visible) return;
+    raf = 0;
+    if (!engineVisible()) return;
+    if (now - lastPaint < 1000 / 40) {
+      ensureLoop();
+      return;
+    }
     var dt = Math.min(40, Math.max(1, now - lastTime));
     lastTime = now;
+    lastPaint = now;
     ctx.clearRect(0, 0, width, height);
     drawParticles(dt, now);
     drawContourCurrent(now);
@@ -236,19 +259,30 @@
     if (now >= nextBurst) {
       triggerBurst();
       var overdrive = hero.getAttribute('data-energy') === 'overdrive';
-      nextBurst = now + random(overdrive ? 700 : 1200, overdrive ? 1350 : 2400);
+      nextBurst = now + random(overdrive ? 850 : 1500, overdrive ? 1550 : 2800);
     }
+    ensureLoop();
+  }
+
+  function paintPointerMotion() {
+    pointerFrame = 0;
+    if (!pointerEvent || scrollPaused) return;
+    var rect = stage.getBoundingClientRect();
+    pointer.x = clamp((pointerEvent.clientX - rect.left) / rect.width, 0, 1);
+    pointer.y = clamp((pointerEvent.clientY - rect.top) / rect.height, 0, 1);
+    hero.style.setProperty('--hero-logo-shift-x', ((pointer.x - .5) * 18).toFixed(2) + 'px');
+    hero.style.setProperty('--hero-logo-shift-y', ((pointer.y - .5) * 14).toFixed(2) + 'px');
   }
 
   stage.addEventListener('pointermove', function (event) {
-    var rect = stage.getBoundingClientRect();
-    pointer.x = clamp((event.clientX - rect.left) / rect.width, 0, 1);
-    pointer.y = clamp((event.clientY - rect.top) / rect.height, 0, 1);
-    hero.style.setProperty('--hero-logo-shift-x', ((pointer.x - .5) * 18).toFixed(2) + 'px');
-    hero.style.setProperty('--hero-logo-shift-y', ((pointer.y - .5) * 14).toFixed(2) + 'px');
+    pointerEvent = event;
+    if (!pointerFrame) pointerFrame = window.requestAnimationFrame(paintPointerMotion);
   }, { passive: true });
 
   stage.addEventListener('pointerleave', function () {
+    pointerEvent = null;
+    if (pointerFrame) window.cancelAnimationFrame(pointerFrame);
+    pointerFrame = 0;
     hero.style.setProperty('--hero-logo-shift-x', '0px');
     hero.style.setProperty('--hero-logo-shift-y', '0px');
   }, { passive: true });
@@ -269,19 +303,42 @@
 
   if (window.IntersectionObserver) {
     new IntersectionObserver(function (entries) {
-      visible = Boolean(entries[0] && entries[0].isIntersecting);
-      if (visible) lastTime = performance.now();
+      heroVisible = Boolean(entries[0] && entries[0].isIntersecting);
+      if (heroVisible) {
+        lastTime = performance.now();
+        lastPaint = 0;
+        ensureLoop();
+      } else {
+        stopLoop();
+      }
     }, { threshold: .02 }).observe(stage);
   }
 
   document.addEventListener('visibilitychange', function () {
-    visible = !document.hidden;
-    if (visible) lastTime = performance.now();
+    pageVisible = !document.hidden;
+    if (pageVisible) {
+      lastTime = performance.now();
+      lastPaint = 0;
+      ensureLoop();
+    } else {
+      stopLoop();
+    }
+  });
+
+  document.addEventListener('wagner:scroll-start', function () {
+    scrollPaused = true;
+    stopLoop();
+  });
+  document.addEventListener('wagner:scroll-end', function () {
+    scrollPaused = false;
+    lastTime = performance.now();
+    lastPaint = 0;
+    ensureLoop();
   });
 
   resize();
   hero.setAttribute('data-motion-ready', 'true');
-  nextBurst = performance.now() + 350;
+  nextBurst = performance.now() + 500;
   triggerBurst();
-  raf = window.requestAnimationFrame(frame);
+  ensureLoop();
 }());

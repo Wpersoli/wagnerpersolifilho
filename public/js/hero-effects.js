@@ -103,6 +103,7 @@
   var overdrive = false;
   var pageVisible = !document.hidden;
   var heroVisible = true;
+  var scrollPaused = false;
   var lastPointerStrike = 0;
   var hitTimer = 0;
   var quality = 'high';
@@ -116,15 +117,15 @@
 
   function random(min, max) { return min + Math.random() * (max - min); }
   function clamp(value, min, max) { return Math.max(min, Math.min(max, value)); }
-  function engineVisible() { return pageVisible && heroVisible; }
+  function engineVisible() { return pageVisible && heroVisible && !scrollPaused; }
 
   function resolveQuality() {
     var cores = navigator.hardwareConcurrency || 4;
     if (width < 720 || cores <= 2) quality = 'low';
     else if (width < 1180 || cores <= 4) quality = 'medium';
     else quality = 'high';
-    maxBolts = quality === 'high' ? 14 : quality === 'medium' ? 9 : 5;
-    maxSparks = quality === 'high' ? 92 : quality === 'medium' ? 58 : 28;
+    maxBolts = quality === 'high' ? 11 : quality === 'medium' ? 8 : 5;
+    maxSparks = quality === 'high' ? 72 : quality === 'medium' ? 48 : 26;
     hero.setAttribute('data-fx-quality', quality);
   }
 
@@ -133,7 +134,7 @@
     width = Math.max(1, Math.round(rect.width));
     height = Math.max(1, Math.round(rect.height));
     resolveQuality();
-    var cap = quality === 'high' ? 1.45 : quality === 'medium' ? 1.25 : 1;
+    var cap = quality === 'high' ? 1.25 : quality === 'medium' ? 1.1 : 1;
     dpr = Math.min(cap, window.devicePixelRatio || 1);
     canvas.width = Math.round(width * dpr);
     canvas.height = Math.round(height * dpr);
@@ -489,6 +490,21 @@
     pageVisible = !document.hidden;
     if (engineVisible()) scheduleStrike(true);
     else clearTimer();
+  });
+
+  document.addEventListener('wagner:scroll-start', function () {
+    scrollPaused = true;
+    clearTimer();
+    if (raf) window.cancelAnimationFrame(raf);
+    raf = 0;
+  });
+
+  document.addEventListener('wagner:scroll-end', function () {
+    scrollPaused = false;
+    if (engineVisible()) {
+      ensureAnimation();
+      scheduleStrike(false);
+    }
   });
 
   if (reduceMotionQuery && typeof reduceMotionQuery.addEventListener === 'function') {

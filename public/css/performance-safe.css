@@ -1,0 +1,24 @@
+/* =====================================================================
+   WAGNER.OS — conservative performance profile
+   Decorative rendering pauses only while the viewport is moving.
+   Functional controls, chat, WhatsApp and presentation remain untouched.
+   ===================================================================== */
+
+#bgCanvas,
+.hero-lightning-canvas,
+.hero-motion-canvas {
+  contain: strict;
+}
+
+body.is-scrolling .neon-lines i,
+body.is-scrolling .film-grain,
+body.is-scrolling .fidelity-hero *,
+body.is-scrolling .fidelity-hero *::before,
+body.is-scrolling .fidelity-hero *::after {
+  animation-play-state: paused !important;
+}
+
+body.is-scrolling > header {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}

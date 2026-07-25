@@ -83,12 +83,26 @@
     hero.style.setProperty('--hero-copy-shift-y', (dy * -4).toFixed(2) + 'px');
   }
 
+  var motionFrame = 0;
+  var latestPointer = null;
+  function paintHeroMotion() {
+    motionFrame = 0;
+    if (!latestPointer || (document.body && document.body.classList.contains('is-scrolling'))) return;
+    setHeroMotion(latestPointer.clientX, latestPointer.clientY);
+  }
+
   stage.addEventListener('pointermove', function (event) {
     if (event.pointerType && event.pointerType !== 'mouse' && event.pointerType !== 'pen') return;
-    setHeroMotion(event.clientX, event.clientY);
+    latestPointer = event;
+    if (!motionFrame) motionFrame = window.requestAnimationFrame(paintHeroMotion);
   }, { passive: true });
 
-  stage.addEventListener('pointerleave', resetHeroMotion, { passive: true });
+  stage.addEventListener('pointerleave', function () {
+    latestPointer = null;
+    if (motionFrame) window.cancelAnimationFrame(motionFrame);
+    motionFrame = 0;
+    resetHeroMotion();
+  }, { passive: true });
   stage.addEventListener('blur', resetHeroMotion, true);
 
   /* Prevent subtle perspective transforms from remaining stale after a tab restore. */

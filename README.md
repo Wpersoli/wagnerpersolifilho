@@ -35,6 +35,13 @@ Esta evolução concentra o trabalho no topo do site e mantém os fluxos funcion
 - emulador responsivo;
 - boot cinematográfico, terminal e HUD.
 
+## Currículo online e PDF
+
+- página responsiva: `public/curriculo.html`;
+- PDF oficial: `public/docs/curriculo-wagner-persoli-filho.pdf`;
+- menu desktop/mobile abre a visualização online;
+- botões de download do hero baixam diretamente o PDF.
+
 ## Como rodar
 
 ```powershell

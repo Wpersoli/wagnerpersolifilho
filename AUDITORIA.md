@@ -1,25 +1,25 @@
-# AUDITORIA — WAGNER.OS v2.9.6
+# AUDITORIA — WAGNER.OS v2.9.7
 
-## Escopo aplicado
-- Substituição da imagem principal do topo pela nova arte limpa aprovada.
-- Hero ajustado para preenchimento full-screen responsivo.
-- Preservação de chat, modo apresentação, formulário por e-mail e links principais.
-- Adição de overlay funcional visível para botões principais e redes no topo.
-- Refino dos efeitos/raios para não poluir a nova arte.
+## Correções aprovadas
 
-## Segurança
-- `.env.local` removido do pacote final por conter token sensível do Vercel.
-- Diretórios `.git` e `.vercel` removidos do ZIP final.
+- Substituída a arte antiga 1369 × 498 pela imagem fornecida em 2048 × 1152.
+- Desktop: hero em largura e altura totais da viewport, sem distorção (`cover`).
+- Mobile: imagem completa e proporcional em 16:9, sem recorte (`contain`).
+- A seção do hero agora escapa corretamente do `max-width: 1500px` aplicado ao `main`.
+- Header restaurado como barra fixa flexível de uma linha; a declaração-base estava neutralizada por comentário CSS legado malformado.
+- Dock mobile reposicionado abaixo da imagem, sem ficar recortado pelo hero.
+- `package.json` recebeu scripts reais de sintaxe, testes e validação.
 
-## Validação esperada
-Executar:
+## Segurança do pacote
 
-```powershell
+- `.env.local` não integra o ZIP final, pois contém credencial local.
+- `.git` e `.vercel` não integram o ZIP final.
+
+## Validação executada
+
+```bash
 npm ci
 npm run validate
-npm audit --audit-level=high
 ```
 
-## Observações
-- A responsividade mobile preserva o dock de ações já existente.
-- Os controles visíveis do hero usam os mesmos destinos funcionais já existentes no projeto.
+Também foram verificadas as geometrias do hero em 1920×1080, 1440×900, 430×932 e 390×844.

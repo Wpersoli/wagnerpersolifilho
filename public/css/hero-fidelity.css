@@ -829,21 +829,3 @@ body > header::after { right: 0 !important; background: linear-gradient(90deg, t
 @media (max-width: 760px) {
   body > header { padding-inline: 10px !important; }
 }
-
-
-/* === Hero fullscreen responsive fix === */
-.hero-fidelity-stage,
-.hero-fidelity,
-.hero-fidelity-container{
-  min-height:100vh;
-  min-height:100svh;
-}
-.hero-fidelity-stage img,
-.hero-fidelity img,
-.hero-fidelity-image{
-  width:100%!important;
-  height:100%!important;
-  object-fit:cover!important;
-  object-position:center center!important;
-  display:block;
-}

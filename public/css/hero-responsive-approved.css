@@ -1,0 +1,163 @@
+/* =====================================================================
+   WAGNER.OS — HERO RESPONSIVE APPROVED v2.9.7
+   Desktop: full viewport fill without distortion.
+   Mobile: complete 16:9 artwork, proportional and uncropped.
+   This stylesheet is intentionally loaded last to neutralize legacy layers.
+   ===================================================================== */
+
+:root {
+  --hero-master-ratio: 16 / 9;
+  --mobile-header-space: calc(64px + env(safe-area-inset-top, 0px));
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: clip;
+}
+
+/* Restore the intended one-line system bar. A malformed legacy comment in
+   main.css prevented its foundational flex/fixed declarations from loading. */
+body > header {
+  position: fixed !important;
+  inset: 0 0 auto 0 !important;
+  z-index: 1000 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: nowrap !important;
+  width: auto !important;
+  max-width: none !important;
+  min-height: 72px !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+body > header > .cyber-brand,
+body > header > .mainnav,
+body > header > .status-cluster {
+  width: auto !important;
+}
+
+body > header > .mainnav {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  justify-content: center !important;
+}
+
+body > header > .status-cluster {
+  flex: 0 0 auto !important;
+  margin-left: auto !important;
+}
+
+/* The section itself must escape main's max-width. Expanding only the inner
+   shell still leaves it clipped by the section boundary. */
+.fidelity-hero.cyber-hero {
+  width: 100vw !important;
+  max-width: none !important;
+  margin-inline: calc(50% - 50vw) !important;
+  border-inline: 0 !important;
+}
+
+@media (min-width: 761px) {
+  .fidelity-hero.cyber-hero {
+    height: 100svh !important;
+    min-height: 100svh !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .fidelity-hero .hero-fidelity-shell,
+  .fidelity-hero .hero-fidelity-stage.hero-brand-stage {
+    width: 100% !important;
+    max-width: none !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    aspect-ratio: auto !important;
+  }
+
+  .fidelity-hero .hero-fidelity-image {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    object-fit: cover !important;
+    object-position: center center !important;
+    transform: none !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .fidelity-hero.cyber-hero {
+    height: auto !important;
+    min-height: 0 !important;
+    padding: var(--mobile-header-space) 0 0 !important;
+    overflow: visible !important;
+    background: #02070d !important;
+  }
+
+  .fidelity-hero .hero-fidelity-shell {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  .fidelity-hero .hero-fidelity-stage.hero-brand-stage {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    aspect-ratio: var(--hero-master-ratio) !important;
+    overflow: hidden !important;
+    background: #02070d !important;
+  }
+
+  .fidelity-hero .hero-fidelity-image {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    object-fit: contain !important;
+    object-position: center center !important;
+    transform: none !important;
+    background: #02070d !important;
+  }
+
+  /* Realtime effects remain aligned only with the image, not with the dock. */
+  .fidelity-hero .hero-atmosphere {
+    top: var(--mobile-header-space) !important;
+    right: 0 !important;
+    bottom: auto !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: calc(100vw * 9 / 16) !important;
+    overflow: hidden !important;
+  }
+
+  .fidelity-hero .hero-mobile-action-dock {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
+}
+
+@media (max-width: 430px) {
+  :root {
+    --mobile-header-space: calc(62px + env(safe-area-inset-top, 0px));
+  }
+}

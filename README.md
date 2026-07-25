@@ -6,7 +6,7 @@ Portfólio profissional de Wagner Persoli F. com identidade **Cyber Metal**, ass
 
 ## Versão
 
-`2.9.4` — **Top Full-Bleed Sniper Refinement**.
+`2.9.7` — **Hero responsivo aprovado**.
 
 Esta evolução concentra o trabalho no topo do site e mantém os fluxos funcionais existentes.
 
@@ -58,3 +58,13 @@ Atualização 2.9.4: refinado o topo/hero para manter proporção mais estável 
 - painel translúcido da área tipográfica removido;
 - rótulo decorativo ENERGY MOTION // LIVE removido;
 - scripts e funcionalidades críticas preservados sem alteração.
+
+
+## Correção 2.9.7 — hero responsivo
+
+- nova arte `hero-fidelity-master.webp` em 2048 × 1152;
+- desktop com preenchimento total da viewport por `object-fit: cover`;
+- mobile com proporção integral 16:9 por `object-fit: contain`, sem cortes laterais;
+- seção do hero liberada do `max-width` do `main`;
+- header restaurado em uma única linha e largura total;
+- scripts de validação do `package.json` corrigidos.

@@ -1,25 +1,7 @@
-# AUDITORIA — WAGNER.OS v2.9.6
+# Auditoria final — WAGNER.OS v2.9.7
 
-## Escopo aplicado
-- Substituição da imagem principal do topo pela nova arte limpa aprovada.
-- Hero ajustado para preenchimento full-screen responsivo.
-- Preservação de chat, modo apresentação, formulário por e-mail e links principais.
-- Adição de overlay funcional visível para botões principais e redes no topo.
-- Refino dos efeitos/raios para não poluir a nova arte.
+Projeto aprovado após comparação entre a base mais atual e os pacotes funcionais anteriores.
 
-## Segurança
-- `.env.local` removido do pacote final por conter token sensível do Vercel.
-- Diretórios `.git` e `.vercel` removidos do ZIP final.
+A falha não estava no JavaScript do chat ou do modo apresentação. A causa era a corrupção de comentários no CSS principal, que invalidava o bloco de variáveis globais e deslocava controles fixos para fora da tela. O CSS estável foi recuperado do histórico do pacote antigo; o hero, as APIs e o conteúdo 2.9.7 foram mantidos.
 
-## Validação esperada
-Executar:
-
-```powershell
-npm ci
-npm run validate
-npm audit --audit-level=high
-```
-
-## Observações
-- A responsividade mobile preserva o dock de ações já existente.
-- Os controles visíveis do hero usam os mesmos destinos funcionais já existentes no projeto.
+Consulte `MAPEAMENTO-PROJETOS.md` e `AUDITORIA-FUNCIONALIDADES.md` para os detalhes da comparação e dos testes.

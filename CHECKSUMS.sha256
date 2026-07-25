@@ -1,8 +1,9 @@
 6c15ba5881f8917ac9e9b1273570e81db38be288ad45c6c752d2865188363698  ./.env.example
 c65a85d600f6444f50773d93646b1f964492a73532639170db6dadd01b0cb98e  ./.gitattributes
 70f7678928115da82a27c3f605508cb3ea07472071d17b85429d97824eea5de7  ./.gitignore
-846e86fc96eca3fcaf372b8dd05bd042bed6ed24637d3cadd175c31778f7732b  ./AUDITORIA-FUNCIONALIDADES.md
-bcad2a8503bef36915e57dd3349f706f7a8d30ae9e5d7d47f6e5088c0faa24a3  ./AUDITORIA.md
+e55bad60b0301cfaa9f177b669010367f6bd53a16d57017e1c44b7f5ec7ac58e  ./AUDITORIA-FUNCIONALIDADES.md
+9f20eafe3890042d546e85288bd16b3cac948184b9aa284afbf58863859e5106  ./AUDITORIA.md
+47853a747ef5c0df9120327b979c920a2f2a1738c1a34871e5d2899c2afc7cdd  ./MAPEAMENTO-PROJETOS.md
 f70d3d9b8580277d8d5301ce89c2f91d74b22066681407547849e47e9fb19563  ./README.md
 a9ccc4de2f71b454a9f798b6608db0dab66b6c0bffd2c7f4c80d19bb619ae990  ./api/chat.js
 686d1379242f039f16f061a11989d8d94091b322b8524e5064c7506f03546171  ./api/contact.js
@@ -22,7 +23,7 @@ b616444ca0da94522773d7ed370347a263f92d676212f93d204cb452e6d26aeb  ./public/css/c
 8ce21b86d7f4cef4f957009cf2b6965bda4db0653069f391e3a62937a1b4a341  ./public/css/hero-motion.css
 7530a46c271f5196f4cd27fdc670ae74af7a11a4bd4da4932c47c2eb64cbe9b0  ./public/css/hero-responsive-approved.css
 8347135247ddd04f5bac7f0e29fc477b8ae98b875addc08f109b91285384ccdf  ./public/css/hero-top-responsive.css
-ffd8a788dba4a08ab48dd146011a417934031e469316ebd5506e930dad49327b  ./public/css/main.css
+f88c48d7be8a3c3afd32299f5c4d8fc1d42fb9c3c4713991c4e33e58f74292fc  ./public/css/main.css
 d4f5982740f6b91fea26fccfceee98f06e5517c29611159ce691731f799b0bd1  ./public/css/wagner-top-sniper.css
 c99c3ba2199ab2d2ea169a0d73992d9fe82d1967dd6dd10dd179ba7bd6266116  ./public/css/wagner-visual-fix.css
 e94f93acf02cb6b7c68e150096a95f793784305e6330260e9d56bb9963ff1bcb  ./public/cv-wagner-persoli.txt
@@ -31,7 +32,7 @@ e94f93acf02cb6b7c68e150096a95f793784305e6330260e9d56bb9963ff1bcb  ./public/cv-wa
 f85706be7a855a139076d99f05c8b301097610b1875139c1d27837a3907e09c0  ./public/emulador/styles.css
 82b0a27ded4176339197e69bbd7f4b1eafc9b580174813a6f321480b299c6b8b  ./public/img/assistant-robot.webp
 bdbe0a7ae9aba9a1ed54345f0e3b5d7d4c0ff65982d0e32a2bf6fdc639b4faf5  ./public/img/hero-electric-scene.webp
-031360cbaa1b76c936dca71e345019f486104044372d1cc3a4e6296a75000f26  ./public/img/hero-fidelity-master.webp
+c3f7a56716023d25d2b2b8601964a35419328a3f78684e063e463b7b01939c9e  ./public/img/hero-fidelity-master.webp
 21f2f084cf63c824ebb12b7712be13ece99295e6cd9dbdb09f42c7d533722c14  ./public/img/hero-w-energy.webp
 ddad023168fefe6ee5fb461c98978ba86a4ee0ef18d67c73184e0f712c61f5aa  ./public/img/project-1.webp
 4f0cba816e1d11c1c550840cfb61fc41f2a12fe264ab8cc4a065645bc87ba2da  ./public/img/project-2.webp
@@ -39,7 +40,7 @@ ddad023168fefe6ee5fb461c98978ba86a4ee0ef18d67c73184e0f712c61f5aa  ./public/img/p
 df30f830730b9e7eb7363781a251aba02591bdfe8310b6dc94ed3eb20817b552  ./public/img/project-4.webp
 6953913d653933bf86aa6a0054d3ae8e03b4aaeb36fde6afed622aa6b8598c48  ./public/img/wp-concept-mark.webp
 8b399045a3049b30b1ebed3f3d15f02f246d5ecf9eee5b233e73fb16757f2ce7  ./public/img/wp-monogram.svg
-f874a9be9bd07e80fd901a8d02930b0c232a21bff31c24f0ec4115f755cb582b  ./public/index.html
+f4299ad37417154c273604ab675cd45bf5c40fa37e8546a6dc50ab5f6a6e525c  ./public/index.html
 470876e5db17d54350cd8f28c131b2d9bdbd0b087ec8c692a5ca58ea906d3958  ./public/js/hero-effects.js
 6ff3bbb7574137132f7da6b026e29263c8d43244c42dab4643d79faf9237dd50  ./public/js/hero-fidelity.js
 8fa603849cdf428af0763da57b51d42887252b6008706bdf3ab058fd136aca45  ./public/js/hero-motion.js
@@ -47,4 +48,5 @@ ca6617090b1b7f981e54fe3d18b33445d6fd344a24edbe09494b8322d27f7880  ./public/js/ma
 65e248eb31e0561bf4481b58deeea3dadfdae7a2c40623f86b7c5a8f7dc634e4  ./public/og-image.jpg
 cf3e056d423d1ff1b2d7d640132569a4fc6d2b43ab54c77fb70262129837daa3  ./tests/chat.test.js
 570198d72cd9bc8977db73313ee7b5a1248d60339405e708e75780cca0a94f2a  ./tests/contact.test.js
+d1639ed173465908b3da49a10a87d43abd96790efaf22f35081673a12aa82e99  ./tests/ui-contract.test.js
 3932d178c68d3cd2053c36b0efb0d80893f244335baf374b505207ceed675a4f  ./vercel.json

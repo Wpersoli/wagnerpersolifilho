@@ -1,29 +1,7 @@
-# Auditoria WAGNER.OS v2.9.7
+# Auditoria final — WAGNER.OS v2.9.7
 
-## Resultado
+Projeto aprovado após comparação entre a base mais atual e os pacotes funcionais anteriores.
 
-Projeto aprovado para entrega após restauração e validação do núcleo funcional do pacote anterior.
+A falha não estava no JavaScript do chat ou do modo apresentação. A causa era a corrupção de comentários no CSS principal, que invalidava o bloco de variáveis globais e deslocava controles fixos para fora da tela. O CSS estável foi recuperado do histórico do pacote antigo; o hero, as APIs e o conteúdo 2.9.7 foram mantidos.
 
-## Preservado/restaurado
-
-- Chat e integração `/api/chat`
-- Modo apresentação desktop e mobile
-- Botões, menu, ações rápidas, WhatsApp e retorno ao topo
-- Formulário e integração `/api/contact`
-- Terminal, HUD e efeitos do hero
-- Nova imagem e responsividade do hero
-
-## Correção aplicada
-
-Os controles flutuantes, painel do chat, menu móvel, banner LGPD e cabeçalho receberam camadas explícitas acima do hero em tela cheia, evitando que o hero impeça sua exibição/interação.
-
-## Limpeza segura
-
-Foram removidos somente arquivos de mídia sem qualquer referência no HTML, CSS, JavaScript, APIs, testes ou dados do projeto, além dos módulos legados `logo-video` também não utilizados. `.env.local` e `.git` não fazem parte do pacote de entrega.
-
-## Validação
-
-- Verificação sintática de APIs e JavaScript: aprovada
-- Testes automatizados: 13/13 aprovados
-- Chat: testes de contexto, sanitização, fallback e circuit breaker aprovados
-- Contato: validação, segurança de origem, limite de payload e envio simulado aprovados
+Consulte `MAPEAMENTO-PROJETOS.md` e `AUDITORIA-FUNCIONALIDADES.md` para os detalhes da comparação e dos testes.

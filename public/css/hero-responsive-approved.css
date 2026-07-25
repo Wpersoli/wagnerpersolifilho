@@ -161,3 +161,10 @@ body > header > .status-cluster {
     --mobile-header-space: calc(62px + env(safe-area-inset-top, 0px));
   }
 }
+
+/* Functional overlays must remain above the full-screen hero. */
+.fab-stack { z-index: 20010 !important; }
+.chat-panel { z-index: 20020 !important; }
+.mobile-nav { z-index: 20030 !important; }
+.cookie-banner { z-index: 20040 !important; }
+body > header { z-index: 20000 !important; }

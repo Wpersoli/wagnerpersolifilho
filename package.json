@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "vercel dev",
-    "check": "node --check api/chat.js && node --check api/contact.js && node --check public/js/main.js && node --check public/js/hero-effects.js && node --check public/js/hero-fidelity.js && node --check public/js/hero-motion.js && node --check public/js/logo-video.js",
+    "check": "node --check api/chat.js && node --check api/contact.js && node --check public/js/main.js && node --check public/js/hero-effects.js && node --check public/js/hero-fidelity.js && node --check public/js/hero-motion.js",
     "test": "node --test tests/*.test.js",
     "validate": "npm run check && npm test"
   }

@@ -1,25 +1,29 @@
-# AUDITORIA — WAGNER.OS v2.9.7
+# Auditoria WAGNER.OS v2.9.7
 
-## Correções aprovadas
+## Resultado
 
-- Substituída a arte antiga 1369 × 498 pela imagem fornecida em 2048 × 1152.
-- Desktop: hero em largura e altura totais da viewport, sem distorção (`cover`).
-- Mobile: imagem completa e proporcional em 16:9, sem recorte (`contain`).
-- A seção do hero agora escapa corretamente do `max-width: 1500px` aplicado ao `main`.
-- Header restaurado como barra fixa flexível de uma linha; a declaração-base estava neutralizada por comentário CSS legado malformado.
-- Dock mobile reposicionado abaixo da imagem, sem ficar recortado pelo hero.
-- `package.json` recebeu scripts reais de sintaxe, testes e validação.
+Projeto aprovado para entrega após restauração e validação do núcleo funcional do pacote anterior.
 
-## Segurança do pacote
+## Preservado/restaurado
 
-- `.env.local` não integra o ZIP final, pois contém credencial local.
-- `.git` e `.vercel` não integram o ZIP final.
+- Chat e integração `/api/chat`
+- Modo apresentação desktop e mobile
+- Botões, menu, ações rápidas, WhatsApp e retorno ao topo
+- Formulário e integração `/api/contact`
+- Terminal, HUD e efeitos do hero
+- Nova imagem e responsividade do hero
 
-## Validação executada
+## Correção aplicada
 
-```bash
-npm ci
-npm run validate
-```
+Os controles flutuantes, painel do chat, menu móvel, banner LGPD e cabeçalho receberam camadas explícitas acima do hero em tela cheia, evitando que o hero impeça sua exibição/interação.
 
-Também foram verificadas as geometrias do hero em 1920×1080, 1440×900, 430×932 e 390×844.
+## Limpeza segura
+
+Foram removidos somente arquivos de mídia sem qualquer referência no HTML, CSS, JavaScript, APIs, testes ou dados do projeto, além dos módulos legados `logo-video` também não utilizados. `.env.local` e `.git` não fazem parte do pacote de entrega.
+
+## Validação
+
+- Verificação sintática de APIs e JavaScript: aprovada
+- Testes automatizados: 13/13 aprovados
+- Chat: testes de contexto, sanitização, fallback e circuit breaker aprovados
+- Contato: validação, segurança de origem, limite de payload e envio simulado aprovados

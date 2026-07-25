@@ -8,8 +8,9 @@
     "node": "22.x"
   },
   "scripts": {
-    "check": "node --check public/js/main.js && node --check public/js/hero-effects.js && node --check public/js/hero-fidelity.js && node --check public/js/hero-motion.js && node --check public/emulador/script.js && node --check api/chat.js && node --check api/contact.js && node --check tests/chat.test.js && node --check tests/contact.test.js",
-    "test": "node --test tests/chat.test.js tests/contact.test.js",
+    "dev": "vercel",
+    "check": "...",
+    "test": "...",
     "validate": "npm run check && npm test"
   }
 }

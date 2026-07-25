@@ -1,0 +1,335 @@
+/* =====================================================================
+   WAGNER.OS — HERO FULLSCREEN v3.0.0
+   Imagem hero-fidelity-master.webp: 100vw × 100svh, borda-a-borda.
+   Header position:fixed flutua sobre a imagem (full-bleed real).
+   Preserva todos os efeitos, animações, overlay, chat e apresentação.
+   ===================================================================== */
+
+:root {
+  --fidelity-stage-ratio: 1369 / 498;
+}
+
+/* ── SECTION: preenchimento total, sem padding ──────────────────────── */
+.fidelity-hero.cyber-hero {
+  --hero-top-shell-gutter: 0px;
+  --hero-top-top-space: 0px;
+  --hero-top-bottom-space: 0px;
+  padding: 0 !important;
+  min-height: 100svh !important;
+  height: 100svh !important;
+  background:
+    radial-gradient(circle at 50% -20%, rgba(22, 118, 220, .12), transparent 40%),
+    linear-gradient(180deg, rgba(1, 6, 12, .98), rgba(1, 6, 12, .82) 14%, rgba(1, 6, 12, .95) 100%) !important;
+}
+
+.fidelity-hero.cyber-hero::before,
+.fidelity-hero.cyber-hero::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* ── SHELL: ocupa 100% da altura da section ─────────────────────────── */
+.fidelity-hero .hero-fidelity-shell {
+  width: 100vw !important;
+  max-width: none !important;
+  height: 100% !important;
+  margin: 0 calc(50% - 50vw) !important;
+  padding-inline: 0 !important;
+  background: transparent !important;
+}
+
+/* ── STAGE: 100vw × 100%, sem aspect-ratio ──────────────────────────── */
+.fidelity-hero .hero-fidelity-stage.hero-brand-stage {
+  width: 100vw !important;
+  max-width: none !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  aspect-ratio: unset !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: #02070d !important;
+  box-shadow:
+    inset 0 1px 0 rgba(98, 224, 255, .18),
+    0 28px 90px rgba(0, 0, 0, .44),
+    0 0 90px rgba(8, 125, 255, .10) !important;
+}
+
+/* ── IMAGEM: cover centralizado, sem distorção ──────────────────────── */
+.fidelity-hero .hero-fidelity-image,
+.fidelity-hero .hero-motion-canvas,
+.fidelity-hero .hero-lightning-canvas,
+.fidelity-hero .hero-fidelity-reflection,
+.fidelity-hero .hero-fidelity-sheen,
+.fidelity-hero .hero-fidelity-vignette {
+  border-radius: 0 !important;
+}
+
+.fidelity-hero .hero-fidelity-image {
+  object-fit: cover !important;
+  object-position: center center !important;
+  filter: saturate(1.02) contrast(1.02) brightness(.99) !important;
+}
+
+/* ── Elementos de efeito preservados ────────────────────────────────── */
+.fidelity-hero .hero-stage-bleed,
+.fidelity-hero .hero-logo-cutout,
+.fidelity-hero .hero-logo-contour,
+.fidelity-hero .hero-logo-lightning,
+.fidelity-hero .hero-copy-energy,
+.fidelity-hero .hero-top-energy-rail,
+.fidelity-hero .hero-logo-aura,
+.fidelity-hero .hero-logo-sweep,
+.fidelity-hero .hero-logo-edge-energy,
+.fidelity-hero .hero-logo-core-flare,
+.fidelity-hero .hero-platform-energy,
+.fidelity-hero .hero-platform-ring {
+  display: none !important;
+}
+
+.fidelity-hero .hero-lightning-canvas {
+  opacity: .64 !important;
+  filter: drop-shadow(0 0 6px rgba(82, 220, 255, .74));
+}
+
+.fidelity-hero .hero-electric-flash {
+  background:
+    radial-gradient(circle at 25% 78%, rgba(236, 253, 255, .55), rgba(53, 187, 255, .18) 9%, transparent 28%),
+    linear-gradient(105deg, transparent 26%, rgba(210, 248, 255, .10) 39%, transparent 50%);
+}
+
+.fidelity-hero .hero-energy-column {
+  left: 25.2% !important;
+  top: 31.5% !important;
+  width: 4.8% !important;
+  height: 46% !important;
+  opacity: .26 !important;
+}
+
+.fidelity-hero .hero-fidelity-glow--left {
+  left: 4%;
+  top: 10%;
+  width: 32%;
+  height: 64%;
+  opacity: .10;
+}
+
+.fidelity-hero .hero-fidelity-glow--right {
+  right: 10%;
+  top: 20%;
+  width: 24%;
+  height: 40%;
+  opacity: .06;
+}
+
+.fidelity-hero .hero-fidelity-particles { opacity: .12; }
+.fidelity-hero .hero-scanline           { opacity: .14 !important; }
+.fidelity-hero .hero-fidelity-reflection { opacity: .15; }
+
+.fidelity-hero .hero-fidelity-vignette {
+  background:
+    linear-gradient(90deg, rgba(0, 5, 10, .22), transparent 10%, transparent 90%, rgba(0, 5, 10, .24)),
+    linear-gradient(180deg, rgba(0, 4, 8, .06), transparent 14%, transparent 86%, rgba(0, 3, 6, .16));
+}
+
+/* ── Overlay de controles reais ─────────────────────────────────────── */
+.fidelity-hero .hero-clean-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 13;
+  pointer-events: none;
+}
+
+.fidelity-hero .hero-clean-actions,
+.fidelity-hero .hero-clean-socials {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  pointer-events: auto;
+}
+
+.fidelity-hero .hero-clean-actions {
+  left: 52.8%;
+  top: 68.2%;
+  transform: translateX(-1%);
+  gap: clamp(10px, .8vw, 16px);
+}
+
+.fidelity-hero .hero-clean-socials {
+  right: clamp(22px, 2.6vw, 48px);
+  bottom: clamp(18px, 2.2vw, 34px);
+  gap: clamp(9px, .8vw, 14px);
+}
+
+.fidelity-hero .hero-clean-btn,
+.fidelity-hero .hero-clean-socials a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .65em;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: .16em;
+  font-family: "JetBrains Mono", monospace;
+  color: #e7fbff;
+  border: 1px solid rgba(77, 214, 255, .45);
+  background: linear-gradient(180deg, rgba(3, 14, 26, .92), rgba(2, 8, 16, .84));
+  box-shadow:
+    inset 0 0 0 1px rgba(178, 241, 255, .08),
+    0 0 20px rgba(31, 174, 255, .12);
+  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease, background .2s ease;
+}
+
+.fidelity-hero .hero-clean-btn {
+  min-width: clamp(150px, 12vw, 208px);
+  min-height: clamp(34px, 2.8vw, 46px);
+  padding: clamp(9px, .72vw, 12px) clamp(14px, 1.05vw, 18px);
+  font-size: clamp(10px, .78vw, 13px);
+  border-radius: 4px;
+  backdrop-filter: blur(8px);
+}
+
+.fidelity-hero .hero-clean-btn--primary {
+  color: #f5fdff;
+  background: linear-gradient(180deg, rgba(27, 138, 255, .92), rgba(4, 104, 222, .92));
+  box-shadow:
+    inset 0 0 0 1px rgba(215, 248, 255, .12),
+    0 0 24px rgba(32, 170, 255, .24);
+}
+
+.fidelity-hero .hero-clean-socials a {
+  width: clamp(36px, 2.8vw, 44px);
+  height: clamp(36px, 2.8vw, 44px);
+  border-radius: 4px;
+  font-size: clamp(12px, .92vw, 15px);
+  font-weight: 700;
+}
+
+.fidelity-hero .hero-clean-btn:hover,
+.fidelity-hero .hero-clean-btn:focus-visible,
+.fidelity-hero .hero-clean-socials a:hover,
+.fidelity-hero .hero-clean-socials a:focus-visible {
+  transform: translateY(-2px);
+  border-color: rgba(197, 248, 255, .92);
+  box-shadow:
+    0 0 0 1px rgba(46, 204, 255, .52),
+    0 0 28px rgba(24, 177, 255, .28),
+    inset 0 0 18px rgba(151, 236, 255, .09);
+  outline: none;
+}
+
+.fidelity-hero .hero-hotspot {
+  display: none !important;
+}
+
+.fidelity-hero .hero-hotspot--projects { left: 52.8%; top: 68.2%; width: 14.6%; height: 5.9%; }
+.fidelity-hero .hero-hotspot--cv       { left: 68.2%; top: 68.2%; width: 14.8%; height: 5.9%; }
+.fidelity-hero .hero-hotspot--github   { right: 14.8%; left: auto; top: auto; bottom: 4.1%; width: 3.2%; height: 8.2%; }
+.fidelity-hero .hero-hotspot--linkedin { right: 10.5%; left: auto; top: auto; bottom: 4.1%; width: 3.2%; height: 8.2%; }
+.fidelity-hero .hero-hotspot--x        { right: 6.2%;  left: auto; top: auto; bottom: 4.1%; width: 3.2%; height: 8.2%; }
+.fidelity-hero .hero-hotspot--email    { right: 1.9%;  left: auto; top: auto; bottom: 4.1%; width: 3.2%; height: 8.2%; }
+
+.fidelity-hero .fidelity-energy-toggle.hero-energy-toggle {
+  top: 2.6% !important;
+  right: 1.7% !important;
+}
+
+.fidelity-hero + .brand-principles {
+  width: 100vw !important;
+  max-width: none !important;
+  margin: 0 calc(50% - 50vw) !important;
+}
+
+/* ── TABLET 1280px ─────────────────────────────────────────────────── */
+@media (max-width: 1280px) {
+  .fidelity-hero .hero-clean-actions {
+    left: 52%;
+    top: 67.6%;
+  }
+}
+
+/* ── TABLET 1024px ─────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .fidelity-hero.cyber-hero {
+    height: 100svh !important;
+    min-height: 100svh !important;
+    padding: 0 !important;
+  }
+  .fidelity-hero .hero-clean-actions {
+    left: 51%;
+    top: 67.2%;
+    transform: translateX(0);
+  }
+  .fidelity-hero .hero-clean-btn {
+    min-width: clamp(124px, 16vw, 168px);
+    font-size: clamp(9px, .95vw, 11px);
+  }
+}
+
+/* ── MOBILE 760px ──────────────────────────────────────────────────── */
+@media (max-width: 760px) {
+  .fidelity-hero.cyber-hero {
+    padding: 0 !important;
+    min-height: 100svh !important;
+    height: 100svh !important;
+  }
+
+  .fidelity-hero .hero-fidelity-shell {
+    height: 100% !important;
+  }
+
+  .fidelity-hero .hero-fidelity-stage.hero-brand-stage {
+    width: 100vw !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    aspect-ratio: unset !important;
+  }
+
+  .fidelity-hero .hero-fidelity-image {
+    object-fit: cover !important;
+    object-position: center center !important;
+  }
+
+  .fidelity-hero .hero-clean-overlay {
+    display: none !important;
+  }
+
+  .fidelity-hero .hero-hotspot {
+    display: none !important;
+  }
+
+  .fidelity-hero .hero-lightning-canvas {
+    opacity: .54 !important;
+  }
+}
+
+/* ── MOBILE SMALL 430px ─────────────────────────────────────────────── */
+@media (max-width: 430px) {
+  .fidelity-hero.cyber-hero {
+    padding: 0 !important;
+    min-height: 100svh !important;
+    height: 100svh !important;
+  }
+
+  .fidelity-hero .hero-fidelity-shell {
+    height: 100% !important;
+  }
+
+  .fidelity-hero .hero-fidelity-stage.hero-brand-stage {
+    width: 100vw !important;
+    height: 100% !important;
+    aspect-ratio: unset !important;
+  }
+
+  .fidelity-hero .hero-fidelity-image {
+    object-fit: cover !important;
+    object-position: center 30% !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fidelity-hero .hero-clean-btn,
+  .fidelity-hero .hero-clean-socials a {
+    transition: none;
+  }
+}

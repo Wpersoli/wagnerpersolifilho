@@ -1,112 +1,60 @@
 # WAGNER.OS — AI Systems Lab
 
-Portfólio profissional de Wagner Persoli F. com interface Cyber Metal, modo apresentação, assistente Gemini, emulador responsivo e formulário de contato por e-mail.
+Portfólio profissional de Wagner Persoli F. com identidade **Cyber Metal**, assistente Gemini, modo apresentação, emulador responsivo e formulário de contato por e-mail.
 
-**Produção principal:** https://wagnerpersolifilho.vercel.app
-
-**Domínio autorizado:** https://wagnerpersoli.vercel.app
+**Produção:** `https://wagnerpersolifilho.vercel.app`
 
 ## Versão
 
-`2.2.0` — refinamento visual Cyber Metal, reorganização dos painéis e auditoria funcional completa sem regressão dos recursos existentes.
+`2.9.4` — **Top Full-Bleed Sniper Refinement**.
 
-## Stack
+Esta evolução concentra o trabalho no topo do site e mantém os fluxos funcionais existentes.
 
-- Frontend: HTML5, CSS3 e JavaScript puro
-- Backend: Vercel Serverless Functions em Node.js 22
-- IA principal: `gemini-3.5-flash`
-- Contingência: `gemini-3.1-flash-lite`
-- E-mail: endpoint `/api/contact`
-- Hospedagem: Vercel
+## Evoluções do hero
 
-## Interface Cyber Metal 2.2
-
-- monograma WP vetorial com acabamento metálico, neon e plataforma luminosa
-- hero cinematográfico com composição mais próxima da identidade visual aprovada
-- header técnico com acesso rápido ao terminal
-- quatro cards de projetos e quatro módulos consolidados de stack
-- terminal e painel Wagner AI integrados em um dashboard operacional
-- contato em três painéis: canais, formulário e identidade
-- footer técnico, HUD e imagem Open Graph atualizados
-- responsividade validada em desktop, tablet e celular
-- camadas visuais em `public/css/main.css`, `public/css/cyber-v2.css` e `public/css/cyber-v3.css`
+- cena principal em largura total, conectada às bordas da viewport;
+- command rail superior estendido até as bordas;
+- monograma WP recortado em uma camada independente e transparente;
+- camada de brilho neon separada do monograma principal;
+- contornos SVG energizados com fluxo contínuo;
+- raios Canvas guiados por pontos do monograma;
+- ramificações, flashes e partículas de impacto;
+- parallax independente entre cena, monograma e painel textual;
+- modos `ENERGY // AUTO` e `ENERGY // MAX` com atalho `E`;
+- qualidade adaptativa conforme largura e capacidade do dispositivo;
+- pausa automática quando o hero sai da tela ou a aba fica oculta;
+- suporte a `prefers-reduced-motion`.
 
 ## Funcionalidades preservadas
 
-- chat real com Gemini e fallback local
-- modo apresentação em desktop, tablet e celular
-- formulário com envio por e-mail e confirmação visual
-- menu desktop e drawer mobile
-- botões, links externos e navegação por âncoras
-- emulador responsivo com dispositivos, rotação, zoom e resolução personalizada
-- boot cinematográfico, Canvas, terminal digitado, HUD e animações
-- acessibilidade básica por teclado, nomes acessíveis e estados ARIA
+- chat Gemini, modelo secundário, circuit breaker e fallback local;
+- modo apresentação em desktop e mobile;
+- formulário com envio por e-mail e validações do endpoint;
+- botões, links, redes sociais, WhatsApp e download do currículo;
+- menu desktop e mobile;
+- emulador responsivo;
+- boot cinematográfico, terminal e HUD.
 
-## Chat
-
-O endpoint `/api/chat` combina uma base profissional oficial com respostas gerais do modelo. A implementação inclui retry, modelo secundário, circuit breaker, rate limit, sanitização, respostas locais de data/hora de São Paulo e fallback profissional.
-
-## Formulário de contato
-
-O endpoint `/api/contact` usa validação no frontend e backend, honeypot, rate limit, limite de payload, sanitização HTML, proteção de origem e envio pelo provider configurado no ambiente.
-
-## Estrutura
-
-```text
-wagnerpersolifilho/
-├── api/
-│   ├── chat.js
-│   └── contact.js
-├── data/
-│   ├── cv.txt
-│   ├── knowledge-data.js
-│   └── knowledge.json
-├── public/
-│   ├── css/
-│   │   ├── main.css
-│   │   ├── cyber-v2.css
-│   │   └── cyber-v3.css
-│   ├── emulador/
-│   ├── img/wp-monogram.svg
-│   ├── js/main.js
-│   ├── index.html
-│   └── og-image.jpg
-├── tests/
-│   ├── chat.test.js
-│   └── contact.test.js
-├── AUDITORIA.md
-├── CHECKSUMS.sha256
-├── .env.example
-├── package.json
-├── package-lock.json
-└── vercel.json
-```
-
-## Validação local
+## Como rodar
 
 ```powershell
+cd C:\Projetos\wagnerpersolifilho
 npm ci
 npm run validate
 npm audit --audit-level=high
-vercel dev
+npx vercel@latest dev
 ```
 
 Abra `http://localhost:3000`.
 
-## Variáveis de ambiente
 
-```env
-GEMINI_API_KEY=
-GEMINI_MODEL=gemini-3.5-flash
-GEMINI_FALLBACK_MODEL=gemini-3.1-flash-lite
-GEMINI_PRIMARY_COOLDOWN_MS=120000
-CHAT_RATE_LIMIT_MAX=8
+Atualização 2.9.4: refinado o topo/hero para manter proporção mais estável em desktop e mobile, sem alterar chat, modo apresentação, formulário e demais interações.
 
-RESEND_API_KEY=
-CONTACT_TO_EMAIL=wagnerpersoli@hotmail.com
-CONTACT_FROM_EMAIL=WAGNER.OS <onboarding@resend.dev>
-CONTACT_RATE_LIMIT_MAX=5
-CONTACT_MAX_BODY_BYTES=16384
-```
 
-Marque `GEMINI_API_KEY` e `RESEND_API_KEY` como sensíveis. Nunca compacte `.env.local`, `.vercel`, `.git`, `node_modules` ou credenciais.
+## Refinamento cirúrgico do topo — 2.9.4
+
+- header somente com WAGNER.OS e subtítulo;
+- cenário tecnológico expandido até as bordas sem ampliar o conteúdo central;
+- painel translúcido da área tipográfica removido;
+- rótulo decorativo ENERGY MOTION // LIVE removido;
+- scripts e funcionalidades críticas preservados sem alteração.

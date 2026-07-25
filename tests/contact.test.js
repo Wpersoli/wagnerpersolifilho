@@ -90,7 +90,7 @@ test('handler envia mensagem com provider simulado', async function () {
   global.fetch = async function (url, options) {
     assert.equal(url, 'https://api.resend.com/emails');
     assert.equal(options.method, 'POST');
-    assert.equal(options.headers['User-Agent'], 'WAGNER.OS/2.2.0');
+    assert.equal(options.headers['User-Agent'], 'WAGNER.OS/2.7.0');
     return { ok: true, status: 200, json: async function () { return { id: 'email_test_123' }; } };
   };
 

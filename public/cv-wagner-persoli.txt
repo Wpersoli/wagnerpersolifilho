@@ -1,0 +1,137 @@
+WAGNER PERSOLI FILHO
+Nome de exibição: Wagner Persoli F.
+IT Specialist | Full-Stack Developer | AI Developer | Digital Founder
+
+CONTATO PÚBLICO
+Localização: Vila Galvão, Guarulhos - SP, Brasil
+Telefone/WhatsApp: +55 11 98150-4061
+E-mail: wagnerpersoli@hotmail.com
+LinkedIn: linkedin.com/in/wagner-persoli-f-3004bb91
+GitHub: github.com/Wpersoli
+Portfólio: wagnerpersolifilho.vercel.app
+
+RESUMO PROFISSIONAL
+Profissional de TI com mais de 12 anos de experiência em ambientes corporativos críticos e outsourcing. Atua em suporte técnico N1/N2/N3, infraestrutura, gestão de serviços, desenvolvimento Full-Stack, automação e inteligência artificial. Possui histórico em empresas como Apple, TIVIT, Infoplus, ConnectCom BPO e IT2B, além de atuação autônoma em desenvolvimento e IA desde 2018.
+
+COMPETÊNCIAS
+- Suporte N1/N2/N3, Service Desk e Helpdesk
+- ITIL v3/v4, gestão de incidentes, problemas e mudanças
+- SLA, TMA, FCR e KPIs
+- Windows Server, Active Directory, Microsoft 365 e Office 365
+- Microsoft Azure, redes, DNS, VPN e virtualização
+- HTML, CSS, JavaScript, React, Node.js e Python
+- APIs REST, Git, Docker e CI/CD
+- Automação, RPA, integração de LLMs e APIs de IA
+- Segurança da Informação, LGPD e documentação técnica
+- Ecossistema Apple: macOS, iOS, iCloud e AppleCare
+- Gestão de projetos, processos, requisitos e atendimento corporativo
+
+EXPERIÊNCIA PROFISSIONAL
+
+INFOPLUS
+Cargo: IT Specialist
+Período informado: março de 2022 a 2026
+- Suporte técnico especializado em ambientes corporativos de alta complexidade.
+- Administração de usuários, acessos, Active Directory, Office 365 e sistemas internos.
+- Gestão de incidentes, problemas e mudanças com práticas ITIL.
+- Monitoramento de SLA e indicadores como TMA e FCR.
+- Configuração e manutenção de redes, VPN, DNS e servidores físicos e virtuais.
+Observação: o mês de encerramento e o motivo de saída não estão documentados.
+
+APPLE INC. (VIA PARCEIRO AUTORIZADO)
+Cargo: Advisor - Suporte Apple
+Período: janeiro de 2020 a novembro de 2021
+- Suporte técnico avançado a macOS, iOS, iCloud e AppleCare.
+- Atendimento por voz, chat e e-mail.
+- Diagnóstico de falhas de software, hardware e rede.
+- Colaboração com equipes globais em casos críticos.
+
+AUTÔNOMO
+Cargo: Desenvolvedor Full-Stack e Consultor de IA
+Período: janeiro de 2018 ao presente
+- Desenvolvimento de aplicações web completas.
+- Criação e integração de soluções de IA e automação.
+- Levantamento de requisitos, documentação e entrega de MVPs.
+- Administração de servidores, hospedagem, domínios e pipelines CI/CD.
+
+CONNECTCOM BPO
+Cargo: Help Desk Analyst
+Período: novembro de 2016 a março de 2019
+- Suporte N1/N2 corporativo.
+- Gestão de chamados e SLA.
+- Atendimento multicanal e escalonamento ao N3.
+
+IT2B TECNOLOGIA
+Cargo: Pleno Service Desk Analyst
+Período: janeiro de 2015 a março de 2016
+- Análise e resolução de incidentes.
+- Administração de usuários e acessos.
+- Configuração de endpoints e suporte a aplicações.
+
+TIVIT
+Cargo: Help Desk Analyst
+Período: maio de 2012 a maio de 2014
+- Suporte em ambiente corporativo de grande porte.
+- Registro e gerenciamento de chamados.
+- Diagnóstico de falhas e suporte presencial e remoto.
+
+ORBITALL (GRUPO ITAÚ)
+Cargo: Investment Banking Analyst
+Período: janeiro de 2008 a agosto de 2009
+- Apoio a operações de back-office em serviços financeiros.
+- Análise de processos e geração de relatórios.
+- Apoio a equipes de atendimento corporativo.
+
+FORMAÇÃO
+Centro Universitário ENIAC
+Análise e Desenvolvimento de Sistemas
+Período: 2012 a 2015
+
+CERTIFICAÇÕES E CURSOS INFORMADOS
+- Gestão Estratégica de TI - ITIL (Fundamentos)
+- Segurança da Informação
+- Lógica de Programação - Certificação ICS
+- Fundamentos de Redes
+- Microsoft Certified (MCP)
+- Client Support Analyst - UOL
+
+IDIOMAS
+- Português: nativo
+- Inglês: proficiência profissional completa
+- Espanhol: proficiência profissional intermediária
+
+PROJETOS DOCUMENTADOS NO PORTFÓLIO
+- Device Simulator Engine (Brutal Dev Emulator): plataforma de emulação responsiva multi-device em tempo real.
+- AI Systems & Automation: motor de automação com inteligência artificial integrada.
+- Automation Engine: sistemas de automação de processos e fluxos digitais.
+- Premium Dashboards: painéis analíticos avançados, em desenvolvimento.
+
+INFORMAÇÕES DE RECRUTAMENTO
+Atualização: 17 de julho de 2026
+- Nome completo: Wagner Persoli Filho.
+- Idade informada: 36 anos. Não recalcular sem data de nascimento.
+- Estado civil: solteiro.
+- Filhos: não possui.
+- Disponibilidade de início: 1 dia, dependendo do alinhamento com a empresa.
+- Turno: sem preferência fixa; sujeito ao combinado.
+- Modelo de trabalho: preferência por home office, com disponibilidade para presencial.
+- Contratação: aceita CLT ou PJ.
+- Remuneração informada: R$ 20 a R$ 30 por hora.
+- Remuneração em dólar informada: US$ 15 a US$ 25 por hora.
+- Deslocamento: por transporte público, considera um ônibus intermunicipal de Guarulhos até o metrô Tucuruvi, totalizando duas conduções na ida e duas na volta. A viabilidade depende da proposta e do local da empresa.
+
+INTERESSES E LAZER
+- Desenvolvimento de sistemas.
+- Inteligência artificial e automação.
+- Futebol aos finais de semana.
+- Viagens e filmes.
+- Confraternizações com amigos e familiares.
+
+INFORMAÇÕES NÃO DOCUMENTADAS
+- Data de nascimento.
+- Endereço residencial completo.
+- Motivo de saída do último emprego.
+- Mês exato de encerramento na Infoplus.
+- Referências profissionais.
+- Documentos pessoais.
+- Informações médicas, religiosas ou políticas.

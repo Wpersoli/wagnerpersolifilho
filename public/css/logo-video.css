@@ -1,0 +1,170 @@
+/* WAGNER.OS v2.10.0 — animated video identity */
+.brand-video-link {
+  min-width: 218px;
+  gap: 9px;
+  overflow: visible;
+}
+
+.brand-video-mark {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  flex: 0 0 52px;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid rgba(82, 220, 255, .16);
+  background: radial-gradient(circle at 50% 50%, rgba(29, 170, 215, .12), rgba(0, 5, 10, .86) 72%);
+  box-shadow: inset 0 0 18px rgba(56, 207, 255, .06), 0 0 18px rgba(0, 169, 255, .08);
+  clip-path: polygon(9% 0, 91% 0, 100% 9%, 100% 91%, 91% 100%, 9% 100%, 0 91%, 0 9%);
+}
+
+.brand-video-mark::before,
+.brand-video-mark::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.brand-video-mark::before {
+  inset: 0;
+  background: linear-gradient(115deg, transparent 31%, rgba(216, 251, 255, .55) 48%, transparent 64%);
+  transform: translateX(-130%);
+  animation: logo-video-scan 4.6s cubic-bezier(.2,.7,.2,1) infinite;
+  mix-blend-mode: screen;
+}
+
+.brand-video-mark::after {
+  inset: 2px;
+  border: 1px solid rgba(145, 238, 255, .12);
+  clip-path: inherit;
+  box-shadow: 0 0 11px rgba(76, 217, 255, .16);
+}
+
+.brand-motion-video,
+.brand-motion-fallback {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.brand-motion-video {
+  z-index: 2;
+  opacity: 0;
+  transition: opacity .35s ease, filter .35s ease;
+}
+
+.brand-motion-video.is-ready {
+  opacity: 1;
+}
+
+.brand-motion-fallback {
+  z-index: 1;
+  opacity: 1;
+  transition: opacity .35s ease;
+}
+
+.brand-motion-video.is-ready + .brand-motion-fallback {
+  opacity: 0;
+}
+
+.header-brand-video {
+  width: 84px;
+  height: 58px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
+  mix-blend-mode: screen;
+  filter: saturate(1.18) brightness(1.12) drop-shadow(0 0 8px rgba(93, 229, 255, .45));
+}
+
+.brand-video-link:hover .header-brand-video,
+.brand-video-link:focus-visible .header-brand-video {
+  filter: saturate(1.45) brightness(1.28) drop-shadow(0 0 14px rgba(130, 239, 255, .72));
+}
+
+.boot-signature-video {
+  width: min(780px, 88vw);
+  margin-inline: auto;
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+}
+
+.boot-video-shell {
+  position: relative;
+  width: min(760px, 86vw);
+  aspect-ratio: 1024 / 184;
+  overflow: hidden;
+  isolation: isolate;
+  background: transparent;
+  filter: drop-shadow(0 0 18px rgba(83, 224, 255, .3));
+}
+
+.boot-video-shell::after {
+  content: "";
+  position: absolute;
+  inset: -16%;
+  z-index: 4;
+  pointer-events: none;
+  background: linear-gradient(110deg, transparent 34%, rgba(231, 253, 255, .48) 49%, transparent 63%);
+  transform: translateX(-115%);
+  animation: logo-video-scan 3.8s ease-in-out infinite 1.4s;
+  mix-blend-mode: screen;
+}
+
+.boot-brand-video {
+  object-fit: contain;
+  mix-blend-mode: screen;
+  filter: saturate(1.25) brightness(1.12) contrast(1.06);
+}
+
+.brand-motion-video.is-burst {
+  animation: logo-video-burst .64s ease-out;
+}
+
+.brand-video-paused .brand-motion-video {
+  opacity: 0;
+}
+
+@keyframes logo-video-scan {
+  0%, 58% { transform: translateX(-135%); opacity: 0; }
+  66% { opacity: .9; }
+  86% { opacity: .35; }
+  100% { transform: translateX(135%); opacity: 0; }
+}
+
+@keyframes logo-video-burst {
+  0% { filter: brightness(1) saturate(1); }
+  32% { filter: brightness(1.8) saturate(1.75) drop-shadow(0 0 18px rgba(171, 247, 255, .9)); }
+  100% { filter: brightness(1.08) saturate(1.18); }
+}
+
+@media (max-width: 1120px) {
+  .brand-video-link { min-width: 176px; }
+  .brand-video-mark { width: 46px; height: 46px; flex-basis: 46px; }
+}
+
+@media (max-width: 720px) {
+  .brand-video-link { min-width: 0; gap: 6px; }
+  .brand-video-mark { width: 42px; height: 42px; flex-basis: 42px; }
+  .header-brand-video { width: 72px; height: 48px; }
+  .boot-signature-video { width: 94vw; }
+  .boot-video-shell { width: 92vw; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-video-mark::before,
+  .boot-video-shell::after,
+  .brand-motion-video.is-burst {
+    animation: none !important;
+  }
+}

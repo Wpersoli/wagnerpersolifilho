@@ -302,7 +302,7 @@ var logLines = [
   { t: '> 2023 — mergulho em IA aplicada: modelos preditivos, pipelines de dados.' },
   { t: '> 2024 — integração de LLMs em produtos internos. Automação vira inteligência.' },
   { t: '> 2025 — Premium Dashboards e Device Simulator Engine entram em desenvolvimento.' },
-  { t: '> 2026 — este console. wagner.pers.f v2.2.0 — status: em constante deploy.' },
+  { t: '> 2026 — este console. wagner.pers.f v2.7.0 — status: em constante deploy.' },
   { p: 'system', t: 'log --status' },
   { t: '> 20+ sistemas publicados · 100K+ linhas versionadas · uptime 24/7.' },
 ];
@@ -842,7 +842,7 @@ var TOUR = [
   },
   {
     sel: '.hero',
-    mobileSel: '.hero-title',
+    mobileSel: '.hero-fidelity-stage',
     icon: '⚡',
     title: 'Banner Principal',
     desc: 'São a primeira impressão do seu site. Apresentam sua marca, destacam as informações mais importantes, direcionam o visitante para as principais ações e tornam a navegação mais clara, profissional e atrativa.'
@@ -1532,3 +1532,48 @@ if (contactForm) {
 }
 
 })(); // end IIFE
+
+/* ================================================================
+   HERO POINTER FIELD — progressive enhancement only
+   Uses CSS custom properties so the hero remains fully visible and usable
+   when JavaScript, motion or a precise pointer is unavailable.
+   ================================================================ */
+(function initHeroPointerField() {
+  'use strict';
+  var hero = document.querySelector('.cyber-hero');
+  if (!hero || !window.matchMedia) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!window.matchMedia('(pointer: fine)').matches) return;
+
+  var frame = 0;
+  var lastEvent = null;
+  function render() {
+    frame = 0;
+    if (!lastEvent) return;
+    var rect = hero.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    var x = Math.max(0, Math.min(1, (lastEvent.clientX - rect.left) / rect.width));
+    var y = Math.max(0, Math.min(1, (lastEvent.clientY - rect.top) / rect.height));
+    hero.style.setProperty('--hero-pointer-x', (x * 100).toFixed(2) + '%');
+    hero.style.setProperty('--hero-pointer-y', (y * 100).toFixed(2) + '%');
+    hero.style.setProperty('--hero-ry', ((x - .5) * 5.2).toFixed(2) + 'deg');
+    hero.style.setProperty('--hero-rx', ((.5 - y) * 3.8).toFixed(2) + 'deg');
+    hero.style.setProperty('--hero-tx', ((x - .5) * 5).toFixed(2) + 'px');
+    hero.style.setProperty('--hero-ty', ((y - .5) * 3).toFixed(2) + 'px');
+  }
+  hero.addEventListener('pointermove', function(event) {
+    lastEvent = event;
+    if (!frame) frame = window.requestAnimationFrame(render);
+  }, { passive: true });
+  hero.addEventListener('pointerleave', function() {
+    lastEvent = null;
+    if (frame) window.cancelAnimationFrame(frame);
+    frame = 0;
+    hero.style.setProperty('--hero-pointer-x', '28%');
+    hero.style.setProperty('--hero-pointer-y', '43%');
+    hero.style.setProperty('--hero-rx', '0deg');
+    hero.style.setProperty('--hero-ry', '0deg');
+    hero.style.setProperty('--hero-tx', '0px');
+    hero.style.setProperty('--hero-ty', '0px');
+  }, { passive: true });
+})();

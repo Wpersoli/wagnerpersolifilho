@@ -1,0 +1,171 @@
+/* =====================================================================
+   WAGNER.OS — TOP HERO RESPONSIVE REFINEMENT v3.0.0
+   Full-screen fill mode: hero-fidelity-master.webp ocupa 100vw × 100svh.
+   Header position:fixed flutua sobre a imagem (full-bleed).
+   Preserva chat, apresentação, efeitos, animações e demais módulos.
+   ===================================================================== */
+
+/* ── SECTION: preenchimento total da viewport ──────────────────────── */
+.fidelity-hero.cyber-hero {
+  padding: 0 !important;
+  min-height: 100svh !important;
+  height: 100svh !important;
+  background: #02070d !important;
+}
+
+/* ── SHELL: sem gutters, herda altura total ─────────────────────────── */
+.hero-fidelity-shell {
+  width: 100% !important;
+  max-width: none !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding-inline: 0 !important;
+  display: block !important;
+  background: transparent !important;
+}
+
+/* ── STAGE: 100% × 100%, sem aspect-ratio, sem gutters ─────────────── */
+.hero-fidelity-stage.hero-brand-stage {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  aspect-ratio: unset !important;
+  margin-inline: 0 !important;
+  border-radius: 0 !important;
+  border: none !important;
+  overflow: hidden !important;
+  box-shadow:
+    0 0 0 1px rgba(75, 214, 255, .08),
+    0 28px 70px rgba(0, 0, 0, .46),
+    0 0 46px rgba(19, 136, 255, .10);
+}
+
+/* ── IMAGEM: cover centralizado, borda-a-borda ──────────────────────── */
+.hero-fidelity-image,
+.hero-motion-canvas,
+.fidelity-hero .hero-lightning-canvas,
+.hero-fidelity-reflection,
+.hero-fidelity-sheen,
+.hero-fidelity-vignette {
+  border-radius: 0 !important;
+}
+
+.hero-fidelity-image {
+  object-fit: cover !important;
+  object-position: center center !important;
+}
+
+/* ── CONTROLES internos: preservados ───────────────────────────────── */
+.hero-fidelity-stage.hero-brand-stage .hero-stage-bleed {
+  top: -1.8%;
+  bottom: -4.2%;
+}
+
+.fidelity-energy-toggle.hero-energy-toggle {
+  min-width: clamp(102px, 7.2vw, 124px);
+  min-height: clamp(24px, 2vw, 28px);
+  padding: clamp(6px, .48vw, 8px) clamp(8px, .62vw, 10px) !important;
+  font-size: clamp(6px, .42vw, 7px) !important;
+}
+
+.hero-motion-status {
+  padding: clamp(6px, .48vw, 7px) clamp(8px, .62vw, 10px);
+  font-size: clamp(6px, .42vw, 7px);
+}
+
+/* ── brand-principles logo mantém alinhamento ──────────────────────── */
+.fidelity-hero + .brand-principles {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 auto !important;
+}
+
+/* ── TABLET 1440px ─────────────────────────────────────────────────── */
+@media (max-width: 1440px) {
+  .fidelity-hero.cyber-hero {
+    height: 100svh !important;
+    min-height: 100svh !important;
+  }
+}
+
+/* ── NOTEBOOK / TABLET 1180px ──────────────────────────────────────── */
+@media (max-width: 1180px) {
+  .fidelity-hero.cyber-hero {
+    height: 100svh !important;
+    min-height: 100svh !important;
+    padding: 0 !important;
+  }
+  .hero-fidelity-shell {
+    height: 100% !important;
+    padding-inline: 0 !important;
+  }
+  .hero-fidelity-stage.hero-brand-stage {
+    width: 100% !important;
+    height: 100% !important;
+    aspect-ratio: unset !important;
+  }
+}
+
+/* ── TABLET 900px ──────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .fidelity-hero.cyber-hero {
+    height: 100svh !important;
+    min-height: 100svh !important;
+    padding: 0 !important;
+  }
+  .hero-fidelity-stage.hero-brand-stage {
+    width: 100% !important;
+    height: 100% !important;
+    aspect-ratio: unset !important;
+  }
+}
+
+/* ── MOBILE 760px ──────────────────────────────────────────────────── */
+@media (max-width: 760px) {
+  .fidelity-hero.cyber-hero {
+    height: 100svh !important;
+    min-height: 100svh !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+  .hero-fidelity-shell {
+    height: 100% !important;
+    padding-inline: 0 !important;
+  }
+  .hero-fidelity-stage.hero-brand-stage {
+    width: 100% !important;
+    height: 100% !important;
+    aspect-ratio: unset !important;
+    border-radius: 0 !important;
+  }
+  .hero-fidelity-image {
+    object-fit: cover !important;
+    object-position: center center !important;
+  }
+  .fidelity-hero + .brand-principles {
+    width: 100% !important;
+    margin-top: 8px !important;
+  }
+}
+
+/* ── MOBILE SMALL 430px ─────────────────────────────────────────────── */
+@media (max-width: 430px) {
+  .fidelity-hero.cyber-hero {
+    height: 100svh !important;
+    min-height: 100svh !important;
+    padding: 0 !important;
+  }
+  .hero-fidelity-shell {
+    height: 100% !important;
+    padding-inline: 0 !important;
+  }
+  .hero-fidelity-stage.hero-brand-stage {
+    width: 100% !important;
+    height: 100% !important;
+    aspect-ratio: unset !important;
+  }
+  .hero-fidelity-image {
+    object-fit: cover !important;
+    object-position: center 20% !important;
+  }
+}

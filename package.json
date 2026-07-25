@@ -1,14 +1,14 @@
 {
   "name": "wagnerpersolifilho",
-  "version": "2.2.0",
+  "version": "2.9.6",
   "private": true,
-  "description": "WAGNER.OS — portfólio Cyber Metal com chat Gemini, modo apresentação e canal de contato por e-mail.",
+  "description": "WAGNER.OS — portfólio Cyber Metal v2.9.6 com hero clean full-screen responsivo, imagem aprovada, chat Gemini, modo apresentação e contato por e-mail preservados.",
   "type": "commonjs",
   "engines": {
     "node": "22.x"
   },
   "scripts": {
-    "check": "node --check public/js/main.js && node --check public/emulador/script.js && node --check api/chat.js && node --check api/contact.js && node --check tests/chat.test.js && node --check tests/contact.test.js",
+    "check": "node --check public/js/main.js && node --check public/js/hero-effects.js && node --check public/js/hero-fidelity.js && node --check public/js/hero-motion.js && node --check public/emulador/script.js && node --check api/chat.js && node --check api/contact.js && node --check tests/chat.test.js && node --check tests/contact.test.js",
     "test": "node --test tests/chat.test.js tests/contact.test.js",
     "validate": "npm run check && npm test"
   }

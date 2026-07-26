@@ -1,0 +1,154 @@
+:root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --accent: #0ea5e9;
+            --accent-dark: #0284c7;
+            --border: #e2e8f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.5;
+            font-size: 13px; /* Fonte base ligeiramente menor para caber mais conteúdo */
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px 40px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .cv-actions {
+            position: sticky;
+            top: 10px;
+            z-index: 1000;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 8px;
+            margin: 0 0 18px;
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: rgba(255, 255, 255, 0.96);
+        }
+        .cv-action {
+            min-height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            font: inherit;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform .18s ease, border-color .18s ease, background-color .18s ease;
+        }
+        .cv-action:hover,
+        .cv-action:focus-visible {
+            transform: translateY(-1px);
+            border-color: var(--accent);
+            outline: none;
+        }
+        .cv-action-primary {
+            background: var(--text-primary);
+            border-color: var(--text-primary);
+            color: #fff;
+        }
+        .cv-action-primary:hover,
+        .cv-action-primary:focus-visible { background: var(--accent-dark); }
+
+        header { text-align: center; padding-bottom: 20px; margin-bottom: 20px; border-bottom: 2px solid var(--border); position: relative; }
+        header::after { content: ''; position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%); width: 100px; height: 2px; background: linear-gradient(90deg, transparent, var(--accent), transparent); }
+        h1 { font-size: 2.2rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 4px; background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-dark) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .subtitle { font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 12px; }
+        .contact-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 16px; font-size: 0.8rem; color: var(--text-secondary); }
+        .contact-grid a { color: var(--text-secondary); text-decoration: none; display: flex; align-items: center; gap: 4px; }
+
+        /* NOVO: Grid para juntar Resumo e Competências na mesma página */
+        .top-grid {
+            display: grid;
+            grid-template-columns: 2fr 3fr; /* Resumo ocupa 40%, Competências 60% */
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        section { margin-bottom: 20px; }
+        h2 { font-size: 0.95rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; padding-bottom: 4px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+        h2::before { content: ''; display: inline-block; width: 6px; height: 6px; background-color: var(--accent); border-radius: 1px; transform: rotate(45deg); }
+
+        .summary { text-align: justify; color: var(--text-secondary); font-size: 0.85rem; line-height: 1.5; }
+
+        /* Competências compactas */
+        .skills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .skill-category { background: var(--card-bg); padding: 10px; border-radius: 6px; border: 1px solid var(--border); }
+        .skill-category h3 { font-size: 0.75rem; font-weight: 700; color: var(--accent-dark); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.03em; }
+        .skill-category p { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4; }
+
+        /* Experiência Profissional Compacta */
+        .experience-item { margin-bottom: 14px; padding-left: 16px; border-left: 2px solid var(--border); position: relative; }
+        .experience-item::before { content: ''; position: absolute; left: -5px; top: 5px; width: 8px; height: 8px; background-color: var(--card-bg); border: 2px solid var(--accent); border-radius: 50%; }
+        .job-header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; margin-bottom: 4px; }
+        .job-title { font-size: 0.95rem; font-weight: 700; color: var(--text-primary); }
+        .company { font-weight: 600; color: var(--accent-dark); }
+        .job-date { font-size: 0.75rem; color: var(--text-secondary); font-weight: 500; background: var(--bg-color); padding: 1px 6px; border-radius: 3px; border: 1px solid var(--border); }
+        .experience-item ul { list-style-type: none; margin-top: 4px; }
+        .experience-item li { position: relative; padding-left: 14px; margin-bottom: 2px; color: var(--text-secondary); font-size: 0.85rem; line-height: 1.4; }
+        .experience-item li::before { content: '▹'; position: absolute; left: 0; color: var(--accent); font-weight: bold; font-size: 0.8rem; }
+
+        .two-col-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .education-item, .cert-item { margin-bottom: 8px; }
+        .education-item h3, .cert-item h3 { font-size: 0.85rem; font-weight: 700; color: var(--text-primary); }
+        .education-item p, .cert-item p { font-size: 0.8rem; color: var(--text-secondary); }
+
+        .lang-item { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed var(--border); font-size: 0.8rem; }
+        .lang-name { font-weight: 600; color: var(--text-primary); }
+        .lang-level { color: var(--text-secondary); }
+
+        .additional-info { margin-top: 20px; padding: 15px; border-top: 1px solid var(--border); font-size: 0.75rem; color: var(--text-secondary); background: var(--card-bg); border-radius: 6px; border: 1px solid var(--border); }
+        .additional-info h3 { font-size: 0.8rem; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; text-transform: uppercase; }
+        .additional-info p { margin-bottom: 4px; line-height: 1.4; }
+
+        /* REGRAS DE IMPRESSÃO (O SEGREDO PARA CABER EM 1-2 PÁGINAS) */
+        @media print {
+            @page { size: A4; margin: 1.5cm; } /* Margens estritas para ganhar área útil */
+            
+            body { background: white; max-width: 100%; padding: 0; color: black; font-size: 10.5pt; }
+            .print-btn, .cv-actions { display: none !important; }
+            
+            h1 { background: none; -webkit-text-fill-color: black; color: black; font-size: 22pt; }
+            .subtitle { color: #333; font-size: 9pt; }
+            h2 { color: black; border-bottom: 1px solid #ccc; font-size: 10pt; margin-bottom: 8px; }
+            h2::before { background-color: #333; }
+            
+            .skill-category, .additional-info { box-shadow: none; border: 1px solid #ddd; break-inside: avoid; }
+            .experience-item { break-inside: avoid; border-left-color: #ccc; margin-bottom: 12px; }
+            .experience-item::before { border-color: #333; }
+            .company, .skill-category h3 { color: #000; }
+            a { color: black; text-decoration: none; }
+            
+            /* Evitar quebras de página no meio das seções principais */
+            section, .top-grid, .two-col-grid { break-inside: avoid; }
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 18px; }
+            .cv-actions { position: static; justify-content: center; margin-bottom: 16px; }
+            .cv-action { flex: 1 1 30%; padding-inline: 8px; }
+            .top-grid, .two-col-grid { grid-template-columns: 1fr; }
+            .skills-grid { grid-template-columns: 1fr; }
+            .job-header { flex-direction: column; gap: 2px; }
+            h1 { font-size: 1.8rem; }
+        }
+.skill-category-wide { grid-column: span 2; }
+@media (max-width: 768px) { .skill-category-wide { grid-column: auto; } }

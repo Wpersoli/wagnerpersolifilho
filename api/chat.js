@@ -6,12 +6,15 @@
 
 var fs = require('fs');
 var path = require('path');
+var http = require('./_shared/http');
+var rateLimiter = require('./_shared/rate-limit');
 
 var SAO_PAULO_TIME_ZONE = 'America/Sao_Paulo';
 var MODEL_KNOWLEDGE_CUTOFF = 'janeiro de 2025';
 var MAX_MESSAGES = 24;
 var MAX_CONTENT_LENGTH = 2000;
-var MAX_KNOWLEDGE_CHARS = 30000;
+var MAX_KNOWLEDGE_CHARS = 18000;
+var MAX_BODY_BYTES = http.positiveInt(process.env.CHAT_MAX_BODY_BYTES, 65536, 4096, 131072);
 
 var PRIMARY_MODEL = String(process.env.GEMINI_MODEL || 'gemini-3.5-flash').trim();
 var SECONDARY_MODEL = String(process.env.GEMINI_FALLBACK_MODEL || 'gemini-3.1-flash-lite').trim();
@@ -23,7 +26,6 @@ var primaryUnavailableUntil = 0;
 
 var RATE_LIMIT_WINDOW_MS = 60000;
 var RATE_LIMIT_MAX_REQ = positiveInt(process.env.CHAT_RATE_LIMIT_MAX, 8, 2, 30);
-var rateLimitMap = new Map();
 
 var FALLBACK_RESPONSES = {
   greeting: 'Olá! Posso responder sobre a experiência, projetos, stack, disponibilidade e contato do Wagner. Para perguntas gerais, a IA pode tentar novamente em instantes.',
@@ -201,50 +203,69 @@ function readJsonFile(fileName) {
 }
 
 function loadKnowledge() {
-  var cvText = readTextFile('cv.txt');
   var structured = readJsonFile('knowledge.json');
-  var embedded = null;
-
-  if (!cvText || !structured) {
-    try {
-      embedded = require('../data/knowledge-data.js');
-    } catch (err) {
-      console.error('[knowledge] Erro ao carregar knowledge-data.js:', err.message);
-    }
-  }
-
-  if (!cvText && embedded && embedded.cvText) {
-    cvText = String(embedded.cvText).trim();
-    console.warn('[knowledge] cv.txt indisponível — usando cópia embutida');
-  }
-  if (!structured && embedded && embedded.knowledge) {
-    structured = embedded.knowledge;
-    console.warn('[knowledge] knowledge.json indisponível — usando cópia embutida');
-  }
-
-  var sections = [];
-  if (structured) {
-    sections.push('=== DADOS ESTRUTURADOS (PRIORIDADE MÁXIMA) ===\n' + JSON.stringify(structured, null, 2));
-  }
-  if (cvText) {
-    sections.push('=== CURRÍCULO E CONTEXTO COMPLEMENTAR ===\n' + cvText);
-  }
-
-  var combined = sections.join('\n\n').slice(0, MAX_KNOWLEDGE_CHARS);
-  if (!combined) console.error('[knowledge] Nenhuma base de conhecimento pôde ser carregada');
-
-  return {
-    structured: structured || {},
-    cvText: cvText,
-    combined: combined
-  };
+  if (!structured) console.error('[knowledge] Base estruturada indisponível');
+  var combined = structured
+    ? '=== DADOS ESTRUTURADOS (FONTE CANÔNICA) ===\n' + JSON.stringify(structured, null, 2)
+    : '';
+  return { structured: structured || {}, combined: combined.slice(0, MAX_KNOWLEDGE_CHARS) };
 }
 
 var KNOWLEDGE = loadKnowledge();
 
-function buildSystemPrompt(now) {
+function includesAny(question, pattern) {
+  return pattern.test(normalizeQuestion(question));
+}
+
+function selectKnowledge(question) {
+  if (!isProfileQuestion(question)) {
+    return 'Pergunta geral: não inclua nem utilize dados pessoais ou profissionais do titular, salvo se o usuário os solicitar explicitamente.';
+  }
+
+  var source = KNOWLEDGE.structured || {};
+  var profile = source.profile || {};
+  var location = profile.location || {};
+  var selected = {
+    metadata: source.metadata,
+    profile: {
+      full_name: profile.full_name,
+      display_name: profile.display_name,
+      title: profile.title,
+      location: { city: location.city, state: location.state, country: location.country }
+    },
+    summary: source.summary,
+    core_skills: source.core_skills,
+    experience: source.experience,
+    education: source.education,
+    certifications_and_courses: source.certifications_and_courses,
+    languages: source.languages,
+    projects: source.projects,
+    not_documented: source.not_documented
+  };
+
+  if (includesAny(question, /contato|whatsapp|telefone|celular|e-?mail|linkedin|github/)) selected.profile.contact = profile.contact;
+  if (includesAny(question, /onde mora|localiza|bairro|vila galvao|vila galvão/)) selected.profile.location.district = location.district;
+  if (includesAny(question, /idade|quantos anos/)) selected.profile.age = profile.age;
+  if (includesAny(question, /estado civil|solteiro|casado|filhos?/)) {
+    selected.profile.civil_status = profile.civil_status;
+    selected.profile.children = profile.children;
+  }
+  if (includesAny(question, /salario|salário|remunera|pretens|valor por hora|contrato|clt|pj|home office|remoto|presencial|hibrido|híbrido|disponibilidade|turno|jornada/)) {
+    selected.recruitment = source.recruitment;
+    if (selected.recruitment && !includesAny(question, /trajeto|deslocamento|conducao|condução|metro|metrô|tucuruvi/)) {
+      selected.recruitment = Object.assign({}, selected.recruitment);
+      delete selected.recruitment.commute;
+    }
+  }
+  if (includesAny(question, /hobb|lazer|interesse|futebol|tempo livre/)) selected.interests = source.interests;
+
+  return JSON.stringify(selected, null, 2).slice(0, MAX_KNOWLEDGE_CHARS);
+}
+
+
+function buildSystemPrompt(now, question) {
   var runtime = getRuntimeContext(now);
-  var base = KNOWLEDGE.combined || '(base de conhecimento indisponível no momento)';
+  var base = selectKnowledge(question);
 
   return [
     '<role>',
@@ -314,53 +335,6 @@ function buildSystemPrompt(now) {
     '',
     'Responda à próxima mensagem seguindo todas as regras acima.'
   ].join('\n');
-}
-
-var ALLOWED_ORIGINS_EXACT = [
-  'https://wagnerpersolifilho.vercel.app',
-  'https://wagnerpersoli.vercel.app'
-];
-var ALLOWED_ORIGIN_PATTERN = /^https:\/\/wagnerpersoli(?:filho)?(?:-[a-z0-9-]+)+\.vercel\.app$/i;
-
-function applyCors(req, res) {
-  var origin = req.headers && req.headers.origin;
-  if (origin && (ALLOWED_ORIGINS_EXACT.indexOf(origin) !== -1 || ALLOWED_ORIGIN_PATTERN.test(origin))) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-    res.setHeader('Vary', 'Origin');
-  }
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Access-Control-Max-Age', '600');
-}
-
-function getClientIp(req) {
-  var fwd = req.headers && req.headers['x-forwarded-for'];
-  if (fwd) return String(fwd).split(',')[0].trim();
-  return (req.socket && req.socket.remoteAddress) || 'unknown';
-}
-
-function isRateLimited(ip) {
-  var now = Date.now();
-  var timestamps = (rateLimitMap.get(ip) || []).filter(function (t) {
-    return now - t < RATE_LIMIT_WINDOW_MS;
-  });
-
-  if (timestamps.length >= RATE_LIMIT_MAX_REQ) {
-    rateLimitMap.set(ip, timestamps);
-    return true;
-  }
-
-  timestamps.push(now);
-  rateLimitMap.set(ip, timestamps);
-
-  if (rateLimitMap.size > 500) {
-    var cutoff = now - RATE_LIMIT_WINDOW_MS;
-    rateLimitMap.forEach(function (ts, key) {
-      if (!ts.length || ts[ts.length - 1] < cutoff) rateLimitMap.delete(key);
-    });
-  }
-
-  return false;
 }
 
 function sanitizeMessageText(value) {
@@ -488,56 +462,70 @@ function sanitizeAssistantOutput(value) {
     .slice(0, 10000);
 }
 
-function sendText(res, text, source, model) {
+function sendText(res, text, source, model, statusCode, requestId) {
+  var status = statusCode || 200;
   res.setHeader('X-Wagner-Chat-Source', source || 'local');
   if (model) res.setHeader('X-Wagner-Chat-Model', model);
-  return res.status(200).json({
+  if (requestId) res.setHeader('X-Request-Id', requestId);
+  return http.sendJson(res, status, {
     content: [{ type: 'text', text: text }]
   });
 }
 
 async function handler(req, res) {
-  applyCors(req, res);
+  var reqId = http.requestId(req);
+  http.applyCors(req, res);
+  res.setHeader('X-Request-Id', reqId);
 
-  if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-
-  var clientIp = getClientIp(req);
-  if (isRateLimited(clientIp)) {
-    res.setHeader('Retry-After', '15');
-    return sendText(res, 'Você está enviando mensagens muito rápido. Aguarde alguns segundos e tente novamente.', 'rate-limit');
+  if (!http.isAllowedOrigin(req) || !http.isAllowedFetchSite(req)) {
+    http.log('warn', 'chat_origin_blocked', { requestId: reqId });
+    return http.sendJson(res, 403, { error: 'Origem não autorizada.' });
+  }
+  if (req.method === 'OPTIONS') {
+    res.statusCode = 204;
+    res.setHeader('Allow', 'POST, OPTIONS');
+    return res.end();
+  }
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', 'POST, OPTIONS');
+    return http.sendJson(res, 405, { error: 'Método não permitido.' });
   }
 
-  var body = req.body || {};
+  var parsed = await http.parseJsonBody(req, MAX_BODY_BYTES);
+  if (!parsed.ok) return http.sendJson(res, parsed.status, { error: parsed.error });
+
+  var clientIp = http.getClientIp(req);
+  var rate = await rateLimiter.check('chat', clientIp, RATE_LIMIT_MAX_REQ, Math.ceil(RATE_LIMIT_WINDOW_MS / 1000));
+  http.setRateLimitHeaders(res, RATE_LIMIT_MAX_REQ, rate);
+  if (rate.limited) {
+    res.setHeader('Retry-After', String(rate.retryAfter));
+    http.log('warn', 'chat_rate_limited', { requestId: reqId, backend: rate.backend });
+    return sendText(res, 'Você está enviando mensagens muito rápido. Aguarde alguns segundos e tente novamente.', 'rate-limit', '', 429, reqId);
+  }
+
+  var body = parsed.value || {};
   var messages = sanitizeMessages(body.messages);
-  if (!messages.length) return sendText(res, FALLBACK_RESPONSES.greeting, 'local');
+  if (!messages.length) return sendText(res, FALLBACK_RESPONSES.greeting, 'local', '', 200, reqId);
 
   var lastUserMsg = '';
   for (var mi = messages.length - 1; mi >= 0; mi--) {
-    if (messages[mi].role === 'user') {
-      lastUserMsg = messages[mi].content;
-      break;
-    }
+    if (messages[mi].role === 'user') { lastUserMsg = messages[mi].content; break; }
   }
 
   var directRuntime = getDirectRuntimeResponse(lastUserMsg);
-  if (directRuntime) return sendText(res, directRuntime, 'runtime');
+  if (directRuntime) return sendText(res, directRuntime, 'runtime', '', 200, reqId);
 
   var apiKey = String(process.env.GEMINI_API_KEY || '').trim();
   if (!apiKey) {
-    console.warn('[chat] GEMINI_API_KEY não configurada — usando fallback local');
-    return sendText(res, getFallbackResponse(lastUserMsg), 'local');
+    http.log('warn', 'chat_local_fallback', { requestId: reqId, reason: 'missing_api_key' });
+    return sendText(res, getFallbackResponse(lastUserMsg), 'local', '', 200, reqId);
   }
 
   try {
-    var systemPrompt = buildSystemPrompt(new Date());
+    var systemPrompt = buildSystemPrompt(new Date(), lastUserMsg);
     var contents = messages.map(function (message) {
-      return {
-        role: message.role === 'assistant' ? 'model' : 'user',
-        parts: [{ text: message.content }]
-      };
+      return { role: message.role === 'assistant' ? 'model' : 'user', parts: [{ text: message.content }] };
     });
-
     var requestBody = {
       systemInstruction: { parts: [{ text: systemPrompt }] },
       contents: contents,
@@ -555,68 +543,47 @@ async function handler(req, res) {
     modelLoop:
     for (var pi = 0; pi < plan.length; pi++) {
       var item = plan[pi];
-
       for (var ai = 0; ai < item.attempts; ai++) {
         var result = await callGeminiModel(item.model, apiKey, requestBody, item.timeoutMs);
-
         if (result.ok) {
           data = result.data;
           selectedModel = result.model;
           if (item.primary) primaryUnavailableUntil = 0;
           break modelLoop;
         }
-
         var retryable = result.networkError || Boolean(RETRYABLE_HTTP_STATUS[result.status]);
         var modelUnavailable = result.status === 404;
         if (item.primary && (retryable || modelUnavailable)) primaryHadTransientFailure = true;
-
-        var level = retryable || modelUnavailable ? 'warn' : 'error';
-        console[level](
-          '[chat] Gemini', result.model,
-          'tentativa', (ai + 1) + '/' + item.attempts,
-          'status', result.status || 'NETWORK', '-', geminiErrorMessage(result.data)
-        );
-
-        if (!retryable && !modelUnavailable) {
-          stopAllAttempts = true;
-          break modelLoop;
-        }
-
+        http.log(retryable || modelUnavailable ? 'warn' : 'error', 'gemini_attempt_failed', {
+          requestId: reqId, model: result.model, attempt: ai + 1, attempts: item.attempts,
+          status: result.status || 'NETWORK', message: geminiErrorMessage(result.data)
+        });
+        if (!retryable && !modelUnavailable) { stopAllAttempts = true; break modelLoop; }
         if (ai + 1 < item.attempts) {
           var backoff = RETRY_BASE_MS * Math.pow(2, ai) + Math.floor(Math.random() * Math.max(1, Math.floor(RETRY_BASE_MS * 0.45)));
           await wait(backoff);
         }
       }
-
       if (stopAllAttempts) break;
-      if (pi + 1 < plan.length) {
-        await wait(MODEL_SWITCH_DELAY_MS + Math.floor(Math.random() * 150));
-      }
+      if (pi + 1 < plan.length) await wait(MODEL_SWITCH_DELAY_MS + Math.floor(Math.random() * 150));
     }
 
     if (primaryHadTransientFailure && selectedModel !== primary) markPrimaryUnavailable();
-
     if (!data) {
-      console.error('[chat] Todos os modelos Gemini falharam — usando fallback local');
-      return sendText(res, getFallbackResponse(lastUserMsg), 'local');
+      http.log('error', 'gemini_all_models_failed', { requestId: reqId });
+      return sendText(res, getFallbackResponse(lastUserMsg), 'local', '', 200, reqId);
     }
-
     if (selectedModel === secondary && secondary !== primary) {
-      console.warn('[chat] Modelo secundário utilizado:', selectedModel);
+      http.log('warn', 'gemini_secondary_used', { requestId: reqId, model: selectedModel });
     }
 
     var text = sanitizeAssistantOutput(extractGeminiText(data));
-    if (!text) {
-      var finishReason = data && data.candidates && data.candidates[0] && data.candidates[0].finishReason;
-      console.warn('[chat] Resposta vazia da IA; finishReason:', finishReason || 'desconhecido');
-      text = getFallbackResponse(lastUserMsg);
-      return sendText(res, text, 'local');
-    }
-
-    return sendText(res, text, 'gemini', selectedModel);
+    if (!text) return sendText(res, getFallbackResponse(lastUserMsg), 'local', '', 200, reqId);
+    http.log('info', 'chat_completed', { requestId: reqId, source: 'gemini', model: selectedModel });
+    return sendText(res, text, 'gemini', selectedModel, 200, reqId);
   } catch (err) {
-    console.error('[chat] Exceção não tratada:', err.message);
-    return sendText(res, getFallbackResponse(lastUserMsg), 'local');
+    http.log('error', 'chat_unhandled_error', { requestId: reqId, message: String(err && err.message || err) });
+    return sendText(res, getFallbackResponse(lastUserMsg), 'local', '', 200, reqId);
   }
 }
 
@@ -630,10 +597,11 @@ module.exports._internal = {
   getGenerationConfig: getGenerationConfig,
   getRuntimeContext: getRuntimeContext,
   isProfileQuestion: isProfileQuestion,
+  selectKnowledge: selectKnowledge,
   sanitizeMessages: sanitizeMessages,
   knowledge: KNOWLEDGE,
   resetState: function () {
     primaryUnavailableUntil = 0;
-    rateLimitMap.clear();
+    rateLimiter.reset();
   }
 };

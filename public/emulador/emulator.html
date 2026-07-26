@@ -25,20 +25,22 @@
     <!-- Barra de Controle -->
     <header class="control-bar">
         <div class="control-group url-group">
-            <input type="text" id="urlInput" placeholder="https://seudominio.com" />
-            <button id="loadBtn">CARREGAR</button>
+            <label class="sr-only" for="urlInput">URL HTTPS para testar</label>
+            <input type="url" id="urlInput" inputmode="url" autocomplete="url" placeholder="https://seudominio.com" aria-describedby="urlHelp">
+            <span id="urlHelp" class="sr-only">Somente HTTPS; HTTP é permitido apenas em localhost.</span>
+            <button type="button" id="loadBtn">CARREGAR</button>
         </div>
 
         <div class="control-group device-group">
             <div class="dropdown">
-                <button id="deviceToggle" class="toggle-btn">
+                <button type="button" id="deviceToggle" class="toggle-btn">
                     <span id="toggleText">iPhone 16 Pro Max</span> ▼
                 </button>
 
                 <div id="deviceDropdown" class="dropdown-content">
                     <div class="dropdown-header">
                         <input type="text" id="searchDevice" placeholder="Buscar dispositivo..." />
-                        <button id="closeDropdown" class="close-btn">×</button>
+                        <button type="button" id="closeDropdown" class="close-btn">×</button>
                     </div>
 
                     <div class="dropdown-body">
@@ -68,7 +70,7 @@
                                 <input type="number" id="customWidth" placeholder="Largura" min="100" />
                                 <span>×</span>
                                 <input type="number" id="customHeight" placeholder="Altura" min="100" />
-                                <button id="applyCustom">Aplicar</button>
+                                <button type="button" id="applyCustom">Aplicar</button>
                             </div>
                         </div>
                     </div>
@@ -77,11 +79,11 @@
         </div>
 
         <div class="control-group actions">
-            <button id="rotateBtn">⟲ Girar</button>
-            <button id="zoomOut">−</button>
+            <button type="button" id="rotateBtn">⟲ Girar</button>
+            <button type="button" id="zoomOut">−</button>
             <span id="zoomValue">100%</span>
-            <button id="zoomIn">+</button>
-            <button id="resetZoom">⟳</button>
+            <button type="button" id="zoomIn">+</button>
+            <button type="button" id="resetZoom">⟳</button>
         </div>
     </header>
 
@@ -97,7 +99,7 @@
                         <p>Inicializando emulação...</p>
                     </div>
 
-                    <iframe id="previewFrame" src="about:blank" frameborder="0" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals" referrerpolicy="no-referrer"></iframe>
+                    <iframe id="previewFrame" src="about:blank" title="Pré-visualização responsiva" sandbox="allow-scripts allow-forms" referrerpolicy="no-referrer" loading="lazy"></iframe>
                 </div>
             </div>
         </div>

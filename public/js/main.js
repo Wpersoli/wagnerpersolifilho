@@ -21,6 +21,8 @@ function sanitizeText(str, maxLength) {
 var bootEl = document.getElementById('boot');
 var bootTypeItems = [];
 var bootStarted = false;
+var bootCancelled = false;
+var bootMaxTimer = 0;
 var bootTotalChars = 0;
 var bootTypedChars = 0;
 
@@ -106,6 +108,7 @@ async function typeBootItem(item, speed) {
   for (var si = 0; si < segments.length; si++) {
     var segment = segments[si];
     for (var ci = 0; ci < segment.text.length; ci++) {
+      if (bootCancelled) return;
       var char = segment.text.charAt(ci);
       segment.target.nodeValue += char;
       bootTypedChars += 1;
@@ -120,6 +123,9 @@ async function typeBootItem(item, speed) {
 
 function finishBootSequence() {
   if (!bootEl || bootEl.classList.contains('hide')) return;
+  bootCancelled = true;
+  window.clearTimeout(bootMaxTimer);
+  try { window.sessionStorage.setItem('wagnerBootSeen', '1'); } catch (_) {}
   bootEl.classList.add('hide');
   bootEl.setAttribute('aria-busy', 'false');
 
@@ -139,30 +145,40 @@ async function startBootSequence() {
   bootStarted = true;
 
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var seen = false;
+  try { seen = window.sessionStorage.getItem('wagnerBootSeen') === '1'; } catch (_) {}
   if (reduceMotion) bootEl.classList.add('boot-motion-safe');
 
   bootEl.classList.add('is-running');
-  setBootProgress(2);
-  await waitMs(520);
-
-  for (var i = 0; i < bootTypeItems.length; i++) {
-    var item = bootTypeItems[i];
-    var speed = item.kind === 'title' ? 42 : (item.kind === 'meta' ? 16 : 14);
-    await typeBootItem(item, speed);
-    await waitMs(item.kind === 'title' ? 230 : (item.kind === 'meta' ? 145 : 115));
+  if (seen || reduceMotion) {
+    setBootProgress(100);
+    await waitMs(180);
+    finishBootSequence();
+    return;
   }
 
-  setBootProgress(90);
-  await waitMs(260);
-  bootEl.classList.add('is-signature-ready');
-  setBootProgress(96);
-  await waitMs(1780);
+  bootMaxTimer = window.setTimeout(finishBootSequence, 3200);
+  setBootProgress(2);
+  await waitMs(120);
 
-  bootEl.classList.add('is-complete');
+  for (var i = 0; i < bootTypeItems.length && !bootCancelled; i++) {
+    var item = bootTypeItems[i];
+    var speed = item.kind === 'title' ? 9 : (item.kind === 'meta' ? 4 : 3);
+    await typeBootItem(item, speed);
+    await waitMs(item.kind === 'title' ? 45 : 22);
+  }
+  if (bootCancelled) return;
+  bootEl.classList.add('is-signature-ready', 'is-complete');
   setBootProgress(100);
-  await waitMs(1150);
+  await waitMs(240);
   finishBootSequence();
 }
+
+var bootSkip = document.getElementById('bootSkip');
+if (bootSkip) bootSkip.addEventListener('click', finishBootSequence);
+if (bootEl) bootEl.addEventListener('keydown', function (event) {
+  if (event.key === 'Escape') finishBootSequence();
+});
 
 prepareBootSequence();
 if (document.readyState === 'complete') {
@@ -194,12 +210,15 @@ var hudLat    = document.getElementById('hudLatency');
 function pad(n) { return String(n).padStart(2, '0'); }
 
 function tickHud() {
-  var s = Math.floor((Date.now() - bootTime) / 1000);
-  var h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
+  var elapsed = Math.floor((Date.now() - bootTime) / 1000);
+  var h = Math.floor(elapsed / 3600), m = Math.floor((elapsed % 3600) / 60), sec = elapsed % 60;
   if (hudUptime) hudUptime.textContent = pad(h) + ':' + pad(m) + ':' + pad(sec);
-  if (hudReq)    hudReq.textContent    = (1280 + s * 7).toLocaleString('pt-BR');
-  // Simulated latency variation
-  if (hudLat)    hudLat.textContent    = (10 + Math.floor(Math.sin(s * 0.3) * 3 + 3)) + 'ms';
+  if (hudReq && window.performance) hudReq.textContent = String(performance.getEntriesByType('resource').length);
+  if (hudLat && window.performance) {
+    var nav = performance.getEntriesByType('navigation')[0];
+    var renderMs = nav ? Math.max(0, Math.round(nav.domContentLoadedEventEnd - nav.startTime)) : 0;
+    hudLat.textContent = renderMs ? renderMs + 'ms' : '--ms';
+  }
 }
 setInterval(tickHud, 1000);
 tickHud();
@@ -214,11 +233,13 @@ var mobileNav    = document.getElementById('mobileNav');
 var mobileClose  = document.getElementById('mobileNavClose');
 var mobileLinks  = mobileNav ? mobileNav.querySelectorAll('a.mobile-nav-link') : [];
 var navOverflowBeforeOpen = '';
+if (mobileNav && 'inert' in mobileNav) mobileNav.inert = true;
 
 function openMobileNav() {
   if (!mobileNav || !burgerBtn) return;
   navOverflowBeforeOpen = document.body.style.overflow;
   mobileNav.classList.add('open');
+  if ('inert' in mobileNav) mobileNav.inert = false;
   mobileNav.setAttribute('aria-hidden', 'false');
   burgerBtn.setAttribute('aria-expanded', 'true');
   burgerBtn.setAttribute('aria-label', 'Fechar menu');
@@ -229,6 +250,7 @@ function openMobileNav() {
 function closeMobileNav(options) {
   if (!mobileNav || !burgerBtn) return;
   mobileNav.classList.remove('open');
+  if ('inert' in mobileNav) mobileNav.inert = true;
   mobileNav.setAttribute('aria-hidden', 'true');
   burgerBtn.setAttribute('aria-expanded', 'false');
   burgerBtn.setAttribute('aria-label', 'Abrir menu');
@@ -442,7 +464,9 @@ var chatSuggest= document.getElementById('chatSuggest');
 var chatOpened = false;
 var chatHistory = [];
 var chatBusy   = false;
+var chatFocusBeforeOpen = null;
 var CHAT_HISTORY_LIMIT = 24;
+if (chatPanel && 'inert' in chatPanel) chatPanel.inert = true;
 
 function trimChatHistory() {
   if (chatHistory.length > CHAT_HISTORY_LIMIT) {
@@ -451,15 +475,17 @@ function trimChatHistory() {
 }
 
 function openChat() {
+  chatFocusBeforeOpen = document.activeElement;
   chatPanel.classList.add('open');
-  chatPanel.removeAttribute('aria-hidden');
+  if ('inert' in chatPanel) chatPanel.inert = false;
+  chatPanel.setAttribute('aria-hidden', 'false');
   fabChat.setAttribute('aria-expanded', 'true');
   var ping = fabChat.querySelector('.ping');
   if (ping) ping.style.display = 'none';
   if (!chatOpened) {
     chatOpened = true;
     setTimeout(function() {
-      addMsg('Olá! Sou o assistente do WAGNER.OS, powered by Gemini AI. Posso responder sobre a trajetória, projetos e stack do Wagner, além de ajudar com perguntas gerais. Como posso ajudar?', 'bot');
+      addMsg('Olá! Sou o assistente do WAGNER.OS, integrado ao Gemini AI quando o serviço está disponível. Posso responder sobre a trajetória, projetos e stack do Wagner, além de ajudar com perguntas gerais. Como posso ajudar?', 'bot');
     }, 350);
   }
   setTimeout(function() { if (chatInput) chatInput.focus(); }, 350);
@@ -467,9 +493,11 @@ function openChat() {
 
 function closeChat() {
   chatPanel.classList.remove('open');
+  if ('inert' in chatPanel) chatPanel.inert = true;
   chatPanel.setAttribute('aria-hidden', 'true');
   fabChat.setAttribute('aria-expanded', 'false');
-  if (fabChat) fabChat.focus();
+  if (chatFocusBeforeOpen && typeof chatFocusBeforeOpen.focus === 'function') chatFocusBeforeOpen.focus();
+  else if (fabChat) fabChat.focus();
 }
 
 if (fabChat) fabChat.addEventListener('click', function() {
@@ -489,6 +517,16 @@ assistantPreviewChips.forEach(function(chip) {
   });
 });
 if (chatClose) chatClose.addEventListener('click', closeChat);
+
+if (chatPanel) chatPanel.addEventListener('keydown', function(e) {
+  if (e.key !== 'Tab' || !chatPanel.classList.contains('open')) return;
+  var focusable = Array.from(chatPanel.querySelectorAll('button:not([disabled]), input:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])'));
+  if (!focusable.length) return;
+  var first = focusable[0];
+  var last = focusable[focusable.length - 1];
+  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+});
 
 function escapeChatHtml(raw) {
   return String(raw || '')
@@ -922,15 +960,15 @@ var TOUR = [
     sel: '#projects',
     mobileSel: '#projects .proj-grid',
     icon: '⚙️',
-    title: 'Sistemas Deployados',
-    desc: 'Vitrine de projetos reais em produção. Cada card representa uma solução concreta: AI Automation, Automation Engine e Premium Dashboards — evidências de competência técnica aplicada.'
+    title: 'Soluções em Destaque',
+    desc: 'Vitrine de soluções apresentadas no portfólio. Cada card descreve uma proposta técnica em IA, automação, emulação responsiva ou visualização de dados, com escopo e status identificados na própria interface.'
   },
   {
     sel: '#stack',
     mobileSel: '#stack .stack-groups',
     icon: '🧰',
     title: 'Stack Tecnológico',
-    desc: 'O arsenal completo de tecnologias utilizadas: React, Node.js, Python, Docker, LLMs e muito mais. Cada chip representa uma ferramenta dominada e aplicada em projetos reais.'
+    desc: 'Conjunto de tecnologias apresentadas no perfil: React, Node.js, Python, Docker, LLMs e outras ferramentas relacionadas aos projetos e à experiência profissional documentada.'
   },
   {
     sel: '#logs',
@@ -944,14 +982,14 @@ var TOUR = [
     mobileSel: '#contact .contact-panel',
     icon: '📡',
     title: 'Open Channel — Contato',
-    desc: 'Canal direto e objetivo: WhatsApp, email, LinkedIn e GitHub. Qualquer projeto, parceria ou consulta começa aqui — resposta rápida garantida.'
+    desc: 'Canal direto para oportunidades, projetos e parcerias por WhatsApp, e-mail, LinkedIn ou GitHub. O retorno depende da disponibilidade informada no momento do contato.'
   },
   {
     sel: '#chatPanel',
     mobileSel: '#chatPanel',
     icon: '🤖',
     title: 'Assistente AI',
-    desc: 'Demonstração local do assistente, sem consumo de API durante o tour. Fora da apresentação, o chat real powered by Gemini continua disponível para projetos, stack, experiência e perguntas gerais.',
+    desc: 'Demonstração local do assistente, sem consumo de API durante o tour. Fora da apresentação, o chat integrado ao Gemini continua disponível; quando o provedor estiver indisponível, respostas locais essenciais preservam a experiência.',
     isChat: true
   },
   {
@@ -959,7 +997,7 @@ var TOUR = [
     mobileSel: 'footer',
     icon: '✅',
     title: 'Rodapé — Fim do Tour',
-    desc: 'Tour concluído. Todos os módulos apresentados. Este portfólio é o console de operações real do Wagner — construído com performance, segurança e obsessão por qualidade.'
+    desc: 'Tour concluído. Os principais módulos do portfólio foram apresentados, com foco em performance, segurança, acessibilidade, clareza e qualidade de entrega.'
   }
 ];
 
@@ -1028,19 +1066,22 @@ var autoTimer   = null;
 var chatTimer   = null;
 var escCount    = 0;
 var escResetTmr = null;
+var presentationMotionToken = 0;
 
 /* ── Helpers ── */
 function raf(fn){ requestAnimationFrame(fn); }
 
 function smoothScrollTo(y, cb) {
+  var token = ++presentationMotionToken;
   var start = window.scrollY, dist = y - start;
   var dur = Math.min(700 + Math.abs(dist)*0.2, 1100), t0 = null;
   function ease(t){ return t<0.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2; }
   function tick(ts){
+    if(token !== presentationMotionToken || !active) return;
     if(!t0) t0=ts;
     var p = Math.min((ts-t0)/dur,1);
     window.scrollTo(0, start+dist*ease(p));
-    if(p<1){ raf(tick); } else { if(cb) cb(); }
+    if(p<1){ raf(tick); } else if(cb) cb();
   }
   raf(tick);
 }
@@ -1237,6 +1278,7 @@ function goToStep(i, cb){
   var scrollTo=Math.max(0,ty-(window.innerHeight/2)+(visibleHeight/2));
   smoothScrollTo(scrollTo, function(){
     setTimeout(function(){
+      if(!active) return;
       positionSpotlight(t);
       positionBalloon(t);
       updateProgress();
@@ -1265,14 +1307,16 @@ function startCinematic(){
   if(mobileNav && mobileNav.classList.contains('open')) closeMobileNav({restoreFocus:false});
   setPresentationButtonState(true);
   document.body.classList.add('pmode-shaking');
-  setTimeout(function(){ document.body.classList.remove('pmode-shaking'); },420);
+  setTimeout(function(){ if(active) document.body.classList.remove('pmode-shaking'); },420);
   lightning.classList.add('active');
   setTimeout(function(){ lightning.classList.remove('active'); },720);
   setTimeout(function(){
+    if(!active) return;
     energy.classList.add('active');
     setTimeout(function(){ energy.classList.remove('active'); },680);
   },200);
   setTimeout(function(){
+    if(!active) return;
     overlay.classList.add('active');
     progressEl.classList.add('visible');
     document.body.classList.add('pmode-active');
@@ -1280,6 +1324,7 @@ function startCinematic(){
     // Disable native smooth-scroll so it stops fighting our own rAF-driven scroll animation
     document.documentElement.style.scrollBehavior='auto';
     setTimeout(function(){
+      if(!active) return;
       controls.classList.add('visible');
       goToStep(0);
     },350);
@@ -1290,6 +1335,7 @@ function startCinematic(){
 function exitPresentation(){
   if(!active) return;
   active=false; escCount=0;
+  presentationMotionToken += 1;
   clearTimeout(autoTimer); clearTimeout(chatTimer); clearTimeout(escResetTmr);
   var cp=document.getElementById('chatPanel'),cc=document.getElementById('chatClose');
   if(cp&&cp.classList.contains('open')&&cc) cc.click();
@@ -1297,6 +1343,7 @@ function exitPresentation(){
   spotlight.classList.remove('visible');
   controls.classList.remove('visible');
   overlay.classList.remove('active');
+  modalBg.classList.remove('active');
   progressEl.classList.remove('visible');
   progressEl.style.width='0%';
   document.body.style.overflow='';
@@ -1491,6 +1538,8 @@ var contactToastTitle = contactToast ? contactToast.querySelector('.contact-toas
 var contactToastSub = contactToast ? contactToast.querySelector('.contact-toast-sub') : null;
 var contactToastIcon = contactToast ? contactToast.querySelector('.contact-toast-icon') : null;
 var contactToastTimer = 0;
+var contactStartedAt = document.getElementById('contactStartedAt');
+if (contactStartedAt) contactStartedAt.value = String(Date.now());
 
 function setContactStatus(message, kind) {
   if (!contactInlineStatus) return;
@@ -1534,7 +1583,8 @@ if (contactForm) {
       subject: sanitizeText((formData.get('subject') || '').trim(), 120),
       phone: sanitizeText((formData.get('phone') || '').trim(), 40),
       message: sanitizeText((formData.get('message') || '').trim(), 2000),
-      company: sanitizeText((formData.get('company') || '').trim(), 120)
+      company: sanitizeText((formData.get('company') || '').trim(), 120),
+      startedAt: Number(formData.get('startedAt') || Date.now())
     };
 
     var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -1585,6 +1635,7 @@ if (contactForm) {
       }
 
       contactForm.reset();
+      if (contactStartedAt) contactStartedAt.value = String(Date.now());
       setContactStatus(data.message || 'Mensagem enviada com sucesso. Wagner receberá seu contato por e-mail.', 'ok');
       showContactToast(
         'Mensagem enviada com sucesso.',

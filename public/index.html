@@ -12,8 +12,8 @@
 <meta property="og:title" content="Wagner Persoli F. — IT Specialist & AI Developer">
 <meta property="og:description" content="12+ anos em TI corporativo. Full-Stack Developer e AI Specialist com experiência em Apple, TIVIT e Infoplus. Construindo sistemas que escalam.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://wagnerpersolifilho.vercel.app/">
-<meta property="og:image" content="https://wagnerpersolifilho.vercel.app/og-image.jpg">
+<meta property="og:url" content="https://wagnerpersoli.vercel.app/">
+<meta property="og:image" content="https://wagnerpersoli.vercel.app/og-image.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:type" content="image/jpeg">
@@ -23,11 +23,13 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Wagner Persoli F. — IT Specialist & AI Developer">
 <meta name="twitter:description" content="12+ anos em TI. Full-Stack Developer e AI Specialist. Build. Automate. Dominate.">
-<meta name="twitter:image" content="https://wagnerpersolifilho.vercel.app/og-image.jpg">
+<meta name="twitter:image" content="https://wagnerpersoli.vercel.app/og-image.jpg">
 <meta name="twitter:image:alt" content="WAGNER.OS — portfólio cyber metálico de Wagner Persoli F.">
 <meta name="theme-color" content="#050b16">
-<link rel="canonical" href="https://wagnerpersolifilho.vercel.app/">
+<meta name="color-scheme" content="dark">
+<link rel="canonical" href="https://wagnerpersoli.vercel.app/">
 <link rel="icon" type="image/svg+xml" href="img/wp-monogram.svg">
+<link rel="preload" as="image" href="img/hero-fidelity-master.webp" type="image/webp" fetchpriority="high">
 
 
 <!-- Schema.org structured data for recruiters/search engines -->
@@ -38,7 +40,7 @@
   "name": "Wagner Persoli F.",
   "jobTitle": "IT Specialist | Full-Stack Developer | AI Developer",
   "description": "Profissional de TI com 12+ anos de experiência em ambientes corporativos críticos. Especialista em Full-Stack, IA e automação.",
-  "url": "https://wagnerpersolifilho.vercel.app",
+  "url": "https://wagnerpersoli.vercel.app",
   "sameAs": [
     "https://linkedin.com/in/wagner-persoli-f-3004bb91",
     "https://github.com/Wpersoli"
@@ -65,28 +67,21 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Orbitron:wght@500;600;700;800;900&family=Rajdhani:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="css/main.css">
-<link rel="stylesheet" href="css/cyber.css">
-<link rel="stylesheet" href="css/hero-fidelity.css">
-<link rel="stylesheet" href="css/hero-motion.css">
-<link rel="stylesheet" href="css/hero-top-responsive.css">
-<link rel="stylesheet" href="css/wagner-visual-fix.css">
-<link rel="stylesheet" href="css/wagner-top-sniper.css">
-<link rel="stylesheet" href="css/hero-clean-v296.css">
-<link rel="stylesheet" href="css/hero-responsive-approved.css">
-<link rel="stylesheet" href="css/performance-safe.css">
+<link rel="stylesheet" href="css/app.css">
 </head>
 <body>
+<a class="skip-link" href="#mainContent">Pular para o conteúdo principal</a>
 <div class="scroll-progress" id="scrollProgress" aria-hidden="true"><span></span></div>
 
 <!-- ===== BOOT SEQUENCE ===== -->
 <div id="boot" role="status" aria-live="polite" aria-label="Carregando sistema" aria-busy="true">
   <div class="boot-shell">
     <div class="boot-title boot-type-line">INITIALIZING EXPERIENCE...</div>
+    <button type="button" class="boot-skip" id="bootSkip">PULAR INTRO</button>
     <div class="boot-box" aria-label="Terminal de inicialização">
       <div class="boot-meta boot-type-line">OPERATING EXPERIENCE: PORTFOLIO</div>
       <div class="boot-meta boot-type-line">PROTOCOL 01 · AI SYSTEMS LAB · STATUS: ONLINE</div>
-      <div class="boot-line boot-type-line">$ booting <b>wagner.pers.f</b> — ai systems kernel v2.9.7</div>
+      <div class="boot-line boot-type-line">$ booting <b>wagner.pers.f</b> — ai systems kernel v3.0.0</div>
       <div class="boot-line boot-type-line">$ mounting modules: <span class="boot-cyan">fullstack</span> · <span class="boot-violet">ai</span> · <span class="boot-green">automation</span></div>
       <div class="boot-line boot-type-line">$ checking dependencies... <b>ok</b></div>
       <div class="boot-line boot-type-line">$ loading ai_systems_engine... <b>ok</b></div>
@@ -136,8 +131,8 @@
     <div class="status-pill" aria-label="Status do sistema: online"><span class="dot" aria-hidden="true"></span> ONLINE</div>
     <div id="clock" aria-live="off" aria-label="Horário atual">--:--:--</div>
     <a class="terminal-access" href="#logs" aria-label="Acessar terminal">ACCESS TERMINAL <span aria-hidden="true">&gt;_</span></a>
-    <button class="pmode-btn" id="pmodeBtn" aria-label="Ativar modo apresentação" data-active="false"><span class="pmode-label">APRESENTAR</span></button>
-    <button class="burger" id="burgerBtn" aria-label="Abrir menu" aria-expanded="false" aria-controls="mobileNav">
+    <button type="button" class="pmode-btn" id="pmodeBtn" aria-label="Ativar modo apresentação" data-active="false"><span class="pmode-label">APRESENTAR</span></button>
+    <button type="button" class="burger" id="burgerBtn" aria-label="Abrir menu" aria-expanded="false" aria-controls="mobileNav">
       <span></span><span></span><span></span>
     </button>
   </div>
@@ -145,7 +140,7 @@
 
 <!-- Mobile Nav -->
 <nav id="mobileNav" class="mobile-nav" role="navigation" aria-label="Menu mobile" aria-hidden="true">
-  <button class="mobile-nav-close" id="mobileNavClose" aria-label="Fechar menu">✕</button>
+  <button type="button" class="mobile-nav-close" id="mobileNavClose" aria-label="Fechar menu">✕</button>
   <a href="#top" class="mobile-nav-link">HOME</a>
   <a href="#featured" class="mobile-nav-link">SIMULATOR</a>
   <a href="#projects" class="mobile-nav-link">SYSTEMS</a>
@@ -153,11 +148,11 @@
   <a href="#logs" class="mobile-nav-link">LOGS</a>
   <a href="curriculo.html" class="mobile-nav-link" target="_blank" rel="noopener noreferrer">CURRÍCULO</a>
   <a href="#contact" class="mobile-nav-link">CONTACT</a>
-  <button class="mobile-nav-link mobile-pmode-btn" id="pmodeMobileBtn" aria-label="Ativar modo apresentação" data-active="false">MODO APRESENTAÇÃO</button>
+  <button type="button" class="mobile-nav-link mobile-pmode-btn" id="pmodeMobileBtn" aria-label="Ativar modo apresentação" data-active="false">MODO APRESENTAÇÃO</button>
 </nav>
 
 <!-- ===== MAIN ===== -->
-<main>
+<main id="mainContent">
 
   <!-- HERO — fidelity master scene -->
   <section class="hero cyber-hero fidelity-hero" id="top" aria-label="Apresentação profissional de Wagner Persoli">
@@ -208,7 +203,7 @@
         <span class="hero-fidelity-sheen" aria-hidden="true"></span>
         <span class="hero-fidelity-vignette" aria-hidden="true"></span>
 
-        <!-- Hotspots mantêm a cena 100% visualmente fiel e todos os controles realmente funcionais. -->
+        <!-- Hotspots preservam a composição visual e mantêm controles acessíveis sobre o hero. -->
         <a class="hero-hotspot hero-hotspot--projects" href="#projects" aria-label="Ver projetos" title="Ver projetos"></a>
         <a class="hero-hotspot hero-hotspot--cv" href="docs/curriculo-wagner-persoli-filho.pdf" download aria-label="Baixar currículo em PDF" title="Baixar currículo em PDF"></a>
         <a class="hero-hotspot hero-hotspot--github" href="https://github.com/Wpersoli" target="_blank" rel="noopener noreferrer" aria-label="Abrir GitHub" title="GitHub"></a>
@@ -267,7 +262,7 @@
   </div>
 
   <!-- PROJECTS / DEPLOYED SYSTEMS -->
-  <section id="projects" aria-label="Projetos deployados">
+  <section id="projects" aria-label="Projetos em destaque">
     <!-- SVG circuit board decoration -->
     <svg class="deco-circuit" aria-hidden="true" viewBox="0 0 260 260" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect x="20" y="20" width="220" height="220" rx="4" stroke="#ff1414" stroke-width="0.5" opacity="0.5"/>
@@ -308,7 +303,7 @@
         </div>
       </div>
 
-      <div class="glass proj-card reveal" id="featured" style="transition-delay:.08s">
+      <div class="glass proj-card reveal reveal-delay-1" id="featured">
         <div class="proj-head">
           <div class="proj-status live"><span class="dot" aria-hidden="true"></span> LIVE</div>
         </div>
@@ -323,7 +318,7 @@
         </div>
       </div>
 
-      <div class="glass proj-card reveal" style="transition-delay:.16s">
+      <div class="glass proj-card reveal reveal-delay-2">
         <div class="proj-head">
           <div class="proj-status dev"><span class="dot" aria-hidden="true"></span> EM DEV</div>
         </div>
@@ -338,7 +333,7 @@
         </div>
       </div>
 
-      <div class="glass proj-card reveal" style="transition-delay:.24s">
+      <div class="glass proj-card reveal reveal-delay-3">
         <div class="proj-head">
           <div class="proj-status live"><span class="dot" aria-hidden="true"></span> LIVE</div>
           <div class="proj-pin">AI INTEGRATION</div>
@@ -389,7 +384,7 @@
         <div class="stack-chip">Next.js <small>SSR</small></div>
         <div class="stack-chip">TypeScript <small>TYPES</small></div>
       </div>
-      <div class="glass stack-group reveal" style="transition-delay:.05s">
+      <div class="glass stack-group reveal reveal-delay-1">
         <div class="stack-head"><h4>Backend</h4><span>02</span></div>
         <div class="stack-icons" aria-hidden="true">
           <span class="tech-mark tech-node"><svg viewBox="0 0 50 50"><path d="M25 5 44 16v22L25 49 6 38V16Z"/><text x="25" y="31">JS</text></svg></span>
@@ -402,7 +397,7 @@
         <div class="stack-chip">Python <small>CORE</small></div>
         <div class="stack-chip">PostgreSQL <small>DATA</small></div>
       </div>
-      <div class="glass stack-group reveal" style="transition-delay:.1s">
+      <div class="glass stack-group reveal reveal-delay-2">
         <div class="stack-head"><h4>AI &amp; Data</h4><span>03</span></div>
         <div class="stack-icons" aria-hidden="true">
           <span class="tech-mark tech-ai"><svg viewBox="0 0 50 50"><circle cx="25" cy="25" r="7"/><circle cx="10" cy="15" r="3"/><circle cx="40" cy="13" r="3"/><circle cx="43" cy="36" r="3"/><circle cx="9" cy="38" r="3"/><path d="m13 17 7 5m9-2 8-5m-7 13 10 6m-20-5-8 7"/></svg></span>
@@ -415,7 +410,7 @@
         <div class="stack-chip">Vector DB <small>RAG</small></div>
         <div class="stack-chip">Analytics <small>BI</small></div>
       </div>
-      <div class="glass stack-group reveal" style="transition-delay:.15s">
+      <div class="glass stack-group reveal reveal-delay-3">
         <div class="stack-head"><h4>Cloud &amp; Tools</h4><span>04</span></div>
         <div class="stack-icons" aria-hidden="true">
           <span class="tech-mark tech-aws"><svg viewBox="0 0 50 50"><text x="25" y="28">aws</text><path d="M10 34q15 9 30 0"/><path d="m36 32 5 1-2 5"/></svg></span>
@@ -548,6 +543,7 @@
             <label class="contact-field"><span>WhatsApp / Telefone</span><input type="text" id="contactPhone" name="phone" maxlength="40" autocomplete="tel" placeholder="(11) 99999-9999"></label>
             <label class="contact-field contact-field-full"><span>Mensagem</span><textarea id="contactMessage" name="message" rows="6" maxlength="2000" placeholder="Conte um pouco do projeto, desafio ou oportunidade." required></textarea></label>
             <input type="text" name="company" id="contactCompany" class="contact-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+            <input type="hidden" name="startedAt" id="contactStartedAt" value="">
           </div>
           <div class="contact-form-footer">
             <button type="submit" id="contactSubmit" class="btn btn-primary contact-submit-btn"><span>ENVIAR MENSAGEM</span></button>
@@ -648,71 +644,73 @@
 <div class="hud" role="status" aria-live="off" aria-label="Métricas do sistema">
   <span>UPTIME <b id="hudUptime">00:00:00</b></span>
   <span class="sep">/</span>
-  <span>LATENCY <b id="hudLatency">12ms</b></span>
+  <span>RENDER <b id="hudLatency">--ms</b></span>
   <span class="sep">/</span>
-  <span>REQUESTS <b id="hudReq">0</b></span>
+  <span>ASSETS <b id="hudReq">0</b></span>
   <span class="sep">/</span>
-  <span>NODE <b>sa-east-1</b></span>
+  <span>MODE <b>EDGE</b></span>
   <span class="sep">/</span>
-  <span>BUILD <b>v2.9.7</b></span>
+  <span>BUILD <b>v3.0.0</b></span>
   <span class="sep">/</span>
   <span class="live-badge">● OPERATIONAL</span>
 </div>
 
 <!-- ===== COOKIE / LGPD BANNER ===== -->
-<div id="cookieBanner" class="cookie-banner glass" role="dialog" aria-label="Aviso de cookies e privacidade" aria-modal="false">
+<div id="cookieBanner" class="cookie-banner glass" role="dialog" aria-label="Preferências locais e privacidade" aria-modal="false">
   <div class="cookie-content">
     <div class="cookie-icon" aria-hidden="true">🍪</div>
     <div class="cookie-text">
-      <strong>Este site utiliza cookies</strong> para melhorar sua experiência de navegação e análise de acesso, em conformidade com a <strong>LGPD</strong>.
+      <strong>Este site usa armazenamento local opcional</strong> para lembrar preferências visuais e a escolha deste aviso. Essas preferências permanecem no seu navegador e não são enviadas por este controle.
     </div>
     <div class="cookie-actions">
-      <button class="cookie-btn cookie-accept" id="cookieAccept">Aceitar</button>
-      <button class="cookie-btn cookie-decline" id="cookieDecline">Recusar</button>
+      <button type="button" class="cookie-btn cookie-accept" id="cookieAccept">Aceitar</button>
+      <button type="button" class="cookie-btn cookie-decline" id="cookieDecline">Recusar</button>
     </div>
   </div>
 </div>
 
 <!-- ===== FLOATING ACTIONS ===== -->
 <div class="fab-stack" role="group" aria-label="Ações rápidas">
-  <button class="fab fab-top" id="fabTop" aria-label="Voltar ao topo da página">
+  <button type="button" class="fab fab-top" id="fabTop" aria-label="Voltar ao topo da página">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
   </button>
   <a class="fab fab-whats" id="fabWhats" href="https://wa.me/5511981504061" target="_blank" rel="noopener noreferrer" aria-label="Abrir WhatsApp para falar com Wagner">
     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.6 6.32A8.86 8.86 0 0 0 12.05 3.6a8.94 8.94 0 0 0-7.73 13.37L3 21l4.17-1.3a8.9 8.9 0 0 0 4.87 1.44h.01a8.94 8.94 0 0 0 8.93-8.94 8.86 8.86 0 0 0-3.38-5.88Zm-5.55 13.7h-.01a7.4 7.4 0 0 1-3.78-1.04l-.27-.16-2.8.87.88-2.73-.18-.28a7.43 7.43 0 1 1 6.16 3.34Zm4.08-5.57c-.22-.11-1.32-.65-1.53-.73-.2-.08-.35-.11-.5.11-.15.22-.57.73-.7.88-.13.15-.26.16-.48.05a6.1 6.1 0 0 1-1.8-1.11 6.7 6.7 0 0 1-1.24-1.54c-.13-.22-.01-.34.1-.45.1-.1.22-.26.33-.39.11-.13.15-.22.22-.37.07-.15.04-.28-.02-.39-.06-.11-.5-1.2-.68-1.65-.18-.43-.36-.37-.5-.38h-.43c-.15 0-.39.06-.6.28-.2.22-.79.77-.79 1.87 0 1.1.81 2.16.92 2.31.11.15 1.6 2.45 3.89 3.43.54.24.97.37 1.3.48.55.17 1.04.15 1.44.09.44-.07 1.32-.54 1.5-1.06.19-.52.19-.96.13-1.06-.06-.1-.2-.15-.42-.26Z"/></svg>
   </a>
-  <button class="fab fab-chat" id="fabChat" aria-label="Abrir assistente virtual" aria-expanded="false">
+  <button type="button" class="fab fab-chat" id="fabChat" aria-label="Abrir assistente virtual" aria-expanded="false" aria-controls="chatPanel">
     <span class="ping" aria-hidden="true"></span>
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5A8.5 8.5 0 1 1 21 11.5Z"/><path d="M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01"/></svg>
   </button>
 </div>
 
 <!-- ===== AI CHAT WIDGET ===== -->
-<div class="chat-panel glass" id="chatPanel" role="dialog" aria-label="Assistente Wagner AI" aria-modal="true" aria-hidden="true">
+<div class="chat-panel glass" id="chatPanel" role="dialog" aria-label="Assistente Wagner AI" aria-modal="true" aria-hidden="true" tabindex="-1">
   <div class="chat-head">
     <div class="chat-avatar" aria-hidden="true">W</div>
     <div class="chat-head-info">
       <div class="name">Wagner AI — Assistente</div>
-      <div class="stat"><span aria-hidden="true"></span> online agora</div>
+      <div class="stat"><span aria-hidden="true"></span> assistente virtual disponível</div>
     </div>
-    <button class="chat-close" id="chatClose" aria-label="Fechar assistente">✕</button>
+    <button type="button" class="chat-close" id="chatClose" aria-label="Fechar assistente">✕</button>
   </div>
   <div class="chat-body" id="chatBody" aria-live="polite"></div>
   <div class="chat-suggest" id="chatSuggest" role="group" aria-label="Sugestões de perguntas">
-    <button class="sugg-chip" data-q="Quais são os projetos do Wagner?">projetos</button>
-    <button class="sugg-chip" data-q="Qual o stack técnico do Wagner?">stack</button>
-    <button class="sugg-chip" data-q="Qual a experiência profissional do Wagner?">experiência</button>
-    <button class="sugg-chip" data-q="Por que contratar o Wagner?">por que contratar</button>
-    <button class="sugg-chip" data-q="Como falar com o Wagner?">contato</button>
+    <button type="button" class="sugg-chip" data-q="Quais são os projetos do Wagner?">projetos</button>
+    <button type="button" class="sugg-chip" data-q="Qual o stack técnico do Wagner?">stack</button>
+    <button type="button" class="sugg-chip" data-q="Qual a experiência profissional do Wagner?">experiência</button>
+    <button type="button" class="sugg-chip" data-q="Por que contratar o Wagner?">por que contratar</button>
+    <button type="button" class="sugg-chip" data-q="Como falar com o Wagner?">contato</button>
   </div>
   <div class="chat-input-row">
     <input type="text" id="chatInput" placeholder="Pergunte sobre o Wagner ou qualquer coisa..."
            aria-label="Digite sua pergunta" autocomplete="off" maxlength="500" spellcheck="false">
-    <button class="chat-send" id="chatSend" aria-label="Enviar mensagem">
+    <button type="button" class="chat-send" id="chatSend" aria-label="Enviar mensagem">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7Z"/></svg>
     </button>
   </div>
 </div>
+
+<noscript><div class="noscript-notice">Ative o JavaScript para usar chat, apresentação e controles interativos. O currículo e os contatos continuam disponíveis.</div></noscript>
 
 <!-- ===================================================
      JAVASCRIPT — SECURITY-HARDENED, FULLY RESPONSIVE

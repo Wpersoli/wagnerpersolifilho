@@ -1,0 +1,91 @@
+/* WAGNER.OS — native, responsive and low-jank page scrolling. */
+html {
+  scroll-behavior: auto;
+  scroll-padding-top: 88px;
+  scrollbar-gutter: stable;
+  overflow-y: auto;
+}
+
+body {
+  overflow-y: visible;
+  overscroll-behavior-x: none;
+  overscroll-behavior-y: auto;
+  touch-action: pan-y pinch-zoom;
+}
+
+/* Programmatic navigation remains smooth only where explicitly requested by JS. */
+main > section:not(#top) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
+}
+
+body.pmode-active main > section,
+body.pmode-visible main > section {
+  content-visibility: visible;
+  contain-intrinsic-size: none;
+}
+
+/* Pause only expensive decorative layers. Avoid universal selectors, which
+   caused large style recalculations at every wheel movement. */
+body.is-scrolling .neon-lines i,
+body.is-scrolling .film-grain,
+body.is-scrolling .hero-electric-flash,
+body.is-scrolling .hero-energy-column,
+body.is-scrolling .hero-scanline,
+body.is-scrolling .hero-fidelity-glow,
+body.is-scrolling .hero-fidelity-particles,
+body.is-scrolling .hero-stage-bleed,
+body.is-scrolling .hero-stage-corner,
+body.is-scrolling .hero-stage-signal {
+  animation-play-state: paused !important;
+}
+
+body.is-scrolling > header {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
+}
+
+.skip-link {
+  position: fixed;
+  left: 12px;
+  top: 12px;
+  z-index: 40000;
+  padding: 10px 14px;
+  color: #04101b;
+  background: #8ef7ff;
+  border-radius: 6px;
+  transform: translateY(-180%);
+  transition: transform .16s ease;
+}
+.skip-link:focus { transform: translateY(0); }
+.reveal-delay-1 { transition-delay: .06s; }
+.reveal-delay-2 { transition-delay: .12s; }
+.reveal-delay-3 { transition-delay: .18s; }
+.noscript-notice {
+  position: fixed;
+  inset: auto 12px 12px;
+  z-index: 50000;
+  padding: 12px 16px;
+  color: #fff;
+  background: #611;
+  border: 1px solid #f66;
+}
+.boot-skip {
+  position: absolute;
+  right: clamp(12px, 3vw, 28px);
+  top: clamp(12px, 3vw, 28px);
+  z-index: 3;
+  padding: 8px 11px;
+  color: #8ef7ff;
+  background: rgba(2, 12, 22, .72);
+  border: 1px solid rgba(142, 247, 255, .35);
+  font: 600 9px/1 var(--mono, monospace);
+  letter-spacing: .12em;
+  cursor: pointer;
+}
+.boot-skip:hover,
+.boot-skip:focus-visible { border-color: #8ef7ff; outline: none; }

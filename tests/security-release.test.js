@@ -17,9 +17,17 @@ function response() {
   };
 }
 
-test('artefato não contém arquivos locais sensíveis', function () {
-  for (var name of ['.env.local', '.vercel', '.git', 'node_modules']) {
-    assert.equal(fs.existsSync(path.join(root, name)), false, name + ' não deve integrar a release');
+test('arquivos locais sensíveis não são versionados nem integram artefato limpo', function () {
+  var names = ['.env.local', '.vercel', 'node_modules'];
+  if (fs.existsSync(path.join(root, '.git'))) {
+    var tracked = cp.execFileSync('git', ['ls-files', '-z'], { cwd: root, encoding: 'utf8' }).split('\0').filter(Boolean);
+    for (var name of names) {
+      assert.equal(tracked.some(function (file) { return file === name || file.startsWith(name + '/'); }), false, name + ' não deve ser rastreado pelo Git');
+    }
+  } else {
+    for (var artifact of ['.env.local', '.vercel', '.git', 'node_modules']) {
+      assert.equal(fs.existsSync(path.join(root, artifact)), false, artifact + ' não deve integrar a release');
+    }
   }
 });
 

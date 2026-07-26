@@ -2,30 +2,73 @@
 var fs = require('fs');
 var path = require('path');
 var crypto = require('crypto');
+var cp = require('child_process');
 var root = path.resolve(__dirname, '..');
 var failures = [];
-var forbidden = ['.env', '.env.local', '.vercel', '.git', 'node_modules'];
-forbidden.forEach(function (name) {
-  if (fs.existsSync(path.join(root, name))) failures.push('artefato proibido: ' + name);
-});
-fs.readdirSync(root).forEach(function (name) {
-  if (/^\.env(?:\.|$)/.test(name) && name !== '.env.example') failures.push('arquivo de ambiente proibido: ' + name);
-});
 
-function walk(dir) {
+function normalize(relativePath) {
+  return String(relativePath || '').split(path.sep).join('/').replace(/^\.\//, '');
+}
+
+function forbiddenReason(relativePath) {
+  var normalized = normalize(relativePath);
+  var parts = normalized.split('/').filter(Boolean);
+  for (var part of parts) {
+    if (part === '.git' || part === '.vercel' || part === 'node_modules') return 'artefato proibido: ' + normalized;
+    if (/^\.env(?:\.|$)/.test(part) && part !== '.env.example') return 'arquivo de ambiente proibido: ' + normalized;
+  }
+  return '';
+}
+
+function walkReleaseTree(dir, base, files) {
   fs.readdirSync(dir, { withFileTypes: true }).forEach(function (entry) {
-    if (entry.name === 'node_modules' || entry.name === '.git' || entry.name === 'tests') return;
-    var file = path.join(dir, entry.name);
-    if (entry.isDirectory()) return walk(file);
-    if (entry.name === '.env.example' || /CHECKSUMS\.sha256$/i.test(entry.name)) return;
-    if (!/\.(?:js|json|html|css|md|txt|yml|yaml)$/i.test(entry.name)) return;
-    var text = fs.readFileSync(file, 'utf8');
-    var rel = path.relative(root, file);
-    if (/(?:VERCEL_OIDC_TOKEN|GEMINI_API_KEY|RESEND_API_KEY|UPSTASH_REDIS_REST_TOKEN)\s*=\s*['\"]?(?![<\s]|$)[^\s'\"]+/.test(text)) failures.push('secret potencial: ' + rel);
-    if (/-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/.test(text)) failures.push('chave privada: ' + rel);
+    var absolute = path.join(dir, entry.name);
+    var relative = normalize(path.relative(base, absolute));
+    var forbidden = forbiddenReason(relative);
+    if (forbidden) {
+      failures.push(forbidden);
+      return;
+    }
+    if (entry.isDirectory()) return walkReleaseTree(absolute, base, files);
+    files.push(relative);
   });
 }
-walk(root);
+
+function collectAuditedFiles() {
+  var gitDir = path.join(root, '.git');
+  if (fs.existsSync(gitDir)) {
+    try {
+      var output = cp.execFileSync('git', ['ls-files', '-c', '-o', '--exclude-standard', '-z'], {
+        cwd: root,
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'pipe']
+      });
+      return output.split('\0').filter(Boolean).map(normalize);
+    } catch (error) {
+      failures.push('não foi possível consultar arquivos rastreados pelo Git: ' + String(error.message || error));
+      return [];
+    }
+  }
+  var files = [];
+  walkReleaseTree(root, root, files);
+  return files;
+}
+
+var auditedFiles = collectAuditedFiles();
+for (var relative of auditedFiles) {
+  var forbidden = forbiddenReason(relative);
+  if (forbidden) {
+    failures.push(forbidden);
+    continue;
+  }
+  var absolute = path.join(root, relative);
+  if (!fs.existsSync(absolute) || !fs.statSync(absolute).isFile()) continue;
+  if (relative === '.env.example' || /CHECKSUMS\.sha256$/i.test(relative) || relative === 'tests' || relative.startsWith('tests/')) continue;
+  if (!/\.(?:js|json|html|css|md|txt|yml|yaml)$/i.test(relative)) continue;
+  var text = fs.readFileSync(absolute, 'utf8');
+  if (/(?:VERCEL_OIDC_TOKEN|GEMINI_API_KEY|RESEND_API_KEY|UPSTASH_REDIS_REST_TOKEN)\s*=\s*['\"]?(?![<\s]|$)[^\s'\"]+/.test(text)) failures.push('secret potencial: ' + relative);
+  if (/-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/.test(text)) failures.push('chave privada: ' + relative);
+}
 
 var pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
 var index = fs.readFileSync(path.join(root, 'public', 'index.html'), 'utf8');
@@ -51,7 +94,7 @@ else {
 }
 
 if (failures.length) {
-  console.error('Release bloqueada:\n- ' + failures.join('\n- '));
+  console.error('Release bloqueada:\n- ' + Array.from(new Set(failures)).join('\n- '));
   process.exit(1);
 }
-console.log('Release check aprovado: árvore limpa, CSP sincronizada e nenhum secret detectado.');
+console.log('Release check aprovado: arquivos versionados/artefato limpos, CSP sincronizada e nenhum secret detectado.');

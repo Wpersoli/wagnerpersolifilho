@@ -13,12 +13,27 @@ function sleep(ms) { return new Promise(function (resolve) { setTimeout(resolve,
 function assert(condition, message) { if (!condition) throw new Error(message); }
 
 function findChrome() {
-  var candidates = [process.env.CHROME_BIN, 'chromium', 'chromium-browser', 'google-chrome', 'google-chrome-stable'].filter(Boolean);
-  for (var i = 0; i < candidates.length; i += 1) {
-    var found = cp.spawnSync('sh', ['-lc', 'command -v ' + candidates[i]], { encoding: 'utf8' });
-    if (found.status === 0 && found.stdout.trim()) return found.stdout.trim();
+  var direct = [
+    process.env.CHROME_BIN,
+    process.platform === 'win32' && process.env.PROGRAMFILES && path.join(process.env.PROGRAMFILES, 'Google', 'Chrome', 'Application', 'chrome.exe'),
+    process.platform === 'win32' && process.env['PROGRAMFILES(X86)'] && path.join(process.env['PROGRAMFILES(X86)'], 'Google', 'Chrome', 'Application', 'chrome.exe'),
+    process.platform === 'win32' && process.env.LOCALAPPDATA && path.join(process.env.LOCALAPPDATA, 'Google', 'Chrome', 'Application', 'chrome.exe'),
+    process.platform === 'win32' && process.env.PROGRAMFILES && path.join(process.env.PROGRAMFILES, 'Microsoft', 'Edge', 'Application', 'msedge.exe'),
+    process.platform === 'win32' && process.env['PROGRAMFILES(X86)'] && path.join(process.env['PROGRAMFILES(X86)'], 'Microsoft', 'Edge', 'Application', 'msedge.exe')
+  ].filter(Boolean);
+  for (var i = 0; i < direct.length; i += 1) {
+    if (fs.existsSync(direct[i])) return direct[i];
   }
-  throw new Error('Chromium/Chrome não encontrado. Defina CHROME_BIN.');
+  var commands = process.platform === 'win32'
+    ? ['chrome.exe', 'msedge.exe', 'chromium.exe']
+    : ['chromium', 'chromium-browser', 'google-chrome', 'google-chrome-stable'];
+  for (var j = 0; j < commands.length; j += 1) {
+    var found = process.platform === 'win32'
+      ? cp.spawnSync('where.exe', [commands[j]], { encoding: 'utf8' })
+      : cp.spawnSync('sh', ['-lc', 'command -v ' + commands[j]], { encoding: 'utf8' });
+    if (found.status === 0 && found.stdout.trim()) return found.stdout.trim().split(/\r?\n/)[0];
+  }
+  throw new Error('Chrome, Chromium ou Edge não encontrado. Defina CHROME_BIN.');
 }
 
 async function waitFor(url, timeoutMs) {

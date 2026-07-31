@@ -17,34 +17,24 @@ function mockResponse() {
     statusCode: 200,
     body: null,
     headers: headers,
-    setHeader: function (name, value) {
-      headers[String(name).toLowerCase()] = String(value);
-    },
-    status: function (code) {
-      this.statusCode = code;
-      return this;
-    },
-    json: function (payload) {
-      this.body = payload;
-      return this;
-    },
-    end: function () {
-      return this;
-    }
+    setHeader: function (name, value) { headers[String(name).toLowerCase()] = String(value); },
+    status: function (code) { this.statusCode = code; return this; },
+    json: function (payload) { this.body = payload; return this; },
+    end: function () { return this; }
   };
 }
 
-function mockRequest(question, ip) {
+function mockRequest(question, ip, extraHeaders) {
   return {
     method: 'POST',
-    headers: {
+    headers: Object.assign({
       origin: 'https://wagnerpersoli.vercel.app',
+      'content-type': 'application/json',
+      'sec-fetch-site': 'same-origin',
       'x-forwarded-for': ip || '203.0.113.10'
-    },
+    }, extraHeaders || {}),
     socket: {},
-    body: {
-      messages: [{ role: 'user', content: question }]
-    }
+    body: { messages: [{ role: 'user', content: question }] }
   };
 }
 
@@ -56,19 +46,34 @@ function apiResponse(status, payload) {
   };
 }
 
-test.beforeEach(function () {
-  internal.resetState();
-});
+test.beforeEach(function () { internal.resetState(); });
 
-test('base oficial combina JSON e currículo sem a contradição antiga de relacionamento', function () {
+test('base oficial usa uma única fonte JSON canônica e sem contradição antiga', function () {
   assert.match(internal.knowledge.combined, /Wagner Persoli Filho/);
-  assert.match(internal.knowledge.combined, /DADOS ESTRUTURADOS/);
-  assert.match(internal.knowledge.combined, /CURRÍCULO E CONTEXTO/);
+  assert.match(internal.knowledge.combined, /DADOS ESTRUTURADOS \(FONTE CANÔNICA\)/);
+  assert.doesNotMatch(internal.knowledge.combined, /CURRÍCULO E CONTEXTO/);
   assert.doesNotMatch(internal.knowledge.combined, /namorada/i);
 });
 
-test('prompt inclui contexto temporal, separa perfil de perguntas gerais e protege fatos', function () {
-  var prompt = internal.buildSystemPrompt(new Date('2026-07-17T12:00:00.000Z'));
+test('seleção de conhecimento minimiza dados pessoais conforme a pergunta', function () {
+  var general = internal.selectKnowledge('Explique REST e GraphQL');
+  assert.doesNotMatch(general, /98150|estado civil|compensation|Vila Galvão/i);
+
+  var projects = internal.selectKnowledge('Quais são os projetos do Wagner?');
+  assert.match(projects, /Device Simulator Engine/);
+  assert.doesNotMatch(projects, /98150|civil_status|compensation|commute/i);
+
+  var contact = internal.selectKnowledge('Qual é o WhatsApp do Wagner?');
+  assert.match(contact, /5511981504061/);
+  assert.doesNotMatch(contact, /civil_status|compensation|commute/i);
+
+  var salary = internal.selectKnowledge('Qual é a pretensão salarial?');
+  assert.match(salary, /R\$ 20 a R\$ 30/);
+  assert.doesNotMatch(salary, /Tucuruvi|commute/i);
+});
+
+test('prompt inclui contexto temporal, modos e proteção contra invenção', function () {
+  var prompt = internal.buildSystemPrompt(new Date('2026-07-17T12:00:00.000Z'), 'Qual é a experiência do Wagner?');
   assert.match(prompt, /Ano atual em São Paulo: 2026/);
   assert.match(prompt, /Limite de conhecimento nativo do modelo: janeiro de 2025/);
   assert.match(prompt, /PERFIL WAGNER/);
@@ -91,9 +96,7 @@ test('hora de São Paulo é respondida localmente sem chamar a API', async funct
     assert.equal(res.statusCode, 200);
     assert.equal(res.headers['x-wagner-chat-source'], 'runtime');
     assert.match(res.body.content[0].text, /São Paulo/);
-  } finally {
-    global.fetch = originalFetch;
-  }
+  } finally { global.fetch = originalFetch; }
 });
 
 test('fallback não inventa motivo de saída e é transparente em pergunta geral', function () {
@@ -104,17 +107,11 @@ test('fallback não inventa motivo de saída e é transparente em pergunta geral
 test('falha transitória no principal usa secundário e ativa circuit breaker', async function () {
   var originalFetch = global.fetch;
   var calls = [];
-
   global.fetch = async function (url) {
     calls.push(String(url));
-    if (String(url).includes('gemini-3.5-flash')) {
-      return apiResponse(503, { error: { message: 'high demand' } });
-    }
-    return apiResponse(200, {
-      candidates: [{ content: { parts: [{ text: 'Resposta pelo modelo secundário.' }] } }]
-    });
+    if (String(url).includes('gemini-3.5-flash')) return apiResponse(503, { error: { message: 'high demand' } });
+    return apiResponse(200, { candidates: [{ content: { parts: [{ text: 'Resposta pelo modelo secundário.' }] } }] });
   };
-
   try {
     var firstRes = mockResponse();
     await handler(mockRequest('Por que contratar o Wagner?', '203.0.113.12'), firstRes);
@@ -129,9 +126,7 @@ test('falha transitória no principal usa secundário e ativa circuit breaker', 
     await handler(mockRequest('Qual é a formação?', '203.0.113.13'), secondRes);
     assert.match(calls[0], /gemini-3\.1-flash-lite/);
     assert.equal(secondRes.headers['x-wagner-chat-model'], 'gemini-3.1-flash-lite');
-  } finally {
-    global.fetch = originalFetch;
-  }
+  } finally { global.fetch = originalFetch; }
 });
 
 test('sanitização limita histórico e remove controles invisíveis', function () {
@@ -140,4 +135,14 @@ test('sanitização limita histórico e remove controles invisíveis', function 
   var clean = internal.sanitizeMessages(raw);
   assert.equal(clean.length, 24);
   assert.doesNotMatch(clean[0].content, /\u0000/);
+});
+
+test('chat bloqueia fetch cross-site e content-type incorreto', async function () {
+  var crossSite = mockResponse();
+  await handler(mockRequest('oi', '203.0.113.21', { 'sec-fetch-site': 'cross-site' }), crossSite);
+  assert.equal(crossSite.statusCode, 403);
+
+  var invalidType = mockResponse();
+  await handler(mockRequest('oi', '203.0.113.22', { 'content-type': 'text/plain' }), invalidType);
+  assert.equal(invalidType.statusCode, 415);
 });

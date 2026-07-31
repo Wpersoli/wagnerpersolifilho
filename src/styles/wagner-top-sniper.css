@@ -1,0 +1,242 @@
+/* =====================================================================
+   WAGNER.OS — TOP SURGICAL REFINEMENT v2.9.4
+   Escopo estrito:
+   1. Header textual sem imagem de marca.
+   2. Background tecnológico do hero em full bleed, sem ampliar o core.
+   3. Remoção visual do painel translúcido atrás da área tipográfica.
+   4. Remoção do rótulo decorativo ENERGY MOTION // LIVE.
+   Nenhuma lógica, ação, link, hotspot, animação ou funcionalidade alterada.
+   ===================================================================== */
+
+/* 1 — MARCA DO HEADER: somente nome + subtítulo. */
+body > header .cyber-brand {
+  min-width: clamp(210px, 15.2vw, 258px) !important;
+  gap: 0 !important;
+  padding: 0 !important;
+  align-items: center !important;
+}
+
+body > header .cyber-brand::before,
+body > header .cyber-brand::after {
+  content: none !important;
+  display: none !important;
+}
+
+body > header .brand-copy {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: flex-start !important;
+  min-width: 0;
+  line-height: 1;
+}
+
+body > header .brand-copy strong {
+  font-size: clamp(18px, 1.34vw, 22px) !important;
+  line-height: 1 !important;
+  letter-spacing: .07em !important;
+  white-space: nowrap !important;
+  color: #f2fbff !important;
+  text-shadow:
+    0 0 10px rgba(170, 239, 255, .18),
+    0 0 22px rgba(38, 183, 255, .16) !important;
+}
+
+body > header .brand-copy strong span {
+  color: #65ddff !important;
+  text-shadow:
+    0 0 8px rgba(117, 230, 255, .54),
+    0 0 18px rgba(35, 179, 255, .36) !important;
+}
+
+body > header .brand-copy small {
+  display: block !important;
+  margin-top: 8px !important;
+  font-size: clamp(7px, .52vw, 8.4px) !important;
+  line-height: 1 !important;
+  letter-spacing: .27em !important;
+  white-space: nowrap !important;
+  color: rgba(130, 202, 232, .72) !important;
+}
+
+/* 2 — BACKGROUND FULL BLEED: expande somente cenário, linhas e energia. */
+.fidelity-hero.cyber-hero {
+  isolation: isolate !important;
+  background: #02070d !important;
+}
+
+.fidelity-hero.cyber-hero::before {
+  content: "" !important;
+  display: block !important;
+  position: absolute !important;
+  z-index: 0 !important;
+  inset: 0 !important;
+  pointer-events: none !important;
+  opacity: .72 !important;
+  background:
+    linear-gradient(180deg, rgba(1, 7, 13, .20) 0%, rgba(1, 7, 13, .04) 18%, rgba(1, 7, 13, .10) 72%, rgba(1, 7, 13, .54) 100%),
+    linear-gradient(90deg, rgba(0, 7, 14, .16) 0%, transparent 16%, transparent 84%, rgba(0, 7, 14, .16) 100%),
+    url("../img/hero-fidelity-master.webp") center bottom / cover no-repeat !important;
+  filter: brightness(.50) saturate(1.18) contrast(1.06) !important;
+  transform: scale(1.012) !important;
+  transform-origin: center bottom !important;
+}
+
+.fidelity-hero.cyber-hero::after {
+  content: "" !important;
+  display: block !important;
+  position: absolute !important;
+  z-index: 1 !important;
+  inset: 0 !important;
+  pointer-events: none !important;
+  opacity: .64 !important;
+  background:
+    linear-gradient(106deg, transparent 0 8%, rgba(76, 216, 255, .07) 8.15%, transparent 8.42% 26%, rgba(57, 179, 255, .055) 26.15%, transparent 26.5% 73%, rgba(93, 222, 255, .05) 73.15%, transparent 73.5%),
+    repeating-linear-gradient(180deg, transparent 0 30px, rgba(64, 203, 255, .036) 30px 31px, transparent 31px 62px),
+    radial-gradient(circle at 7% 35%, rgba(75, 210, 255, .10), transparent 17%),
+    radial-gradient(circle at 94% 58%, rgba(41, 132, 255, .10), transparent 19%);
+  mix-blend-mode: screen !important;
+  animation: wos-edge-grid-current 11s linear infinite !important;
+}
+
+@keyframes wos-edge-grid-current {
+  0%   { background-position: -34px 0, 0 -62px, 0 0, 0 0; opacity: .44; }
+  48%  { opacity: .72; }
+  100% { background-position: 34px 0, 0 62px, 0 0, 0 0; opacity: .44; }
+}
+
+/* O core visual preserva exatamente a escala e os hotspots existentes. */
+.fidelity-hero .hero-fidelity-shell {
+  position: relative !important;
+  z-index: 3 !important;
+  background: transparent !important;
+}
+
+.fidelity-hero .hero-fidelity-stage.hero-brand-stage {
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow:
+    0 26px 66px rgba(0, 0, 0, .38),
+    0 0 54px rgba(24, 154, 255, .055) !important;
+}
+
+/* Fades laterais unem o core ao cenário full bleed sem criar moldura. */
+.fidelity-hero .hero-fidelity-stage.hero-brand-stage::before,
+.fidelity-hero .hero-fidelity-stage.hero-brand-stage::after {
+  content: "" !important;
+  display: block !important;
+  position: absolute !important;
+  z-index: 14 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  width: clamp(8px, 1.4vw, 24px) !important;
+  pointer-events: none !important;
+  opacity: .32 !important;
+}
+
+.fidelity-hero .hero-fidelity-stage.hero-brand-stage::before {
+  left: 0 !important;
+  right: auto !important;
+  background: linear-gradient(90deg, rgba(1, 7, 13, .55), transparent) !important;
+}
+
+.fidelity-hero .hero-fidelity-stage.hero-brand-stage::after {
+  right: 0 !important;
+  left: auto !important;
+  background: linear-gradient(270deg, rgba(1, 7, 13, .55), transparent) !important;
+}
+
+/* 3 — painel/retângulo decorativo atrás da área tipográfica removido. */
+.fidelity-hero .hero-copy-energy,
+.fidelity-hero .hero-copy-energy::before,
+.fidelity-hero .hero-copy-energy::after {
+  display: none !important;
+  content: none !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  opacity: 0 !important;
+}
+
+/* 4 — rótulo visual sem função removido. */
+.fidelity-hero .hero-motion-status {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* Mantém raios e partículas sobre o background expandido. */
+.fidelity-hero .hero-atmosphere {
+  z-index: 4 !important;
+}
+
+/* Header responsivo com as duas linhas textuais preservadas. */
+@media (max-width: 1180px) {
+  body > header .cyber-brand {
+    min-width: clamp(184px, 18vw, 220px) !important;
+  }
+
+  body > header .brand-copy strong {
+    font-size: clamp(16px, 1.55vw, 19px) !important;
+  }
+}
+
+@media (max-width: 900px) {
+  body > header .cyber-brand {
+    min-width: 176px !important;
+  }
+
+  body > header .brand-copy strong {
+    font-size: 15px !important;
+  }
+
+  body > header .brand-copy small {
+    margin-top: 6px !important;
+    font-size: 6.8px !important;
+    letter-spacing: .21em !important;
+  }
+}
+
+@media (max-width: 760px) {
+  body > header .cyber-brand {
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+  }
+
+  body > header .brand-copy strong {
+    font-size: clamp(13px, 4.1vw, 16px) !important;
+  }
+
+  body > header .brand-copy small {
+    display: block !important;
+    margin-top: 5px !important;
+    font-size: clamp(5.6px, 1.7vw, 7px) !important;
+    letter-spacing: .15em !important;
+  }
+
+  .fidelity-hero.cyber-hero::before {
+    opacity: .48 !important;
+    filter: brightness(.42) saturate(1.12) contrast(1.04) !important;
+  }
+
+  .fidelity-hero.cyber-hero::after {
+    opacity: .42 !important;
+  }
+}
+
+@media (max-width: 430px) {
+  body > header .brand-copy strong {
+    font-size: 13px !important;
+  }
+
+  body > header .brand-copy small {
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: clip;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fidelity-hero.cyber-hero::after {
+    animation: none !important;
+  }
+}

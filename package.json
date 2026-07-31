@@ -1,15 +1,24 @@
 {
   "name": "wagnerpersolifilho",
-  "version": "1.2.0",
+  "version": "3.1.0",
   "private": true,
-  "description": "WAGNER.OS — portfólio profissional com assistente Gemini resiliente, factual e de propósito geral.",
+  "description": "WAGNER.OS — portfólio estático/serverless auditado, seguro, acessível, fluido e com funcionalidades críticas preservadas.",
   "type": "commonjs",
   "engines": {
     "node": "22.x"
   },
   "scripts": {
-    "check": "node --check public/js/main.js && node --check public/emulador/script.js && node --check api/chat.js && node --check api/contact.js && node --check tests/chat.test.js",
-    "test": "node --test tests/chat.test.js",
-    "validate": "npm run check && npm test"
+    "build": "node scripts/build-css.js && node scripts/build-security-config.js",
+    "dev": "npm run build && node scripts/dev-server.js",
+    "dev:vercel": "npm run build && vercel dev --listen 3000",
+    "check": "node scripts/check-syntax.js",
+    "test": "node --test tests/*.test.js",
+    "test:e2e": "npm run build && node scripts/e2e-browser.js",
+    "release:check": "node scripts/release-check.js && node scripts/verify-assets.js",
+    "validate": "npm run build && npm run check && npm test && npm run release:check",
+    "quality": "npm run validate && npm run test:e2e && npm run test:visual",
+    "package:release": "npm run quality && npm run checksums && npm run release:check && node scripts/package-release.js",
+    "checksums": "node scripts/generate-checksums.js",
+    "test:visual": "npm run build && node scripts/visual-emulation.js"
   }
 }

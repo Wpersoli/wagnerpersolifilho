@@ -35,7 +35,8 @@ const Utils = {
 
         try {
             const parsed = new URL(url);
-            return ['http:', 'https:'].includes(parsed.protocol) && Boolean(parsed.hostname);
+            var localHttp = parsed.protocol === 'http:' && /^(localhost|127\.0\.0\.1)$/.test(parsed.hostname);
+            return (parsed.protocol === 'https:' || localHttp) && Boolean(parsed.hostname);
         } catch {
             return false;
         }
@@ -162,6 +163,7 @@ class App {
         }
 
         this.showLoading();
+        this.dom.previewFrame.removeAttribute('srcdoc');
         this.dom.previewFrame.src = url;
 
         clearTimeout(this.loadTimeout);
@@ -210,7 +212,7 @@ class App {
     bindEvents() {
         this.dom.loadBtn.addEventListener('click', () => this.loadURL());
 
-        this.dom.urlInput.addEventListener('keypress', e => {
+        this.dom.urlInput.addEventListener('keydown', e => {
             if (e.key === 'Enter') this.loadURL();
         });
 
@@ -260,15 +262,16 @@ class App {
         });
 
         this.dom.applyCustom.addEventListener('click', () => {
-            const width = parseInt(this.dom.customWidth.value);
-            const height = parseInt(this.dom.customHeight.value);
+            const width = Number.parseInt(this.dom.customWidth.value, 10);
+            const height = Number.parseInt(this.dom.customHeight.value, 10);
 
-            if (width > 100 && height > 100) {
+            if (Number.isFinite(width) && Number.isFinite(height) && width >= 240 && width <= 3840 && height >= 320 && height <= 4320) {
                 this.state.currentDevice = {
                     name: 'CUSTOM',
                     width,
                     height
                 };
+                this.state.rotated = false;
 
                 this.updateDevice();
                 this.toggleDropdown(false);

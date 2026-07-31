@@ -1,88 +1,22 @@
-// api/contact.js — Vercel Serverless Function
-// Canal seguro de contato por e-mail usando Resend REST API.
+'use strict';
+
+// Canal serverless de contato via Brevo/Resend, com validação, anti-abuso e logs estruturados.
+var http = require('./_shared/http');
+var rateLimiter = require('./_shared/rate-limit');
+var validation = require('./_shared/validation');
 
 var CONTACT_RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
-var CONTACT_RATE_LIMIT_MAX = positiveInt(process.env.CONTACT_RATE_LIMIT_MAX, 5, 1, 20);
-var contactRateLimitMap = new Map();
-
-function positiveInt(value, fallback, min, max) {
-  var parsed = Number.parseInt(value, 10);
-  if (!Number.isFinite(parsed)) return fallback;
-  return Math.min(max, Math.max(min, parsed));
-}
-
-function sendJson(res, statusCode, payload) {
-  res.statusCode = statusCode;
-  res.setHeader('Content-Type', 'application/json; charset=utf-8');
-  res.setHeader('Cache-Control', 'no-store');
-  res.end(JSON.stringify(payload));
-}
-
-function getClientIp(req) {
-  var forwarded = req.headers['x-forwarded-for'];
-  if (typeof forwarded === 'string' && forwarded.trim()) {
-    return forwarded.split(',')[0].trim();
-  }
-  return String(req.socket && req.socket.remoteAddress || 'unknown');
-}
-
-function isRateLimited(ip) {
-  var now = Date.now();
-  var bucket = contactRateLimitMap.get(ip);
-  if (!bucket || now > bucket.resetAt) {
-    contactRateLimitMap.set(ip, { count: 1, resetAt: now + CONTACT_RATE_LIMIT_WINDOW_MS });
-    return false;
-  }
-  bucket.count += 1;
-  return bucket.count > CONTACT_RATE_LIMIT_MAX;
-}
-
-function cleanupRateLimitMap() {
-  var now = Date.now();
-  contactRateLimitMap.forEach(function(bucket, key) {
-    if (!bucket || now > bucket.resetAt) contactRateLimitMap.delete(key);
-  });
-}
-
-function escapeHtml(value) {
-  return String(value || '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
-function sanitizeField(value, maxLength) {
-  return String(value || '')
-    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '')
-    .trim()
-    .slice(0, maxLength);
-}
-
-function isValidEmail(value) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || ''));
-}
-
-async function parseRequestBody(req) {
-  if (req.body && typeof req.body === 'object') return req.body;
-  if (typeof req.body === 'string' && req.body) {
-    try { return JSON.parse(req.body); } catch (_) { return null; }
-  }
-  var chunks = [];
-  for await (var chunk of req) chunks.push(Buffer.from(chunk));
-  if (!chunks.length) return {};
-  var raw = Buffer.concat(chunks).toString('utf8');
-  try { return JSON.parse(raw); } catch (_) { return null; }
-}
+var CONTACT_RATE_LIMIT_MAX = http.positiveInt(process.env.CONTACT_RATE_LIMIT_MAX, 5, 1, 20);
+var MAX_BODY_BYTES = http.positiveInt(process.env.CONTACT_MAX_BODY_BYTES, 16384, 4096, 65536);
+var PROVIDER_TIMEOUT_MS = http.positiveInt(process.env.CONTACT_PROVIDER_TIMEOUT_MS, 9000, 2000, 20000);
 
 function buildEmailPayload(data) {
   var submittedAt = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
-  var safeName = escapeHtml(data.name);
-  var safeEmail = escapeHtml(data.email);
-  var safePhone = escapeHtml(data.phone || 'Não informado');
-  var safeSubject = escapeHtml(data.subject);
-  var safeMessage = escapeHtml(data.message).replace(/\n/g, '<br>');
+  var safeName = validation.escapeHtml(data.name);
+  var safeEmail = validation.escapeHtml(data.email);
+  var safePhone = validation.escapeHtml(data.phone || 'Não informado');
+  var safeSubject = validation.escapeHtml(data.subject);
+  var safeMessage = validation.escapeHtml(data.message).replace(/\n/g, '<br>');
 
   return {
     subject: '[Portfólio] ' + data.subject,
@@ -107,7 +41,7 @@ function buildEmailPayload(data) {
               '<tr><td style="padding:0 0 10px"><strong style="color:#8ef7ff">E-mail:</strong> ' + safeEmail + '</td></tr>' +
               '<tr><td style="padding:0 0 10px"><strong style="color:#8ef7ff">Telefone:</strong> ' + safePhone + '</td></tr>' +
               '<tr><td style="padding:0 0 10px"><strong style="color:#8ef7ff">Assunto:</strong> ' + safeSubject + '</td></tr>' +
-              '<tr><td style="padding:0 0 18px"><strong style="color:#8ef7ff">Enviado em:</strong> ' + escapeHtml(submittedAt) + '</td></tr>' +
+              '<tr><td style="padding:0 0 18px"><strong style="color:#8ef7ff">Enviado em:</strong> ' + validation.escapeHtml(submittedAt) + '</td></tr>' +
             '</table>' +
             '<div style="padding:18px;border:1px solid rgba(46,242,255,.12);border-radius:14px;background:#070e1a;color:#edf8ff;line-height:1.7">' + safeMessage + '</div>' +
           '</div>' +
@@ -116,127 +50,199 @@ function buildEmailPayload(data) {
   };
 }
 
+function parseSender(value, fallbackName, fallbackEmail) {
+  var raw = String(value || '').trim();
+  var match = raw.match(/^\s*(.*?)\s*<([^<>\s]+@[^<>\s]+)>\s*$/);
+  if (match) return { name: match[1] || fallbackName, email: match[2] };
+  if (validation.isValidEmail(raw)) return { name: fallbackName, email: raw };
+  return { name: fallbackName, email: fallbackEmail };
+}
+
+async function providerFetch(url, options) {
+  var controller = new AbortController();
+  var timer = setTimeout(function () { controller.abort(); }, PROVIDER_TIMEOUT_MS);
+  try {
+    options.signal = controller.signal;
+    return await fetch(url, options);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function sendWithBrevo(data) {
+  var apiKey = String(process.env.BREVO_API_KEY || '').trim();
+  if (!apiKey) return { ok: false, status: 503, code: 'provider_not_configured', provider: 'brevo' };
+
+  var toEmail = String(process.env.CONTACT_TO_EMAIL || 'wagnerpersoli@hotmail.com').trim();
+  var sender = parseSender(
+    process.env.CONTACT_FROM_EMAIL,
+    String(process.env.BREVO_SENDER_NAME || 'WAGNER.OS').trim() || 'WAGNER.OS',
+    String(process.env.BREVO_SENDER_EMAIL || 'contato@wagnerpersoli.com.br').trim()
+  );
+  if (!validation.isValidEmail(toEmail) || !validation.isValidEmail(sender.email)) {
+    return { ok: false, status: 503, code: 'provider_invalid_configuration', provider: 'brevo' };
+  }
+
+  var payload = buildEmailPayload(data);
+  try {
+    var response = await providerFetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: {
+        'api-key': apiKey,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'User-Agent': 'WAGNER.OS/3.1.0'
+      },
+      body: JSON.stringify({
+        sender: sender,
+        to: [{ email: toEmail, name: 'Wagner Persoli' }],
+        replyTo: { email: data.email, name: data.name },
+        subject: payload.subject,
+        textContent: payload.text,
+        htmlContent: payload.html,
+        tags: ['portfolio-contact']
+      })
+    });
+    var body = null;
+    try { body = await response.json(); } catch (_) { body = null; }
+    if (!response.ok) return { ok: false, status: response.status, code: 'provider_error', provider: 'brevo' };
+    var id = body && (body.messageId || Array.isArray(body.messageIds) && body.messageIds[0]);
+    return { ok: true, status: 200, id: id ? String(id) : '', provider: 'brevo' };
+  } catch (error) {
+    return { ok: false, status: error && error.name === 'AbortError' ? 504 : 502, code: 'provider_unavailable', provider: 'brevo' };
+  }
+}
+
 async function sendWithResend(data) {
   var apiKey = String(process.env.RESEND_API_KEY || '').trim();
   var toEmail = String(process.env.CONTACT_TO_EMAIL || 'wagnerpersoli@hotmail.com').trim();
   var fromEmail = String(process.env.CONTACT_FROM_EMAIL || 'WAGNER.OS <onboarding@resend.dev>').trim();
-
-  if (!apiKey) {
-    return { ok: false, status: 503, message: 'RESEND_API_KEY não configurada no ambiente da Vercel.' };
-  }
+  if (!apiKey) return { ok: false, status: 503, code: 'provider_not_configured', provider: 'resend' };
 
   var payload = buildEmailPayload(data);
-  var response = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      'Authorization': 'Bearer ' + apiKey,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      from: fromEmail,
-      to: [toEmail],
-      reply_to: data.email,
-      subject: payload.subject,
-      text: payload.text,
-      html: payload.html
-    })
-  });
-
-  var body = null;
   try {
-    body = await response.json();
-  } catch (_) {
-    body = null;
-  }
+    var response = await providerFetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + apiKey,
+        'Content-Type': 'application/json',
+        'User-Agent': 'WAGNER.OS/3.1.0'
+      },
+      body: JSON.stringify({
+        from: fromEmail,
+        to: [toEmail],
+        reply_to: data.email,
+        subject: payload.subject,
+        text: payload.text,
+        html: payload.html
+      })
+    });
 
-  if (!response.ok) {
-    var detail = body && body.message ? body.message : 'Falha ao enviar via Resend.';
-    return { ok: false, status: response.status, message: detail };
+    var body = null;
+    try { body = await response.json(); } catch (_) { body = null; }
+    if (!response.ok) return { ok: false, status: response.status, code: 'provider_error', provider: 'resend' };
+    return { ok: true, status: 200, id: body && body.id ? String(body.id) : '', provider: 'resend' };
+  } catch (error) {
+    return { ok: false, status: error && error.name === 'AbortError' ? 504 : 502, code: 'provider_unavailable', provider: 'resend' };
   }
+}
 
-  return { ok: true, status: 200, id: body && body.id ? body.id : '' };
+async function sendContactEmail(data) {
+  var selected = String(process.env.CONTACT_EMAIL_PROVIDER || 'auto').trim().toLowerCase();
+  if (selected === 'brevo') return sendWithBrevo(data);
+  if (selected === 'resend') return sendWithResend(data);
+  if (String(process.env.BREVO_API_KEY || '').trim()) return sendWithBrevo(data);
+  return sendWithResend(data);
+}
+
+function normalizeContact(body) {
+  return {
+    name: validation.sanitizeText(body.name, 80),
+    email: validation.sanitizeText(body.email, 120),
+    subject: validation.sanitizeText(body.subject, 120),
+    phone: validation.sanitizeText(body.phone, 40),
+    message: validation.sanitizeText(body.message, 2000),
+    company: validation.sanitizeText(body.company, 120),
+    startedAt: body.startedAt === undefined || body.startedAt === '' ? NaN : Number(body.startedAt)
+  };
+}
+
+function validateContact(data) {
+  if (!data.name || data.name.length < 2) return 'Informe um nome válido.';
+  if (!validation.isValidEmail(data.email)) return 'Informe um e-mail válido.';
+  if (!data.subject || data.subject.length < 3) return 'Informe um assunto com pelo menos 3 caracteres.';
+  if (!data.message || data.message.length < 12) return 'A mensagem deve ter pelo menos 12 caracteres.';
+  return '';
 }
 
 async function handler(req, res) {
-  cleanupRateLimitMap();
+  var reqId = http.requestId(req);
+  res.setHeader('X-Request-Id', reqId);
+  http.applyCors(req, res);
 
+  if (!http.isAllowedOrigin(req) || !http.isAllowedFetchSite(req)) {
+    http.log('warn', 'contact_request_blocked', { requestId: reqId });
+    return http.sendJson(res, 403, { ok: false, message: 'Origem não autorizada.' });
+  }
   if (req.method === 'OPTIONS') {
     res.statusCode = 204;
     res.setHeader('Allow', 'POST, OPTIONS');
     return res.end();
   }
-
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST, OPTIONS');
-    return sendJson(res, 405, { ok: false, message: 'Método não permitido.' });
+    return http.sendJson(res, 405, { ok: false, message: 'Método não permitido.' });
   }
 
-  var ip = getClientIp(req);
-  if (isRateLimited(ip)) {
-    return sendJson(res, 429, { ok: false, message: 'Muitas tentativas em pouco tempo. Aguarde alguns minutos e tente novamente.' });
+  var parsed = await http.parseJsonBody(req, MAX_BODY_BYTES);
+  if (!parsed.ok) return http.sendJson(res, parsed.status, { ok: false, message: parsed.error });
+  var data = normalizeContact(parsed.value || {});
+
+  // Honeypot: resposta neutra para não ensinar o bot a contornar a proteção.
+  if (data.company || !validation.isPlausibleSubmit(data.startedAt)) {
+    http.log('warn', 'contact_bot_trap', { requestId: reqId });
+    return http.sendJson(res, 200, { ok: true, message: 'Mensagem recebida.' });
   }
 
-  var body = await parseRequestBody(req);
-  if (!body || typeof body !== 'object') {
-    return sendJson(res, 400, { ok: false, message: 'Payload inválido.' });
+  var validationError = validateContact(data);
+  if (validationError) return http.sendJson(res, 400, { ok: false, message: validationError });
+
+  var rate = await rateLimiter.check('contact', http.getClientIp(req), CONTACT_RATE_LIMIT_MAX, Math.ceil(CONTACT_RATE_LIMIT_WINDOW_MS / 1000));
+  http.setRateLimitHeaders(res, CONTACT_RATE_LIMIT_MAX, rate);
+  if (rate.limited) {
+    res.setHeader('Retry-After', String(rate.retryAfter));
+    http.log('warn', 'contact_rate_limited', { requestId: reqId, backend: rate.backend });
+    return http.sendJson(res, 429, { ok: false, message: 'Muitas tentativas em pouco tempo. Aguarde alguns minutos e tente novamente.' });
   }
 
-  var data = {
-    name: sanitizeField(body.name, 80),
-    email: sanitizeField(body.email, 120),
-    subject: sanitizeField(body.subject, 120),
-    phone: sanitizeField(body.phone, 40),
-    message: sanitizeField(body.message, 2000),
-    company: sanitizeField(body.company, 120)
-  };
-
-  if (data.company) {
-    return sendJson(res, 200, { ok: true, message: 'Mensagem recebida.' });
-  }
-
-  if (!data.name || data.name.length < 2) {
-    return sendJson(res, 400, { ok: false, message: 'Informe um nome válido.' });
-  }
-  if (!isValidEmail(data.email)) {
-    return sendJson(res, 400, { ok: false, message: 'Informe um e-mail válido.' });
-  }
-  if (!data.subject || data.subject.length < 3) {
-    return sendJson(res, 400, { ok: false, message: 'Informe um assunto com pelo menos 3 caracteres.' });
-  }
-  if (!data.message || data.message.length < 12) {
-    return sendJson(res, 400, { ok: false, message: 'A mensagem deve ter pelo menos 12 caracteres.' });
-  }
-
-  try {
-    var result = await sendWithResend(data);
-    if (!result.ok) {
-      console.error('[contact] Falha no envio:', result.status, result.message);
-      return sendJson(res, result.status || 500, {
-        ok: false,
-        message: 'O formulário está pronto, mas o canal de e-mail precisa de ajuste no ambiente. Configure RESEND_API_KEY, CONTACT_TO_EMAIL e, se necessário, CONTACT_FROM_EMAIL na Vercel.'
-      });
-    }
-
-    return sendJson(res, 200, {
-      ok: true,
-      message: 'Mensagem enviada com sucesso. Wagner receberá seu contato por e-mail.',
-      id: result.id || ''
-    });
-  } catch (err) {
-    console.error('[contact] Exceção não tratada:', err && err.message ? err.message : err);
-    return sendJson(res, 500, {
+  var result = await sendContactEmail(data);
+  if (!result.ok) {
+    http.log('error', 'contact_provider_failed', { requestId: reqId, status: result.status, code: result.code });
+    return http.sendJson(res, result.status || 503, {
       ok: false,
-      message: 'Não foi possível enviar agora. Tente novamente em instantes.'
+      message: 'O canal de e-mail está temporariamente indisponível. Use WhatsApp, LinkedIn ou tente novamente em instantes.'
     });
   }
+
+  http.log('info', 'contact_sent', { requestId: reqId, provider: result.provider || '', providerId: result.id || '' });
+  return http.sendJson(res, 200, {
+    ok: true,
+    message: 'Mensagem enviada com sucesso. Wagner receberá seu contato por e-mail.',
+    id: result.id || ''
+  });
 }
 
 module.exports = handler;
 module.exports._internal = {
   buildEmailPayload: buildEmailPayload,
-  sanitizeField: sanitizeField,
-  isValidEmail: isValidEmail,
-  resetState: function() {
-    contactRateLimitMap.clear();
-  }
+  normalizeContact: normalizeContact,
+  validateContact: validateContact,
+  sanitizeField: validation.sanitizeText,
+  isValidEmail: validation.isValidEmail,
+  isAllowedOrigin: http.isAllowedOrigin,
+  sendWithBrevo: sendWithBrevo,
+  sendWithResend: sendWithResend,
+  sendContactEmail: sendContactEmail,
+  parseSender: parseSender,
+  resetState: function () { rateLimiter.reset(); }
 };

@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 560" role="img" aria-labelledby="title desc">
+  <title id="title">Monograma WP</title>
+  <desc id="desc">Monograma metálico futurista com iluminação neon azul.</desc>
+  <defs>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eef8ff"/>
+      <stop offset=".12" stop-color="#7694aa"/>
+      <stop offset=".27" stop-color="#182938"/>
+      <stop offset=".43" stop-color="#9ab3c5"/>
+      <stop offset=".58" stop-color="#1a2d3c"/>
+      <stop offset=".78" stop-color="#7895aa"/>
+      <stop offset="1" stop-color="#101c27"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#dffbff"/>
+      <stop offset=".3" stop-color="#37d9ff"/>
+      <stop offset=".68" stop-color="#1479ff"/>
+      <stop offset="1" stop-color="#72f5ff"/>
+    </linearGradient>
+    <linearGradient id="depth" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#164d70"/>
+      <stop offset="1" stop-color="#020914"/>
+    </linearGradient>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="8" result="b1"/>
+      <feColorMatrix in="b1" type="matrix" values="0 0 0 0 0.05 0 0 0 0 0.65 0 0 0 0 1 0 0 0 1 0" result="blue"/>
+      <feMerge><feMergeNode in="blue"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="18" stdDeviation="12" flood-color="#000814" flood-opacity=".95"/>
+    </filter>
+    <pattern id="scratches" width="80" height="80" patternUnits="userSpaceOnUse">
+      <path d="M3 12L52 2M12 42L74 25M0 68L36 54M44 79L79 61" stroke="#d9f8ff" stroke-opacity=".12" stroke-width="1"/>
+      <path d="M4 28L32 20M46 48L77 36M18 75L60 60" stroke="#000" stroke-opacity=".28" stroke-width="2"/>
+    </pattern>
+  </defs>
+  <g filter="url(#shadow)">
+    <path d="M72 70L178 70L290 354L240 492L72 70Z" fill="url(#depth)" stroke="#0a5f9e" stroke-width="18" opacity=".95" transform="translate(18 18)"/>
+    <path d="M72 70L178 70L290 354L240 492L72 70Z" fill="url(#metal)" stroke="url(#edge)" stroke-width="9" filter="url(#glow)"/>
+    <path d="M205 70L310 70L408 315L354 448L205 70Z" fill="url(#depth)" stroke="#0a5f9e" stroke-width="18" opacity=".95" transform="translate(18 18)"/>
+    <path d="M205 70L310 70L408 315L354 448L205 70Z" fill="url(#metal)" stroke="url(#edge)" stroke-width="9" filter="url(#glow)"/>
+    <path d="M304 70H571L530 181H403L437 267H510L469 379H388L326 214H455L475 161H342L304 70Z" fill="url(#depth)" stroke="#0a5f9e" stroke-width="18" opacity=".95" transform="translate(18 18)"/>
+    <path d="M304 70H571L530 181H403L437 267H510L469 379H388L326 214H455L475 161H342L304 70Z" fill="url(#metal)" stroke="url(#edge)" stroke-width="9" filter="url(#glow)"/>
+  </g>
+  <g opacity=".8">
+    <path d="M72 70L178 70L290 354L240 492L72 70Z" fill="url(#scratches)"/>
+    <path d="M205 70L310 70L408 315L354 448L205 70Z" fill="url(#scratches)"/>
+    <path d="M304 70H571L530 181H403L437 267H510L469 379H388L326 214H455L475 161H342L304 70Z" fill="url(#scratches)"/>
+  </g>
+  <g fill="none" stroke-linecap="round">
+    <path d="M83 85L177 85L277 351" stroke="#d8fbff" stroke-width="3" opacity=".9"/>
+    <path d="M218 84L302 84L395 313" stroke="#d8fbff" stroke-width="3" opacity=".75"/>
+    <path d="M321 84H548" stroke="#e7fdff" stroke-width="4" opacity=".88"/>
+    <path d="M390 198H443" stroke="#2be7ff" stroke-width="3" opacity=".7"/>
+  </g>
+</svg>

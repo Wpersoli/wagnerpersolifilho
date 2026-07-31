@@ -1,0 +1,14 @@
+WAGNER.OS v3.3.0 — REFINAMENTO VISUAL UNIFORME
+
+- Topo full-width alinhado à referência visual enviada.
+- Monograma W prismatico integrado ao banner sem alterar HTML ou hotspots.
+- Background CSS e canvases animados preservados.
+- Botões, boxes, cards, chat e painéis unificados na mesma linguagem visual.
+- Partículas recalibradas com maior densidade e menor diâmetro aparente.
+- Espaçamento vertical reduzido sem alterar ordem ou conteúdo.
+- Projetos, stack, terminal e contato com escala e contraste refinados.
+- Chat, modo apresentação, menu, currículo, WhatsApp, Brevo e scroll nativo preservados.
+- Monograma W fornecido incorporado ao banner sem trocar IDs ou hotspots.
+- Header full-width alinhado à referência e linguagem uniforme para botões e boxes.
+- Correção de SVGs decorativos que estavam entrando no fluxo e criando espaços vazios.
+- Gate geométrico do título de projetos após navegação por âncora.

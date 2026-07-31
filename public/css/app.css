@@ -11246,3 +11246,759 @@ body.impact-cursor-ready.impact-cursor-hover .impact-cursor-ring {
   }
 }
 
+/* ===== premium-uniform-v330.css ===== */
+/* =====================================================================
+   WAGNER.OS v3.3.0 — UNIFORM PREMIUM VISUAL
+   Visual-only override layer. Preserves DOM, critical IDs, chat,
+   presentation mode, native scrolling, APIs and the animated CSS background.
+   ===================================================================== */
+
+:root {
+  --v330-bg: #020812;
+  --v330-surface: rgba(4, 16, 29, .88);
+  --v330-surface-2: rgba(7, 23, 40, .82);
+  --v330-line: rgba(67, 211, 255, .25);
+  --v330-line-strong: rgba(102, 226, 255, .56);
+  --v330-cyan: #55dfff;
+  --v330-blue: #218dff;
+  --v330-violet: #8d5cff;
+  --v330-magenta: #d75cff;
+  --v330-text: #effbff;
+  --v330-muted: #94b5c7;
+  --v330-radius: 14px;
+  --v330-shadow: 0 24px 64px -32px rgba(0, 0, 0, .95), 0 0 32px -20px rgba(53, 207, 255, .55);
+}
+
+/* ---------------------------------------------------------------------
+   HEADER — matches the supplied full-width reference without changing DOM.
+   --------------------------------------------------------------------- */
+@media (min-width: 1181px) {
+  body > header {
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-height: 70px !important;
+    padding: calc(8px + var(--sat)) 28px 8px !important;
+    border: 0 !important;
+    border-bottom: 1px solid rgba(72, 213, 255, .28) !important;
+    border-radius: 0 !important;
+    clip-path: none !important;
+    background:
+      linear-gradient(180deg, rgba(1, 10, 18, .985), rgba(1, 7, 14, .965)),
+      radial-gradient(circle at 10% 30%, rgba(53, 207, 255, .065), transparent 28%),
+      radial-gradient(circle at 93% 60%, rgba(141, 92, 255, .045), transparent 25%) !important;
+    box-shadow:
+      0 15px 42px -30px #000,
+      inset 0 -1px 0 rgba(84, 218, 255, .045),
+      0 1px 0 rgba(141, 92, 255, .16) !important;
+    backdrop-filter: blur(20px) saturate(1.18) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(1.18) !important;
+  }
+
+  body > header::before {
+    left: 0 !important;
+    right: 0 !important;
+    top: auto !important;
+    bottom: -1px !important;
+    height: 1px !important;
+    opacity: .92 !important;
+    background: linear-gradient(90deg, transparent 0, rgba(53,207,255,.52) 18%, rgba(141,92,255,.48) 68%, transparent 100%) !important;
+    box-shadow: 0 0 12px rgba(53, 207, 255, .18) !important;
+  }
+
+  body > header::after {
+    inset: 0 28px auto !important;
+    height: 1px !important;
+    opacity: .34 !important;
+    background: linear-gradient(90deg, rgba(53,207,255,.5), transparent 15%, transparent 85%, rgba(141,92,255,.42)) !important;
+  }
+
+  .cyber-brand {
+    min-width: 245px !important;
+    justify-content: flex-start !important;
+  }
+
+  .cyber-brand::before,
+  .cyber-brand::after { display: none !important; }
+
+  .brand-copy strong {
+    font-size: 20px !important;
+    letter-spacing: .055em !important;
+    color: #f1fbff !important;
+    text-shadow: 0 0 18px rgba(72, 218, 255, .28) !important;
+  }
+
+  .brand-copy strong span {
+    background: linear-gradient(90deg, #5fe7ff, #5e9cff 55%, #a170ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent;
+    text-shadow: none !important;
+  }
+
+  .brand-copy small {
+    margin-top: 6px !important;
+    font-size: 7px !important;
+    letter-spacing: .29em !important;
+    color: rgba(111, 186, 219, .72) !important;
+  }
+
+  nav.mainnav {
+    flex: 1 1 auto !important;
+    justify-content: center !important;
+    gap: clamp(4px, .55vw, 12px) !important;
+  }
+
+  nav.mainnav a {
+    min-height: 38px !important;
+    padding: 10px 13px !important;
+    border-radius: 8px !important;
+    color: rgba(173, 204, 220, .80) !important;
+    font-size: 9px !important;
+    letter-spacing: .105em !important;
+  }
+
+  nav.mainnav a:hover,
+  nav.mainnav a:focus-visible,
+  nav.mainnav a.active {
+    color: #f3fdff !important;
+    border-color: transparent !important;
+    background: rgba(30, 143, 210, .045) !important;
+    box-shadow: none !important;
+  }
+
+  nav.mainnav a::after {
+    bottom: 2px !important;
+    width: 24px !important;
+    height: 2px !important;
+    background: #55dfff !important;
+    box-shadow: 0 0 12px rgba(85, 223, 255, .9) !important;
+  }
+
+  .status-cluster { gap: 18px !important; }
+
+  .terminal-access,
+  .pmode-btn {
+    min-width: 154px !important;
+    min-height: 36px !important;
+    padding: 0 18px !important;
+    border: 1px solid rgba(62, 205, 255, .38) !important;
+    border-radius: 9px !important;
+    clip-path: none !important;
+    background:
+      linear-gradient(180deg, rgba(5, 22, 38, .86), rgba(2, 10, 19, .92)) !important;
+    color: #e5faff !important;
+    font-size: 7px !important;
+    letter-spacing: .12em !important;
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,.018),
+      inset 0 0 18px rgba(53,207,255,.025),
+      0 0 18px rgba(53,207,255,.035) !important;
+  }
+
+  .pmode-btn {
+    border-color: rgba(120, 100, 255, .38) !important;
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,.018),
+      inset 0 0 18px rgba(141,92,255,.035),
+      0 0 18px rgba(141,92,255,.035) !important;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   HERO — preserve the master scene and animation, upgrade the supplied W.
+   --------------------------------------------------------------------- */
+.fidelity-hero.cyber-hero {
+  background:
+    radial-gradient(circle at 29% 47%, rgba(37, 159, 255, .09), transparent 25%),
+    radial-gradient(circle at 43% 46%, rgba(141, 92, 255, .045), transparent 24%),
+    #010711 !important;
+}
+
+.hero-fidelity-stage.hero-brand-stage {
+  isolation: isolate;
+  background-color: #010711 !important;
+}
+
+.hero-fidelity-image {
+  filter: saturate(1.08) contrast(1.035) brightness(.985) !important;
+}
+
+.hero-logo-cutout {
+  left: 21.5% !important;
+  top: 22.5% !important;
+  width: 28.5% !important;
+  height: 47.5% !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  opacity: .76 !important;
+  mix-blend-mode: screen !important;
+  filter:
+    brightness(1.10)
+    saturate(1.18)
+    contrast(1.08)
+    drop-shadow(0 0 11px rgba(91, 226, 255, .55))
+    drop-shadow(0 0 28px rgba(141, 92, 255, .30)) !important;
+  -webkit-mask-image: radial-gradient(ellipse 78% 80% at 50% 50%, #000 50%, rgba(0,0,0,.9) 72%, transparent 100%) !important;
+  mask-image: radial-gradient(ellipse 78% 80% at 50% 50%, #000 50%, rgba(0,0,0,.9) 72%, transparent 100%) !important;
+  transform: translate3d(var(--hero-logo-shift-x), var(--hero-logo-shift-y), 34px) scale(1.015) !important;
+}
+
+.hero-logo-cutout--glow {
+  opacity: .20 !important;
+  filter: blur(15px) brightness(1.4) saturate(1.32) drop-shadow(0 0 36px rgba(105, 207, 255, .62)) !important;
+  transform: translate3d(var(--hero-logo-shift-x), var(--hero-logo-shift-y), 0) scale(1.045) !important;
+}
+
+.hero-logo-aura {
+  left: 19.5% !important;
+  top: 18% !important;
+  width: 33% !important;
+  height: 55% !important;
+  opacity: .58 !important;
+  background:
+    radial-gradient(ellipse at 42% 46%, rgba(52, 194, 255, .18), transparent 47%),
+    radial-gradient(ellipse at 65% 45%, rgba(166, 83, 255, .13), transparent 45%) !important;
+  filter: blur(10px) !important;
+}
+
+.hero-logo-contour {
+  opacity: .34 !important;
+  filter: drop-shadow(0 0 6px rgba(103, 230, 255, .55)) drop-shadow(0 0 18px rgba(120, 87, 255, .28)) !important;
+}
+
+.fidelity-hero .hero-clean-actions {
+  left: 51.4% !important;
+  top: 67.2% !important;
+  gap: 16px !important;
+}
+
+.fidelity-hero .hero-clean-socials {
+  right: 28px !important;
+  bottom: 50px !important;
+}
+
+/* ---------------------------------------------------------------------
+   Shared button language — same visual family, unchanged behavior.
+   --------------------------------------------------------------------- */
+.terminal-access,
+.pmode-btn,
+.fidelity-hero .hero-clean-btn,
+.section-action,
+.endpoint,
+.assistant-preview-chip,
+.assistant-preview-open,
+.contact-submit-btn,
+.cyber-footer-button,
+.cookie-btn,
+.hero-mobile-action-dock a,
+.hero-mobile-action-dock button {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px !important;
+  clip-path: none !important;
+  border: 1px solid rgba(75, 214, 255, .30) !important;
+  color: #e9fbff !important;
+  background:
+    linear-gradient(180deg, rgba(8, 28, 47, .88), rgba(2, 11, 20, .94)) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.018),
+    inset 0 0 20px rgba(53,207,255,.025),
+    0 14px 34px -26px rgba(0,0,0,.92),
+    0 0 20px -15px rgba(53,207,255,.55) !important;
+  transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease, background .22s ease, color .22s ease !important;
+}
+
+.terminal-access::before,
+.pmode-btn::before,
+.fidelity-hero .hero-clean-btn::before,
+.section-action::before,
+.endpoint::before,
+.assistant-preview-open::before,
+.contact-submit-btn::before,
+.cyber-footer-button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(112deg, transparent 18%, rgba(255,255,255,.09) 48%, transparent 72%);
+  transform: translateX(-130%);
+  transition: transform .58s cubic-bezier(.2,.8,.2,1);
+}
+
+.terminal-access:hover::before,
+.pmode-btn:hover::before,
+.fidelity-hero .hero-clean-btn:hover::before,
+.section-action:hover::before,
+.endpoint:hover::before,
+.assistant-preview-open:hover::before,
+.contact-submit-btn:hover::before,
+.cyber-footer-button:hover::before { transform: translateX(130%); }
+
+.terminal-access:hover,
+.terminal-access:focus-visible,
+.pmode-btn:hover,
+.pmode-btn:focus-visible,
+.fidelity-hero .hero-clean-btn:hover,
+.fidelity-hero .hero-clean-btn:focus-visible,
+.section-action:hover,
+.section-action:focus-visible,
+.endpoint:hover,
+.endpoint:focus-visible,
+.assistant-preview-chip:hover,
+.assistant-preview-chip:focus-visible,
+.assistant-preview-open:hover,
+.assistant-preview-open:focus-visible,
+.contact-submit-btn:hover,
+.contact-submit-btn:focus-visible,
+.cyber-footer-button:hover,
+.cyber-footer-button:focus-visible,
+.cookie-btn:hover,
+.cookie-btn:focus-visible {
+  transform: translateY(-2px) !important;
+  border-color: rgba(112, 230, 255, .76) !important;
+  color: #fff !important;
+  background:
+    linear-gradient(180deg, rgba(12, 45, 75, .94), rgba(4, 18, 32, .96)) !important;
+  box-shadow:
+    0 0 0 1px rgba(92, 217, 255, .08),
+    0 16px 38px -25px #000,
+    0 0 28px -13px rgba(53,207,255,.55),
+    inset 0 0 22px rgba(53,207,255,.055) !important;
+}
+
+.fidelity-hero .hero-clean-btn--primary,
+.contact-submit-btn,
+.cyber-footer-button {
+  border-color: rgba(102, 204, 255, .58) !important;
+  background:
+    linear-gradient(105deg, #137fe9 0%, #3976f4 42%, #8d52ff 100%) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.19),
+    0 0 30px -10px rgba(43, 149, 255, .68),
+    0 0 28px -12px rgba(141, 82, 255, .72) !important;
+}
+
+/* ---------------------------------------------------------------------
+   Shared glass/box language across all sections.
+   --------------------------------------------------------------------- */
+.glass,
+.proj-card,
+.stack-group,
+.terminal-wrap,
+.assistant-preview,
+.contact-panel,
+.contact-side-card,
+.contact-form,
+.contact-form-shell,
+.endpoint,
+.cookie-banner,
+.chat-panel {
+  border-radius: var(--v330-radius) !important;
+  clip-path: none !important;
+  border: 1px solid var(--v330-line) !important;
+  background:
+    linear-gradient(152deg, rgba(6, 23, 40, .89), rgba(2, 10, 19, .94)) !important;
+  box-shadow:
+    var(--v330-shadow),
+    inset 0 1px 0 rgba(255,255,255,.026),
+    inset 0 -1px 0 rgba(141,92,255,.022) !important;
+  backdrop-filter: blur(18px) saturate(1.20) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(1.20) !important;
+}
+
+.proj-card,
+.stack-group,
+.terminal-wrap,
+.assistant-preview,
+.contact-side-card,
+.contact-form {
+  overflow: hidden;
+}
+
+.proj-card::before,
+.stack-group::before,
+.terminal-wrap::before,
+.assistant-preview::before,
+.contact-side-card::before,
+.contact-form::before {
+  border-radius: inherit !important;
+}
+
+.proj-card:hover,
+.stack-group:hover,
+.endpoint:hover,
+.contact-side-card:hover {
+  border-color: rgba(91, 220, 255, .52) !important;
+  box-shadow:
+    0 24px 58px -30px rgba(0,0,0,.95),
+    0 0 0 1px rgba(65, 205, 255, .055),
+    0 0 34px -15px rgba(53,207,255,.38),
+    inset 0 1px 0 rgba(255,255,255,.035) !important;
+}
+
+/* ---------------------------------------------------------------------
+   Rhythm and scale — removes dead space while preserving section order.
+   Presentation mode keeps its own geometry.
+   --------------------------------------------------------------------- */
+body:not(.pmode-active):not(.pmode-visible):not(.presenting) main > section:not(.hero) {
+  width: min(1500px, calc(100% - 36px)) !important;
+  max-width: 1500px !important;
+  min-height: 0 !important;
+  padding-top: clamp(72px, 6.1vw, 104px) !important;
+  padding-bottom: clamp(64px, 5.4vw, 92px) !important;
+}
+
+body:not(.pmode-active):not(.pmode-visible):not(.presenting) #projects {
+  padding-top: clamp(62px, 5vw, 82px) !important;
+}
+
+body:not(.pmode-active):not(.pmode-visible):not(.presenting) #contact {
+  padding-bottom: clamp(84px, 7vw, 118px) !important;
+}
+
+.section-title,
+.contact-title {
+  color: var(--v330-text) !important;
+  text-shadow: 0 0 24px rgba(53,207,255,.09) !important;
+}
+
+.section-sub,
+.proj-desc,
+.stack-group > p,
+.contact-side-desc {
+  color: var(--v330-muted) !important;
+}
+
+/* Projects: stronger desktop presence without reordering the DOM. */
+.proj-grid {
+  gap: 18px !important;
+}
+
+.proj-card {
+  padding: clamp(18px, 1.55vw, 24px) !important;
+  min-height: 0 !important;
+}
+
+.proj-grid > .proj-card:nth-child(1),
+.proj-grid > .proj-card:nth-child(4) {
+  min-height: 525px !important;
+}
+
+.proj-grid > .proj-card:nth-child(2),
+.proj-grid > .proj-card:nth-child(3) {
+  min-height: 470px !important;
+}
+
+.project-visual {
+  min-height: clamp(210px, 18vw, 285px) !important;
+  border-radius: 11px !important;
+  border: 1px solid rgba(83, 213, 255, .13) !important;
+}
+
+.proj-name {
+  font-size: clamp(19px, 1.35vw, 24px) !important;
+  color: #ecfaff !important;
+}
+
+.proj-desc {
+  font-size: clamp(13px, .86vw, 15px) !important;
+  line-height: 1.65 !important;
+}
+
+.proj-tags span,
+.stack-chip {
+  min-height: 25px;
+  display: inline-flex;
+  align-items: center;
+  font-size: 10px !important;
+  color: #b9d8e6 !important;
+  border-color: rgba(77, 207, 255, .16) !important;
+  background: rgba(6, 28, 46, .62) !important;
+}
+
+/* Stack and marquee: larger and visually continuous. */
+.stack-groups.stack-dashboard {
+  gap: 16px !important;
+}
+
+.stack-group {
+  min-height: 275px !important;
+  padding: 22px 18px !important;
+}
+
+.stack-icons {
+  min-height: 86px !important;
+  gap: 13px !important;
+}
+
+.stack-head h4 {
+  font-size: 17px !important;
+  color: #c9f4ff !important;
+}
+
+.impact-skill-marquee {
+  margin-top: 30px !important;
+  padding: 20px 0 !important;
+  border-color: rgba(77, 213, 255, .19) !important;
+  background:
+    linear-gradient(180deg, rgba(4, 20, 34, .92), rgba(2, 10, 19, .94)),
+    radial-gradient(circle at 16% 50%, rgba(53,207,255,.08), transparent 30%),
+    radial-gradient(circle at 84% 50%, rgba(141,92,255,.08), transparent 30%) !important;
+}
+
+.impact-marquee-group span {
+  font-size: clamp(.82rem, 1.15vw, 1.05rem) !important;
+  color: rgba(226, 247, 255, .90) !important;
+}
+
+/* Terminal/contact: readability and balanced emphasis. */
+.terminal-wrap {
+  min-height: 520px !important;
+}
+
+.term-line,
+.terminal-wrap code,
+.terminal-wrap pre {
+  font-size: 12px !important;
+  line-height: 1.72 !important;
+}
+
+.assistant-preview img,
+.assistant-robot {
+  filter: brightness(.91) saturate(1.05) drop-shadow(0 0 22px rgba(53,207,255,.14)) !important;
+}
+
+.contact-panel {
+  padding: clamp(24px, 2.25vw, 38px) !important;
+}
+
+.contact-grid.contact-command-grid {
+  gap: 18px !important;
+}
+
+.contact-form input,
+.contact-form textarea,
+.contact-form select {
+  min-height: 48px !important;
+  border-radius: 9px !important;
+  border-color: rgba(75, 207, 255, .20) !important;
+  background: rgba(1, 10, 19, .84) !important;
+  color: #effbff !important;
+  box-shadow: inset 0 0 16px rgba(53,207,255,.018) !important;
+}
+
+.contact-form textarea { min-height: 138px !important; }
+
+.contact-form input:focus,
+.contact-form textarea:focus,
+.contact-form select:focus {
+  border-color: rgba(95, 224, 255, .66) !important;
+  box-shadow: 0 0 0 3px rgba(53,207,255,.08), inset 0 0 18px rgba(53,207,255,.025) !important;
+}
+
+/* Floating controls: one consistent material, chat remains dominant by scale only. */
+.fab-stack { gap: 10px !important; }
+
+.fab {
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 13px !important;
+  border: 1px solid rgba(72, 210, 255, .28) !important;
+  color: #bdefff !important;
+  background: linear-gradient(145deg, rgba(7,28,47,.91), rgba(2,11,20,.96)) !important;
+  box-shadow: 0 15px 34px -24px #000, 0 0 20px -14px rgba(53,207,255,.6), inset 0 0 16px rgba(53,207,255,.025) !important;
+}
+
+.fab-chat {
+  width: 54px !important;
+  height: 54px !important;
+  border-color: rgba(105, 210, 255, .58) !important;
+  background: linear-gradient(135deg, #158cef, #2188ed 45%, #7559ff) !important;
+  color: #fff !important;
+}
+
+.fab:hover,
+.fab:focus-visible {
+  transform: translateY(-3px) scale(1.035) !important;
+  border-color: rgba(112, 232, 255, .78) !important;
+  box-shadow: 0 18px 36px -22px #000, 0 0 27px -10px rgba(53,207,255,.62), inset 0 0 20px rgba(53,207,255,.05) !important;
+}
+
+/* Chat receives the same material but no layout/behavior change. */
+.chat-panel {
+  border-color: rgba(81, 215, 255, .34) !important;
+  background: linear-gradient(180deg, rgba(4, 20, 35, .985), rgba(1, 8, 16, .99)) !important;
+  box-shadow: 0 28px 76px -25px rgba(0,0,0,.96), 0 0 38px -18px rgba(53,207,255,.52) !important;
+}
+
+.chat-head {
+  border-bottom-color: rgba(77, 210, 255, .16) !important;
+  background: linear-gradient(180deg, rgba(7,29,48,.86), rgba(3,16,28,.76)) !important;
+}
+
+.chat-send,
+.chat-close,
+.sugg-chip {
+  border-color: rgba(77, 210, 255, .24) !important;
+  background: rgba(5, 25, 42, .76) !important;
+  color: #c9f4ff !important;
+}
+
+/* Particle polish: visually over content, still below critical controls. */
+.impact-particle-layer {
+  opacity: .72 !important;
+  filter: saturate(1.16) contrast(1.02) !important;
+}
+
+body.is-scrolling .impact-particle-layer { opacity: .28 !important; }
+
+/* ---------------------------------------------------------------------
+   Responsive — retain the existing mobile structure and touch behavior.
+   --------------------------------------------------------------------- */
+@media (max-width: 1180px) {
+  .hero-logo-cutout {
+    left: 16% !important;
+    top: 22% !important;
+    width: 36% !important;
+    height: 47% !important;
+  }
+
+  body:not(.pmode-active):not(.pmode-visible):not(.presenting) main > section:not(.hero) {
+    width: min(100% - 24px, 1120px) !important;
+    padding-top: 68px !important;
+    padding-bottom: 64px !important;
+  }
+
+  .proj-grid > .proj-card:nth-child(n) { min-height: 440px !important; }
+}
+
+@media (max-width: 760px) {
+  .hero-logo-cutout {
+    left: 2% !important;
+    top: 20% !important;
+    width: 64% !important;
+    height: 45% !important;
+    opacity: .68 !important;
+  }
+
+  .fidelity-hero .hero-clean-actions,
+  .fidelity-hero .hero-clean-socials { display: none !important; }
+
+  body:not(.pmode-active):not(.pmode-visible):not(.presenting) main > section:not(.hero) {
+    width: calc(100% - 10px) !important;
+    padding: 48px 12px !important;
+  }
+
+  .proj-grid > .proj-card:nth-child(n) {
+    min-height: 0 !important;
+    padding: 16px !important;
+  }
+
+  .project-visual { min-height: 205px !important; }
+  .stack-group { min-height: 235px !important; }
+  .terminal-wrap { min-height: 440px !important; }
+  .contact-panel { padding: 14px !important; }
+
+  .fab {
+    width: 46px !important;
+    height: 46px !important;
+    border-radius: 12px !important;
+  }
+
+  .fab-chat {
+    width: 50px !important;
+    height: 50px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .terminal-access::before,
+  .pmode-btn::before,
+  .fidelity-hero .hero-clean-btn::before,
+  .section-action::before,
+  .endpoint::before,
+  .assistant-preview-open::before,
+  .contact-submit-btn::before,
+  .cyber-footer-button::before { display: none !important; }
+}
+
+@media print {
+  .impact-particle-layer { display: none !important; }
+}
+
+/* Final animation authority for the supplied prismatic monogram. */
+.hero-logo-cutout {
+  animation: v330-logo-pulse 5.8s ease-in-out infinite !important;
+}
+.hero-logo-cutout--glow {
+  animation: v330-logo-glow 3.6s ease-in-out infinite alternate !important;
+}
+@keyframes v330-logo-pulse {
+  0%, 100% {
+    opacity: .34;
+    filter: brightness(1.03) saturate(1.10) contrast(1.05) drop-shadow(0 0 10px rgba(91,226,255,.42)) drop-shadow(0 0 24px rgba(141,92,255,.24));
+  }
+  50% {
+    opacity: .52;
+    filter: brightness(1.14) saturate(1.24) contrast(1.08) drop-shadow(0 0 16px rgba(91,226,255,.62)) drop-shadow(0 0 34px rgba(141,92,255,.38));
+  }
+}
+@keyframes v330-logo-glow {
+  from { opacity: .07; }
+  to { opacity: .17; }
+}
+
+/* Critical UI always wins over the decorative canvas. */
+body.impact-chat-open .impact-particle-layer,
+body.pmode-active .impact-particle-layer,
+body.pmode-visible .impact-particle-layer,
+body.presenting .impact-particle-layer {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+/* Re-enable only the safe supplied-monogram overlays hidden by the older clean layer. */
+.fidelity-hero .hero-logo-cutout,
+.fidelity-hero .hero-logo-aura {
+  display: block !important;
+}
+
+/* The master hero already contains the supplied prismatic W. Keep only the
+   soft glow duplicate to avoid a doubled/ghosted monogram while preserving
+   the original animated hero pipeline and hotspot geometry. */
+.fidelity-hero .hero-logo-cutout:not(.hero-logo-cutout--glow) {
+  opacity: 0 !important;
+  animation: none !important;
+  filter: none !important;
+}
+
+.fidelity-hero .hero-logo-cutout--glow {
+  display: block !important;
+  opacity: .08;
+  pointer-events: none !important;
+}
+
+/* Four content sections are light enough to remain render-visible. This avoids
+   intrinsic-size anchor drift and the apparent blank bands that were visible
+   in the supplied recording while retaining native wheel/touch scrolling. */
+body:not(.pmode-active):not(.pmode-visible):not(.presenting) main > section:not(#top) {
+  content-visibility: visible !important;
+  contain-intrinsic-size: none !important;
+}
+
+/* Impact chapter z-index rules must never pull decorative SVGs into normal
+   document flow. Keeping them absolute removes the large blank bands seen in
+   the supplied recording without changing section order or presentation DOM. */
+main > section[data-impact-index] > .deco-circuit,
+main > section[data-impact-index] > .deco-hex,
+main > section[data-impact-index] > .deco-neural,
+main > section[data-impact-index] > .deco-orbit {
+  position: absolute !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+}
+

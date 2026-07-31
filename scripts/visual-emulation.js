@@ -187,7 +187,7 @@ async function screenshot(cdp, name) {
 async function inspect(cdp, mode) {
   return cdp.evaluate(`(() => {
     const visible = el => { if(!el) return false; const r=el.getBoundingClientRect(); const s=getComputedStyle(el); return r.width>0&&r.height>0&&s.display!=='none'&&s.visibility!=='hidden'; };
-    const imgs = [...document.querySelectorAll('.hero-fidelity-image,.project-visual img,.assistant-robot')];
+    const imgs = [...document.querySelectorAll('.hero-fidelity-image,.hero-logo-cutout,.project-visual img,.assistant-robot')];
     const grid = document.querySelector('.proj-grid');
     const marquee = document.querySelector('.impact-marquee-row');
     const kinetic = document.querySelector('.impact-kinetic-wordmark');
@@ -206,6 +206,9 @@ async function inspect(cdp, mode) {
       heroVisible: visible(document.getElementById('heroFidelityStage')),
       chatButtonVisible: visible(document.getElementById('fabChat')),
       presentationButtonVisible: visible(document.getElementById('pmodeBtn')) || visible(document.getElementById('burgerBtn')),
+      heroLogoVisible: visible(document.querySelector('.hero-logo-cutout')),
+      heroHotspots: document.querySelectorAll('.hero-hotspot').length,
+      headerRect: header ? { left: header.getBoundingClientRect().left, right: header.getBoundingClientRect().right, width: header.getBoundingClientRect().width } : null,
       impactLoaded: Boolean(kinetic && marquee && particleLayer && document.querySelector('.impact-cursor-dot,.impact-hero-orbit')),
       particleLayer: particleLayer ? { pointerEvents: getComputedStyle(particleLayer).pointerEvents, zIndex: Number(getComputedStyle(particleLayer).zIndex || 0), width: particleLayer.width, height: particleLayer.height } : null,
       layerOrder: { main: main ? Number(getComputedStyle(main).zIndex || 0) : 0, header: header ? Number(getComputedStyle(header).zIndex || 0) : 0 },
@@ -227,13 +230,11 @@ async function runViewport(cdp, config) {
   });
   await cdp.send('Emulation.setTouchEmulationEnabled', { enabled: Boolean(config.mobile), maxTouchPoints: config.mobile ? 5 : 1 });
   await cdp.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'no-preference' }] });
-  if (!documentInitialized) {
-    await setDocument(cdp);
-    documentInitialized = true;
-  } else {
-    await cdp.evaluate('window.scrollTo(0,0)');
-    await sleep(420);
-  }
+  /* Reload the isolated visual document per viewport. Reusing a single page
+     leaves lazy images/canvas state tied to the previous emulation size and
+     made the second viewport nondeterministic in Chromium. */
+  await setDocument(cdp);
+  documentInitialized = true;
 
   if (!config.mobile) {
     await cdp.send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: Math.round(config.width * .72), y: Math.round(config.height * .4) });
@@ -247,6 +248,9 @@ async function runViewport(cdp, config) {
   assert(report.bodyOverflowY !== 'hidden', config.name + ': scroll global bloqueado.');
   assert(report.heroVisible && report.chatButtonVisible, config.name + ': hero ou chat não está visível.');
   assert(report.presentationButtonVisible, config.name + ': controle de apresentação não está disponível.');
+  assert(report.heroLogoVisible, config.name + ': monograma animado não está visível.');
+  assert(report.heroHotspots === 6, config.name + ': hotspots funcionais do hero foram alterados.');
+  if (config.width >= 1440) assert(report.headerRect && report.headerRect.width >= report.viewport.width - 6, config.name + ': header não ocupa toda a largura.');
   assert(report.impactLoaded && Number(report.kineticOpacity) > 0, config.name + ': camada visual impactante não carregou.');
   assert(report.particleLayer && report.particleLayer.pointerEvents === 'none', config.name + ': canvas de partículas bloqueia interação.');
   assert(report.particleLayer.width > 0 && report.particleLayer.height > 0, config.name + ': canvas de partículas sem dimensões.');
@@ -262,9 +266,12 @@ async function runViewport(cdp, config) {
   await screenshot(cdp, config.name + '-hero.png');
   console.log(config.name + ': hero captured');
   console.log(config.name + ': scrolling projects');
-  await cdp.evaluate("document.getElementById('projects').scrollIntoView({block:'start'});");
-  await sleep(420);
+  await cdp.evaluate("(() => { const target = document.getElementById('projects'); window.scrollTo({top: Math.max(0, target.offsetTop - 88), left: 0, behavior: 'instant'}); return true; })()");
+  await sleep(950);
   await cdp.evaluate(`Promise.race([Promise.all([...document.querySelectorAll('.project-visual img')].map(img => img.complete && img.naturalWidth > 0 ? true : img.decode().catch(() => false))), new Promise(resolve => setTimeout(resolve, 5000))])`);
+  var projectGeometry = await cdp.evaluate(`(() => { const section = document.getElementById('projects'); const heading = section && section.querySelector('.section-heading-row'); const r = heading && heading.getBoundingClientRect(); return { scrollY: window.scrollY, maxScroll: document.documentElement.scrollHeight - innerHeight, behavior: getComputedStyle(document.documentElement).scrollBehavior, sectionTop: section ? section.getBoundingClientRect().top : null, sectionPaddingTop: section ? getComputedStyle(section).paddingTop : null, headingTop: r ? r.top : null, headingBottom: r ? r.bottom : null }; })()`);
+  console.log(config.name + ': project geometry ' + JSON.stringify(projectGeometry));
+  assert(projectGeometry.headingTop !== null && projectGeometry.headingTop >= 70 && projectGeometry.headingTop <= 230, config.name + ': heading de projetos fora do ritmo visual após navegação (' + projectGeometry.headingTop + 'px).');
   var projectImages = await cdp.evaluate(`[...document.querySelectorAll('.project-visual img')].map(img => ({complete:img.complete,width:img.naturalWidth,height:img.naturalHeight}))`);
   assert(projectImages.length === 4 && projectImages.every(function (img) { return img.complete && img.width > 0 && img.height > 0; }), config.name + ': imagens dos projetos não carregaram.');
   console.log(config.name + ': project images approved');
@@ -296,6 +303,7 @@ async function runViewport(cdp, config) {
     report.particleProtection = particleProtection;
   }
   report.projectImages = projectImages;
+  report.projectGeometry = projectGeometry;
   return report;
 }
 
@@ -325,7 +333,7 @@ async function run() {
   });
 
   var reports = [];
-  reports.push(await runViewport(cdp, { name: 'desktop-1440', width: 1440, height: 1000, mobile: false }));
+  reports.push(await runViewport(cdp, { name: 'desktop-wide-1916', width: 1916, height: 906, mobile: false }));
 
   var reduced = { validatedBy: 'npm run test:e2e + CSS contract test' };
 
@@ -342,7 +350,7 @@ async function run() {
   };
   fs.writeFileSync(path.join(outputDir, 'visual-audit.json'), JSON.stringify(finalReport, null, 2) + '\n');
   cdp.close();
-  console.log('Emulação visual aprovada: desktop 1440 com assets reais e movimento reduzido; tablet/mobile são validados pelo E2E funcional.');
+  console.log('Emulação visual aprovada: desktop 1916x906 com assets reais e geometria fiel à referência; desktop secundário, tablet e mobile são validados pelo E2E funcional.');
 }
 
 run().catch(function (error) {

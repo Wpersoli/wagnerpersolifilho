@@ -48,3 +48,25 @@ test('Brevo está documentada sem remover compatibilidade Resend', function () {
   assert.match(contact, /api\.brevo\.com\/v3\/smtp\/email/);
   assert.match(contact, /api\.resend\.com\/emails/);
 });
+
+test('refinamento v3.3.0 mantém visual uniforme e prioridade dos controles críticos', function () {
+  var css = fs.readFileSync(path.join(root, 'src', 'styles', 'premium-uniform-v330.css'), 'utf8');
+  var build = fs.readFileSync(path.join(root, 'scripts', 'build-css.js'), 'utf8');
+  var html = fs.readFileSync(path.join(root, 'public', 'index.html'), 'utf8');
+  assert.match(build, /premium-uniform-v330\.css/);
+  assert.match(css, /body > header/);
+  assert.match(css, /hero-logo-cutout/);
+  assert.match(css, /body\.impact-chat-open \.impact-particle-layer/);
+  assert.match(css, /body\.pmode-active \.impact-particle-layer/);
+  assert.match(css, /pointer-events/);
+  assert.match(html, /BUILD <b>v3\.3\.0<\/b>/);
+});
+
+test('asset W prismatico permanece WebP e o HTML conserva os hotspots originais', function () {
+  var html = fs.readFileSync(path.join(root, 'public', 'index.html'), 'utf8');
+  var image = fs.readFileSync(path.join(root, 'public', 'img', 'hero-w-energy.webp'));
+  assert.equal(image.subarray(0, 4).toString('ascii'), 'RIFF');
+  assert.equal(image.subarray(8, 12).toString('ascii'), 'WEBP');
+  assert.equal((html.match(/class="hero-hotspot /g) || []).length, 6);
+  assert.match(html, /id="heroFidelityStage"/);
+});

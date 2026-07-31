@@ -183,14 +183,14 @@
   function buildParticleSprites() {
     particleSprites = palette.map(function (color) {
       var sprite = document.createElement('canvas');
-      var size = 36;
+      var size = 28;
       sprite.width = size;
       sprite.height = size;
       var spriteContext = sprite.getContext('2d', { alpha: true });
       var gradient = spriteContext.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
       gradient.addColorStop(0, 'rgba(' + color.fill + ',1)');
-      gradient.addColorStop(.16, 'rgba(' + color.fill + ',.88)');
-      gradient.addColorStop(.42, 'rgba(' + color.glow + ',.30)');
+      gradient.addColorStop(.10, 'rgba(' + color.fill + ',.82)');
+      gradient.addColorStop(.34, 'rgba(' + color.glow + ',.24)');
       gradient.addColorStop(1, 'rgba(' + color.glow + ',0)');
       spriteContext.fillStyle = gradient;
       spriteContext.fillRect(0, 0, size, size);
@@ -199,23 +199,34 @@
   }
 
   function particleCountForViewport() {
-    var count = particleWidth < 700 ? 18 : particleWidth < 1100 ? 34 : 58;
+    var count = particleWidth < 700 ? 22 : particleWidth < 1100 ? 42 : 72;
     var cores = Number(navigator.hardwareConcurrency || 4);
     if (cores <= 4) count = Math.round(count * .72);
     return count;
   }
 
   function makeParticle(index) {
-    var depth = .45 + seededRandom() * .85;
+    var depth = .38 + seededRandom() * .92;
+    var sizeRoll = seededRandom();
+    var radius = sizeRoll < .70
+      ? .24 + seededRandom() * .34
+      : sizeRoll < .95
+        ? .62 + seededRandom() * .48
+        : 1.18 + seededRandom() * .58;
+    var alpha = sizeRoll < .70
+      ? .16 + seededRandom() * .30
+      : sizeRoll < .95
+        ? .13 + seededRandom() * .25
+        : .08 + seededRandom() * .18;
     return {
       x: seededRandom() * particleWidth,
       y: seededRandom() * particleHeight,
-      vx: (seededRandom() - .5) * .018 * depth,
-      vy: (-.010 - seededRandom() * .022) * depth,
-      radius: (.48 + seededRandom() * 1.18) * depth,
-      alpha: .18 + seededRandom() * .56,
+      vx: (seededRandom() - .5) * .015 * depth,
+      vy: (-.008 - seededRandom() * .018) * depth,
+      radius: radius * depth,
+      alpha: alpha,
       phase: seededRandom() * Math.PI * 2,
-      drift: .00035 + seededRandom() * .00065,
+      drift: .00034 + seededRandom() * .00058,
       color: palette[index % palette.length],
       spriteIndex: index % palette.length,
       depth: depth
@@ -304,7 +315,7 @@
     }
     var delta = particleLastTime ? clamp(time - particleLastTime, 0, 58) : 33.33;
     particleLastTime = time;
-    var targetOpacity = effectsSuppressed() ? 0 : scrolling ? .35 : 1;
+    var targetOpacity = effectsSuppressed() ? 0 : scrolling ? .28 : 1;
     particleOpacity += (targetOpacity - particleOpacity) * .085;
     particleContext.clearRect(0, 0, particleWidth, particleHeight);
 
@@ -341,7 +352,7 @@
 
         var pulse = .72 + Math.sin(time * .0017 + particle.phase) * .28;
         var alpha = particle.alpha * pulse * particleOpacity;
-        var particleSize = (9 + particle.radius * 8) * pulse;
+        var particleSize = (4.2 + particle.radius * 4.6) * pulse;
         particleContext.globalAlpha = alpha;
         particleContext.drawImage(
           particleSprites[particle.spriteIndex],
@@ -363,8 +374,8 @@
         spark.y += spark.vy * delta;
         spark.vx *= .982;
         spark.vy *= .982;
-        var sparkAlpha = spark.life * .72 * particleOpacity;
-        var sparkSize = (8 + spark.radius * 7) * spark.life;
+        var sparkAlpha = spark.life * .56 * particleOpacity;
+        var sparkSize = (5 + spark.radius * 4.5) * spark.life;
         particleContext.globalAlpha = sparkAlpha;
         particleContext.drawImage(
           particleSprites[spark.spriteIndex],

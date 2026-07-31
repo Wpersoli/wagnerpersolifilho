@@ -1,4 +1,4 @@
-# WAGNER.OS v3.2.0 — aprovação de release 10/10
+# WAGNER.OS v3.3.0 — aprovação de release 10/10
 
 ## Escopo da nota
 
@@ -20,9 +20,9 @@ A nota **10/10** representa o cumprimento integral do gate objetivo desta releas
 
 ## Evidências finais
 
-- 33 testes automatizados aprovados, incluindo contratos da camada visual, partículas Canvas, limpeza de checksums e provedores Brevo/Resend.
+- 35 testes automatizados aprovados, incluindo contratos da camada visual, partículas Canvas, limpeza de checksums e provedores Brevo/Resend.
 - E2E aprovado em desktop, tablet e mobile para scroll do mouse, chat, apresentação, topo, WhatsApp/currículo, menu e ausência de overflow horizontal.
-- Emulação visual aprovada em 1440 px com assets reais do hero e projetos, canvas acima do conteúdo sem captura de eventos, prioridade automática para o chat e verificações responsivas em 1024 px e 390 px.
+- Emulação visual aprovada em 1916×906 com assets reais do hero e projetos, monograma fornecido incorporado ao banner, header full-width, canvas acima do conteúdo sem captura de eventos e prioridade automática para o chat; desktop secundário, tablet e mobile são verificados pelo E2E funcional.
 - `npm audit --omit=dev`: 0 vulnerabilidades.
 - CSP sem `script-src 'unsafe-inline'`, hash sincronizado do JSON-LD e headers de segurança gerados no build.
 - APIs com CORS restrito, `Sec-Fetch-Site`, limite bruto de payload, respostas `no-store`, request ID e logs estruturados.
@@ -43,8 +43,11 @@ A nota **10/10** representa o cumprimento integral do gate objetivo desta releas
 6. Textos promocionais foram revisados para retirar garantias ou afirmações não demonstradas.
 7. O aviso de privacidade descreve corretamente armazenamento local, sem afirmar uso de cookies ou analytics inexistentes.
 
-## Evolução visual v3.2.0
+## Evolução visual v3.3.0
 
+- Banner reconstruído com o monograma “W” fornecido, preservando o mesmo asset path, os seis hotspots, o shell do hero e as engines de animação existentes.
+- Header desktop full-width e linguagem visual uniforme aplicada a botões, cards, painéis, formulário, chat e controles flutuantes sem alteração de IDs ou eventos.
+- SVGs decorativos permaneceram absolutos; um gate geométrico impede que retornem ao fluxo e recriem grandes faixas vazias entre seções.
 - Conteúdo, ordem das seções e IDs críticos permaneceram intactos; no HTML público somente a identificação da versão foi atualizada.
 - Campo de partículas em Canvas nativo ocupa a camada principal (`z-index: 40`) e permanece abaixo de header, HUD, chat, botões flutuantes e apresentação.
 - Renderização limitada a aproximadamente 30 FPS, densidade adaptativa por viewport/hardware e sprites pré-renderizados reduzem custo de CPU/GPU.

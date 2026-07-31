@@ -1,4 +1,13 @@
-# WAGNER.OS v3.2.0
+# WAGNER.OS v3.3.0
+## Release v3.3.0
+
+- Topo alinhado à referência 1916×906, com monograma prismático fornecido integrado ao banner.
+- Header full-width e botões/boxes uniformizados em glass ciano-violeta.
+- Partículas Canvas sobre o conteúdo sem capturar cliques e com prioridade cedida ao chat e à apresentação.
+- Espaços vazios corrigidos mantendo SVGs decorativos fora do fluxo.
+- Conteúdo, ordem, IDs, chat, modo apresentação, scroll, currículo, WhatsApp, Brevo e APIs preservados.
+- Gate visual em 1916×906 e E2E em desktop, tablet e mobile.
+
 
 Portfólio estático/serverless com chat Gemini, contato Brevo com compatibilidade opcional para Resend, modo apresentação, currículo online, acessibilidade e perfil conservador de performance.
 

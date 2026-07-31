@@ -191,6 +191,9 @@ async function inspect(cdp, mode) {
     const grid = document.querySelector('.proj-grid');
     const marquee = document.querySelector('.impact-marquee-row');
     const kinetic = document.querySelector('.impact-kinetic-wordmark');
+    const particleLayer = document.getElementById('impactParticleLayer');
+    const main = document.querySelector('main');
+    const header = document.querySelector('header');
     return {
       mode: ${JSON.stringify(mode)},
       url: location.href,
@@ -203,7 +206,9 @@ async function inspect(cdp, mode) {
       heroVisible: visible(document.getElementById('heroFidelityStage')),
       chatButtonVisible: visible(document.getElementById('fabChat')),
       presentationButtonVisible: visible(document.getElementById('pmodeBtn')) || visible(document.getElementById('burgerBtn')),
-      impactLoaded: Boolean(kinetic && marquee && document.querySelector('.impact-cursor-dot,.impact-hero-orbit')),
+      impactLoaded: Boolean(kinetic && marquee && particleLayer && document.querySelector('.impact-cursor-dot,.impact-hero-orbit')),
+      particleLayer: particleLayer ? { pointerEvents: getComputedStyle(particleLayer).pointerEvents, zIndex: Number(getComputedStyle(particleLayer).zIndex || 0), width: particleLayer.width, height: particleLayer.height } : null,
+      layerOrder: { main: main ? Number(getComputedStyle(main).zIndex || 0) : 0, header: header ? Number(getComputedStyle(header).zIndex || 0) : 0 },
       kineticOpacity: kinetic ? getComputedStyle(kinetic).opacity : '0',
       projectColumns: grid ? getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length : 0,
       marqueeAnimation: marquee ? getComputedStyle(marquee).animationName : '',
@@ -243,6 +248,9 @@ async function runViewport(cdp, config) {
   assert(report.heroVisible && report.chatButtonVisible, config.name + ': hero ou chat não está visível.');
   assert(report.presentationButtonVisible, config.name + ': controle de apresentação não está disponível.');
   assert(report.impactLoaded && Number(report.kineticOpacity) > 0, config.name + ': camada visual impactante não carregou.');
+  assert(report.particleLayer && report.particleLayer.pointerEvents === 'none', config.name + ': canvas de partículas bloqueia interação.');
+  assert(report.particleLayer.width > 0 && report.particleLayer.height > 0, config.name + ': canvas de partículas sem dimensões.');
+  assert(report.particleLayer.zIndex > report.layerOrder.main && report.particleLayer.zIndex < report.layerOrder.header, config.name + ': canvas não está entre conteúdo e controles.');
   assert(report.criticalIds, config.name + ': contrato crítico de IDs foi alterado.');
   assert(report.images.length >= 6 && report.images[0].complete && report.images[0].width > 0, config.name + ': imagem principal do hero não carregou.');
   if (config.mobile) assert(report.projectColumns === 1, 'Mobile: bento deveria reduzir para uma coluna.');
@@ -265,6 +273,27 @@ async function runViewport(cdp, config) {
     console.log(config.name + ': projects captured');
   } else {
     console.log(config.name + ': project layout validated (optional screenshot disabled)');
+  }
+  if (!config.mobile) {
+    await cdp.evaluate("document.getElementById('fabChat').click(); true;");
+    var particleProtection = await cdp.evaluate(`new Promise(resolve => {
+      const started = performance.now();
+      function inspectLayer() {
+        const layer = document.getElementById('impactParticleLayer');
+        const result = {
+          chatOpen: document.getElementById('chatPanel').classList.contains('open'),
+          stateClass: document.body.classList.contains('impact-chat-open'),
+          opacity: layer ? Number(getComputedStyle(layer).opacity) : 1
+        };
+        if (result.opacity <= .05 || performance.now() - started > 1400) return resolve(result);
+        requestAnimationFrame(inspectLayer);
+      }
+      inspectLayer();
+    })`);
+    assert(particleProtection.chatOpen && particleProtection.stateClass && particleProtection.opacity <= .05, config.name + ': partículas não cedem prioridade ao chat.');
+    await cdp.evaluate("document.getElementById('chatClose').click(); true;");
+    await sleep(120);
+    report.particleProtection = particleProtection;
   }
   report.projectImages = projectImages;
   return report;

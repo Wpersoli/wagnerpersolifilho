@@ -1,4 +1,4 @@
-# WAGNER.OS v3.1.0
+# WAGNER.OS v3.2.0
 
 Portfólio estático/serverless com chat Gemini, contato Brevo com compatibilidade opcional para Resend, modo apresentação, currículo online, acessibilidade e perfil conservador de performance.
 
@@ -27,6 +27,20 @@ npm run package:release
 ```
 
 `validate` recompila CSS e headers, verifica sintaxe, executa testes e bloqueia secrets ou assets inválidos. `test:e2e` valida em navegador o scroll do mouse, chat, apresentação, WhatsApp, currículo, topo e menu mobile.
+
+## Experiência visual v3.2
+
+A camada visual mantém o conteúdo e a estrutura existentes e adiciona, sem dependências externas:
+
+- partículas Canvas sobre a camada principal, com `pointer-events: none`;
+- reação sutil ao cursor e trilha luminosa;
+- scroll reveal com máscara, blur e stagger;
+- parallax leve nas imagens e 3D tilt preservado nos cards;
+- marquee duplo de skills;
+- loading cinematográfico refinado;
+- dark mode premium, noise e glassmorphism alinhados à referência visual.
+
+As partículas reduzem carga durante scroll, desaparecem com chat/apresentação e são removidas em `prefers-reduced-motion`, impressão e ambientes sem Canvas.
 
 ## Produção
 

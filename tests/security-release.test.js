@@ -31,6 +31,18 @@ test('arquivos locais sensíveis não são versionados nem integram artefato lim
   }
 });
 
+
+test('gerador de checksums ignora arquivos de ambiente locais', function () {
+  var generator = fs.readFileSync(path.join(root, 'scripts', 'generate-checksums.js'), 'utf8');
+  assert.match(generator, /isSensitiveEnv/);
+  assert.match(generator, /entry\.name/);
+  var checksums = fs.readFileSync(path.join(root, 'CHECKSUMS.sha256'), 'utf8');
+  var containsSensitiveEnv = checksums.split(/\r?\n/).some(function (line) {
+    return /\s\.env(?:\.|$)/.test(line) && !/\s\.env\.example$/.test(line);
+  });
+  assert.equal(containsSensitiveEnv, false);
+});
+
 test('vercel configura CSP estrita, headers e cache revalidável', function () {
   var config = JSON.parse(fs.readFileSync(path.join(root, 'vercel.json'), 'utf8'));
   var serialized = JSON.stringify(config);

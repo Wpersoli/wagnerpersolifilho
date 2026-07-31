@@ -1,4 +1,4 @@
-/* WAGNER.OS Impact Experience v3.1
+/* WAGNER.OS Impact Experience v3.2
    Camada visual isolada. Não altera contratos de chat, apresentação ou scroll. */
 
 :root {
@@ -7,8 +7,8 @@
   --impact-cyan: #35cfff;
   --impact-green: #11ffb7;
   --impact-pink: #ff3d7f;
-  --impact-surface: rgba(7, 17, 31, .76);
-  --impact-border: rgba(125, 220, 255, .18);
+  --impact-surface: rgba(18, 18, 26, .88);
+  --impact-border: rgba(255, 255, 255, .09);
   --impact-glare-x: 50%;
   --impact-glare-y: 50%;
   --impact-glare-strength: 0;
@@ -494,3 +494,331 @@ body.presenting .proj-card::after { display: none !important; }
   .impact-cursor-dot,
   .impact-cursor-ring { display: none !important; }
 }
+
+/* =========================================================
+   VIDEO REFERENCE FIDELITY — effects 05–10
+   Purely additive visual layer. Content, order and critical IDs stay untouched.
+   ========================================================= */
+
+body.impact-enhanced {
+  background-color: #0a0a0f !important;
+}
+
+/* Canvas is intentionally above the main stacking context and below navigation,
+   HUD, chat, floating actions and presentation controls. */
+.impact-particle-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  width: 100vw;
+  height: 100dvh;
+  pointer-events: none;
+  user-select: none;
+  opacity: .86;
+  mix-blend-mode: screen;
+  filter: saturate(1.22) contrast(1.03);
+  transition: opacity .34s ease, filter .34s ease;
+  contain: strict;
+  will-change: opacity;
+}
+
+body.is-scrolling .impact-particle-layer {
+  opacity: .36;
+  filter: saturate(1.05);
+}
+
+body.impact-chat-open .impact-particle-layer,
+body.pmode-active .impact-particle-layer,
+body.pmode-visible .impact-particle-layer,
+body.presenting .impact-particle-layer {
+  opacity: 0;
+}
+
+/* Premium dark/noise treatment, preserving the existing animated CSS background. */
+.vignette {
+  background:
+    radial-gradient(ellipse 78% 66% at 50% 42%, transparent 28%, rgba(3, 3, 8, .34) 72%, rgba(2, 2, 6, .82) 100%) !important;
+}
+
+.film-grain {
+  opacity: .048 !important;
+  mix-blend-mode: soft-light !important;
+  filter: contrast(116%);
+}
+
+main > section:not(.hero) {
+  background:
+    radial-gradient(circle at 8% 4%, rgba(124, 92, 255, .035), transparent 28%),
+    radial-gradient(circle at 92% 18%, rgba(0, 212, 255, .028), transparent 26%);
+}
+
+/* Reference-style surfaces: rounded, restrained and translucent. */
+.proj-card,
+.stack-group,
+.terminal-wrap,
+.contact-panel,
+.feature-panel {
+  clip-path: none !important;
+  border-radius: 18px !important;
+  border: 1px solid rgba(255, 255, 255, .085) !important;
+  background-color: rgba(18, 18, 26, .88) !important;
+}
+
+.glass {
+  background:
+    linear-gradient(155deg, rgba(27, 27, 39, .88), rgba(13, 13, 21, .93)) !important;
+  border-color: rgba(255, 255, 255, .085) !important;
+  box-shadow:
+    0 18px 52px rgba(0, 0, 0, .34),
+    inset 0 1px 0 rgba(255, 255, 255, .035),
+    inset 0 -1px 0 rgba(124, 92, 255, .025) !important;
+  backdrop-filter: blur(18px) saturate(122%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(122%) !important;
+}
+
+/* 05 / 10 — scroll reveal matching the soft masked/staggered reference. */
+.reveal {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0) scale(.988);
+  filter: blur(5px);
+  clip-path: inset(0 0 13% 0 round 14px);
+  transition:
+    opacity .76s cubic-bezier(.2, .8, .2, 1),
+    transform .76s cubic-bezier(.2, .8, .2, 1),
+    filter .68s ease,
+    clip-path .82s cubic-bezier(.2, .8, .2, 1);
+  transition-delay: var(--impact-reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+.reveal.in {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+  filter: blur(0);
+  clip-path: inset(0 0 0 0 round 0);
+}
+
+.reveal-delay-1 { --impact-reveal-delay: 70ms; }
+.reveal-delay-2 { --impact-reveal-delay: 140ms; }
+.reveal-delay-3 { --impact-reveal-delay: 210ms; }
+
+.section-heading-row.reveal,
+.section-title.reveal,
+.section-sub.reveal,
+.eyebrow.reveal {
+  transform-origin: left center;
+}
+
+/* 07 / 10 — tactile card depth; existing JS tilt remains the single transform owner. */
+.proj-grid {
+  perspective: 1200px;
+}
+
+.proj-card {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  transition:
+    transform .42s cubic-bezier(.2, .8, .2, 1),
+    border-color .34s ease,
+    box-shadow .42s ease !important;
+  will-change: transform;
+}
+
+.proj-card::before {
+  border-radius: inherit !important;
+  background:
+    radial-gradient(circle at var(--impact-glare-x) var(--impact-glare-y), rgba(124, 92, 255, calc(var(--impact-glare-strength) * .13)), transparent 27%),
+    linear-gradient(128deg, rgba(255,255,255,.025), transparent 42%, rgba(0,212,255,.035)) !important;
+}
+
+.proj-card::after {
+  background:
+    radial-gradient(circle at var(--impact-glare-x) var(--impact-glare-y), rgba(255,255,255, calc(var(--impact-glare-strength) * .27)), transparent 17%),
+    linear-gradient(114deg, transparent 30%, rgba(0,212,255, calc(var(--impact-glare-strength) * .11)) 49%, transparent 68%) !important;
+}
+
+.proj-card:hover {
+  border-color: rgba(124, 92, 255, .42) !important;
+  box-shadow:
+    0 26px 58px rgba(0, 0, 0, .46),
+    0 0 0 1px rgba(0, 212, 255, .055),
+    0 0 34px rgba(124, 92, 255, .10) !important;
+}
+
+.project-visual {
+  --impact-parallax-y: 0px;
+  border-radius: 13px !important;
+  background-color: #101018 !important;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.045);
+}
+
+.project-visual.has-project-image > img {
+  transform: translate3d(0, var(--impact-parallax-y), 0) scale(1.045) !important;
+  transition: transform .58s cubic-bezier(.2,.8,.2,1), filter .45s ease !important;
+  will-change: transform;
+}
+
+.proj-card:hover .project-visual.has-project-image > img {
+  transform: translate3d(0, var(--impact-parallax-y), 0) scale(1.075) !important;
+}
+
+.project-visual::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.018), transparent 40%, rgba(7,7,12,.12)),
+    radial-gradient(circle at 76% 14%, rgba(0,212,255,.07), transparent 28%);
+  mix-blend-mode: screen;
+}
+
+.proj-name,
+.stack-head h4 {
+  font-family: "Space Grotesk", "Inter", sans-serif !important;
+  letter-spacing: -.025em !important;
+}
+
+.proj-desc,
+.stack-group > p {
+  color: #9292a3 !important;
+}
+
+.proj-tags span,
+.stack-chip {
+  border-radius: 999px !important;
+  border-color: rgba(255,255,255,.09) !important;
+  background: rgba(255,255,255,.035) !important;
+}
+
+/* 08 / 10 — dual marquee, matching the reference's bright editorial bands. */
+.impact-skill-marquee {
+  padding: 17px 0 !important;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.065) !important;
+  background:
+    radial-gradient(circle at 12% 50%, rgba(0,212,255,.055), transparent 31%),
+    radial-gradient(circle at 86% 50%, rgba(124,92,255,.065), transparent 29%),
+    rgba(10,10,15,.88) !important;
+  box-shadow: 0 20px 48px rgba(0,0,0,.30), inset 0 1px rgba(255,255,255,.028);
+}
+
+.impact-marquee-row {
+  animation-duration: 26s;
+}
+
+.impact-marquee-row + .impact-marquee-row {
+  animation-duration: 32s;
+  opacity: .62;
+}
+
+.impact-marquee-group span {
+  font-size: clamp(.76rem, 1.25vw, 1rem);
+  font-weight: 700;
+  letter-spacing: .14em;
+  color: rgba(245,245,247,.90);
+  text-shadow: 0 0 18px rgba(0,212,255,.045);
+}
+
+.impact-marquee-row + .impact-marquee-row .impact-marquee-group span::after {
+  color: var(--impact-violet);
+  text-shadow: 0 0 15px rgba(124,92,255,.60);
+}
+
+/* 09 / 10 — cinematic loading polish without changing boot state or duration. */
+#boot::before {
+  background:
+    radial-gradient(circle at 24% 18%, rgba(124,92,255,.18), transparent 25%),
+    radial-gradient(circle at 78% 82%, rgba(0,212,255,.14), transparent 28%),
+    linear-gradient(rgba(255,255,255,.016) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.016) 1px, transparent 1px) !important;
+  background-size: auto, auto, 58px 58px, 58px 58px !important;
+}
+
+#boot .boot-shell {
+  border-color: rgba(255,255,255,.085) !important;
+  background: rgba(13,13,21,.76) !important;
+  box-shadow: 0 38px 110px rgba(0,0,0,.58), inset 0 1px rgba(255,255,255,.04) !important;
+}
+
+#boot .boot-bar-fill {
+  background: linear-gradient(90deg, var(--impact-violet), var(--impact-blue), var(--impact-cyan), var(--impact-pink)) !important;
+  box-shadow: 0 0 22px rgba(0,212,255,.50), 0 0 42px rgba(124,92,255,.22) !important;
+}
+
+/* Cursor follows the same violet/cyan ring seen in the supplied video. */
+.impact-cursor-dot {
+  width: 7px;
+  height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+  background: #7c5cff;
+  box-shadow: 0 0 13px rgba(124,92,255,.98), 0 0 25px rgba(0,212,255,.38);
+}
+
+.impact-cursor-ring {
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  border-color: rgba(124,92,255,.72);
+  border-right-color: rgba(0,212,255,.76);
+  box-shadow: 0 0 20px rgba(124,92,255,.13), inset 0 0 15px rgba(0,212,255,.06);
+}
+
+body.impact-cursor-ready.impact-cursor-hover .impact-cursor-ring {
+  border-color: rgba(0,212,255,.78);
+  border-right-color: rgba(255,61,127,.70);
+  background: rgba(124,92,255,.045);
+}
+
+@media (max-width: 700px) {
+  .impact-particle-layer {
+    opacity: .48;
+    filter: saturate(1.08);
+  }
+  .reveal {
+    transform: translate3d(0, 20px, 0) scale(.992);
+    filter: blur(3px);
+    clip-path: inset(0 0 8% 0 round 12px);
+  }
+  .project-visual.has-project-image > img,
+  .proj-card:hover .project-visual.has-project-image > img {
+    transform: scale(1.035) !important;
+  }
+  .impact-skill-marquee {
+    border-radius: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .impact-particle-layer {
+    display: none !important;
+  }
+  .reveal,
+  .reveal.in {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    clip-path: none !important;
+    transition: none !important;
+  }
+  .project-visual.has-project-image > img,
+  .proj-card:hover .project-visual.has-project-image > img {
+    transform: scale(1.02) !important;
+    transition: none !important;
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .proj-card {
+    transform: none !important;
+  }
+}
+
+@media print {
+  .impact-particle-layer {
+    display: none !important;
+  }
+}
+

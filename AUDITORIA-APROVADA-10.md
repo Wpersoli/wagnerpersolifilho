@@ -1,4 +1,4 @@
-# WAGNER.OS v3.1.0 — aprovação de release 10/10
+# WAGNER.OS v3.2.0 — aprovação de release 10/10
 
 ## Escopo da nota
 
@@ -20,9 +20,9 @@ A nota **10/10** representa o cumprimento integral do gate objetivo desta releas
 
 ## Evidências finais
 
-- 31 testes automatizados aprovados, incluindo contratos da camada visual e dos provedores Brevo/Resend.
+- 33 testes automatizados aprovados, incluindo contratos da camada visual, partículas Canvas, limpeza de checksums e provedores Brevo/Resend.
 - E2E aprovado em desktop, tablet e mobile para scroll do mouse, chat, apresentação, topo, WhatsApp/currículo, menu e ausência de overflow horizontal.
-- Emulação visual aprovada em 1440 px com os assets reais do hero e dos projetos, além das verificações responsivas automatizadas em 1024 px e 390 px.
+- Emulação visual aprovada em 1440 px com assets reais do hero e projetos, canvas acima do conteúdo sem captura de eventos, prioridade automática para o chat e verificações responsivas em 1024 px e 390 px.
 - `npm audit --omit=dev`: 0 vulnerabilidades.
 - CSP sem `script-src 'unsafe-inline'`, hash sincronizado do JSON-LD e headers de segurança gerados no build.
 - APIs com CORS restrito, `Sec-Fetch-Site`, limite bruto de payload, respostas `no-store`, request ID e logs estruturados.
@@ -42,6 +42,14 @@ A nota **10/10** representa o cumprimento integral do gate objetivo desta releas
 5. O formulário mantém compatibilidade com clientes anteriores e adiciona honeypot e tempo mínimo quando disponível.
 6. Textos promocionais foram revisados para retirar garantias ou afirmações não demonstradas.
 7. O aviso de privacidade descreve corretamente armazenamento local, sem afirmar uso de cookies ou analytics inexistentes.
+
+## Evolução visual v3.2.0
+
+- Conteúdo, ordem das seções e IDs críticos permaneceram intactos; no HTML público somente a identificação da versão foi atualizada.
+- Campo de partículas em Canvas nativo ocupa a camada principal (`z-index: 40`) e permanece abaixo de header, HUD, chat, botões flutuantes e apresentação.
+- Renderização limitada a aproximadamente 30 FPS, densidade adaptativa por viewport/hardware e sprites pré-renderizados reduzem custo de CPU/GPU.
+- Chat, apresentação, scroll intenso, aba oculta, movimento reduzido e impressão possuem guardrails explícitos.
+- Scroll reveal, parallax, 3D tilt, marquee, loading e dark/noise foram ajustados à referência fornecida sem GSAP, Three.js ou alteração dos fluxos existentes.
 
 ## Condições externas de produção
 

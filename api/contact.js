@@ -91,7 +91,7 @@ async function sendWithBrevo(data) {
         'api-key': apiKey,
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        'User-Agent': 'WAGNER.OS/3.1.0'
+        'User-Agent': 'WAGNER.OS/3.2.0'
       },
       body: JSON.stringify({
         sender: sender,
@@ -126,7 +126,7 @@ async function sendWithResend(data) {
       headers: {
         Authorization: 'Bearer ' + apiKey,
         'Content-Type': 'application/json',
-        'User-Agent': 'WAGNER.OS/3.1.0'
+        'User-Agent': 'WAGNER.OS/3.2.0'
       },
       body: JSON.stringify({
         from: fromEmail,

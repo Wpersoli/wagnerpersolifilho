@@ -124,7 +124,7 @@ test('handler envia mensagem pela Brevo quando configurada', async function () {
     assert.equal(url, 'https://api.brevo.com/v3/smtp/email');
     assert.equal(options.method, 'POST');
     assert.equal(options.headers['api-key'], 'brevo_test');
-    assert.equal(options.headers['User-Agent'], 'WAGNER.OS/3.1.0');
+    assert.equal(options.headers['User-Agent'], 'WAGNER.OS/3.2.0');
     var body = JSON.parse(options.body);
     assert.equal(body.replyTo.email, 'pessoa@example.com');
     assert.equal(body.sender.email, 'sender@example.com');
@@ -164,7 +164,7 @@ test('Resend permanece disponível como provider explícito de compatibilidade',
   global.fetch = async function (url, options) {
     assert.equal(url, 'https://api.resend.com/emails');
     assert.equal(options.method, 'POST');
-    assert.equal(options.headers['User-Agent'], 'WAGNER.OS/3.1.0');
+    assert.equal(options.headers['User-Agent'], 'WAGNER.OS/3.2.0');
     return { ok: true, status: 200, json: async function () { return { id: 'email_test_123' }; } };
   };
   try {

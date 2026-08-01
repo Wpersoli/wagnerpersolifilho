@@ -624,37 +624,16 @@ async function sendUserMsg(text) {
   showTyping();
 
   try {
-    var controller = new AbortController();
-    var timeoutId = setTimeout(function() { controller.abort(); }, 30000);
-
-    var response = await fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        messages: chatHistory
-      }),
-      signal: controller.signal
-    });
-    clearTimeout(timeoutId);
-
-    var data = {};
-    try { data = await response.json(); } catch(e) { data = {}; }
-
-    if (!response.ok) {
-      var serverErr = data.error || response.statusText || 'Erro desconhecido';
-      throw new Error('HTTP ' + response.status + ': ' + serverErr);
+    var chatClient = window.WagnerChatClient;
+    if (!chatClient && typeof window.WagnerLoadChatClient === 'function') {
+      chatClient = await window.WagnerLoadChatClient();
+    }
+    if (!chatClient || typeof chatClient.request !== 'function') {
+      throw new Error('CHAT_CLIENT_UNAVAILABLE');
     }
 
-    // Handle both formats: Gemini-style content array and direct text
-    var reply = '';
-    if (data.content && Array.isArray(data.content)) {
-      reply = data.content.map(function(b) { return b.text || ''; }).join('').trim();
-    } else if (data.text) {
-      reply = data.text.trim();
-    } else if (data.error) {
-      throw new Error(String(data.error));
-    }
-
+    var chatResult = await chatClient.request(chatHistory);
+    var reply = sanitizeText(chatResult && chatResult.text || '', 4000);
     if (!reply) reply = 'Não consegui uma resposta agora. Tente novamente ou fale direto com o Wagner no WhatsApp!';
 
     chatHistory.push({ role: 'assistant', content: reply });
@@ -1589,6 +1568,20 @@ if (contactForm) {
       startedAt: Number(formData.get('startedAt') || Date.now())
     };
 
+    var payloadHasStrictTypes =
+      typeof payload.name === 'string' &&
+      typeof payload.email === 'string' &&
+      typeof payload.subject === 'string' &&
+      typeof payload.phone === 'string' &&
+      typeof payload.message === 'string' &&
+      typeof payload.company === 'string' &&
+      Number.isFinite(payload.startedAt);
+    if (!payloadHasStrictTypes) {
+      setContactStatus('Os dados informados possuem formato inválido.', 'err');
+      showContactToast('Dados inválidos.', 'Revise os campos e tente novamente.', true);
+      return;
+    }
+
     var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!payload.name || payload.name.length < 2) {
       setContactStatus('Informe seu nome para abrir o canal.', 'err');
@@ -1615,12 +1608,20 @@ if (contactForm) {
     setContactStatus('Transmitindo mensagem para o canal de e-mail...', '');
 
     try {
-      var response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'same-origin',
-        body: JSON.stringify(payload)
-      });
+      var contactController = new AbortController();
+      var contactTimeout = setTimeout(function() { contactController.abort(); }, 16000);
+      var response;
+      try {
+        response = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify(payload),
+          signal: contactController.signal
+        });
+      } finally {
+        clearTimeout(contactTimeout);
+      }
 
       var data = null;
       try {
@@ -1645,8 +1646,11 @@ if (contactForm) {
         false
       );
     } catch (error) {
-      setContactStatus('Erro de conexão ao enviar. Tente novamente em instantes.', 'err');
-      showContactToast('Erro de conexão.', 'Não foi possível enviar agora. Tente novamente em alguns instantes.', true);
+      var connectionMessage = error && error.name === 'AbortError'
+        ? 'O envio excedeu o tempo seguro. Tente novamente em instantes.'
+        : 'Não foi possível conectar ao canal agora. Tente novamente em alguns instantes.';
+      setContactStatus(connectionMessage, 'err');
+      showContactToast('Canal temporariamente indisponível.', connectionMessage, true);
     } finally {
       setContactLoading(false);
     }

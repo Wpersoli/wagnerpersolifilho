@@ -54,6 +54,10 @@ test('vercel configura CSP estrita, headers e cache revalidável', function () {
   assert.match(serialized, /stale-while-revalidate/);
   assert.doesNotMatch(serialized, /immutable/);
   assert.match(serialized, /no-store/);
+  assert.match(serialized, /https:\/\/\*\.supabase\.co/);
+  assert.match(serialized, /wss:\/\/\*\.supabase\.co/);
+  assert.match(serialized, /https:\/\/api\.brevo\.com/);
+  assert.doesNotMatch(serialized, /script-src[^;]*unsafe-inline/);
 });
 
 test('chat bloqueia origem externa e limita payload', async function () {
@@ -68,4 +72,28 @@ test('chat bloqueia origem externa e limita payload', async function () {
 
 test('release check bloqueia secrets e aprova árvore limpa', function () {
   cp.execFileSync(process.execPath, ['scripts/release-check.js'], { cwd: root, stdio: 'pipe' });
+});
+
+
+test('Supabase possui migração RLS INSERT-only e sem políticas de leitura pública', function () {
+  var sql = fs.readFileSync(path.join(root, 'supabase', 'migrations', '202608010001_mensagens_contato.sql'), 'utf8');
+  assert.match(sql, /alter table public\.mensagens_contato enable row level security/i);
+  assert.match(sql, /grant insert[\s\S]*to anon/i);
+  assert.match(sql, /for insert[\s\S]*to anon[\s\S]*with check/i);
+  assert.doesNotMatch(sql, /create policy[\s\S]{0,120}for select/i);
+  assert.doesNotMatch(sql, /grant select[\s\S]{0,80}to anon/i);
+  assert.doesNotMatch(sql, /grant update[\s\S]{0,80}to anon/i);
+  assert.doesNotMatch(sql, /grant delete[\s\S]{0,80}to anon/i);
+});
+
+test('chat usa cliente assíncrono sob demanda sem script inline', function () {
+  var html = fs.readFileSync(path.join(root, 'public', 'index.html'), 'utf8');
+  var loader = fs.readFileSync(path.join(root, 'public', 'js', 'feature-loader.js'), 'utf8');
+  var client = fs.readFileSync(path.join(root, 'public', 'js', 'chat-client.js'), 'utf8');
+  assert.match(html, /js\/feature-loader\.js/);
+  assert.doesNotMatch(html, /js\/chat-client\.js/);
+  assert.match(loader, /script\.async = true/);
+  assert.match(loader, /requestIdleCallback/);
+  assert.match(client, /AbortController/);
+  assert.match(client, /credentials: 'same-origin'/);
 });

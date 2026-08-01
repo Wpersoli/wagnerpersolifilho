@@ -15,10 +15,12 @@
     "test": "node --test tests/*.test.js",
     "test:e2e": "npm run build && node scripts/e2e-browser.js",
     "release:check": "node scripts/release-check.js && node scripts/verify-assets.js",
-    "validate": "npm run build && npm run check && npm test && npm run release:check",
-    "quality": "npm run validate && npm run test:e2e && npm run test:visual",
+    "validate": "npm run build && npm run lint && npm run check && npm test && npm run release:check",
+    "quality": "npm run ci:quality",
     "package:release": "npm run quality && npm run checksums && npm run release:check && node scripts/package-release.js",
     "checksums": "node scripts/generate-checksums.js",
-    "test:visual": "npm run build && node scripts/visual-emulation.js"
+    "test:visual": "npm run build && node scripts/visual-emulation.js",
+    "ci:quality": "npm run validate && npm run test:e2e && node scripts/ci-browser-settle.js && npm run test:visual",
+    "lint": "node scripts/lint-project.js"
   }
 }

@@ -36,6 +36,7 @@ test('CSS consolidado mantém tokens e overlays dentro da viewport', () => {
 
 test('JavaScript mantém chat, ações flutuantes, menu e apresentação', () => {
   assert.match(mainJs, /fabChat\.addEventListener\(['"]click['"]/);
+  assert.match(html, /js\/feature-loader\.js/);
   assert.match(mainJs, /chatPanel\.classList\.add\(['"]open['"]\)/);
   assert.match(mainJs, /fabWhats\.classList\.toggle\(['"]show['"],\s*visible\)/);
   assert.match(mainJs, /\['pmodeBtn','pmodeMobileBtn'\]/);
@@ -49,7 +50,16 @@ test('hero usa WebP válido e dimensões intrínsecas corretas', () => {
   const image = fs.readFileSync(imagePath);
   assert.equal(image.subarray(0, 4).toString('ascii'), 'RIFF');
   assert.equal(image.subarray(8, 12).toString('ascii'), 'WEBP');
-  assert.match(html, /src=["']img\/hero-fidelity-master\.webp["'][\s\S]*?width=["']1916["'][\s\S]*?height=["']821["']/);
+  const vp8Offset = image.indexOf(Buffer.from([0x9d, 0x01, 0x2a]));
+  assert.ok(vp8Offset > 0, 'frame VP8 ausente');
+  const intrinsicWidth = image.readUInt16LE(vp8Offset + 3) & 0x3fff;
+  const intrinsicHeight = image.readUInt16LE(vp8Offset + 5) & 0x3fff;
+  assert.equal(intrinsicWidth, 4086);
+  assert.equal(intrinsicHeight, 1913);
+  assert.match(html, /src=["']img\/hero-fidelity-master\.webp["'][\s\S]*?width=["']4086["'][\s\S]*?height=["']1913["']/);
+  const fallback = fs.readFileSync(path.join(root, 'public/img/hero-fidelity-master-fallback.jpg'));
+  assert.equal(fallback.subarray(0, 2).toString('hex'), 'ffd8');
+  assert.equal(fs.existsSync(path.join(root, 'public/img/hero-fidelity-master.webp.webp')), false);
 });
 
 test('scroll usa comportamento nativo e pausa apenas efeitos caros', () => {

@@ -32,10 +32,12 @@ Abra `http://127.0.0.1:3000`. O comando usa o servidor local do projeto e não c
 ```powershell
 npm run validate
 npm run test:e2e
+npm run test:visual
+npm run quality
 npm run package:release
 ```
 
-`validate` recompila CSS e headers, verifica sintaxe, executa testes e bloqueia secrets ou assets inválidos. `test:e2e` valida em navegador o scroll do mouse, chat, apresentação, WhatsApp, currículo, topo e menu mobile.
+`validate` recompila CSS e headers, verifica sintaxe, executa testes e bloqueia secrets ou assets inválidos. `test:e2e` valida em navegador o scroll do mouse, chat, apresentação, WhatsApp, currículo, topo e menu mobile. `test:visual` audita a referência 1919×1001 sem depender de timers assíncronos do chat após o scroll. `quality` executa o gate completo com isolamento entre os navegadores E2E e visual.
 
 ## Experiência visual v3.2
 

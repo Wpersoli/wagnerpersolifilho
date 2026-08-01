@@ -181,3 +181,84 @@ test('Resend permanece disponível como provider explícito de compatibilidade',
     global.fetch = oldFetch;
   }
 });
+
+test('Supabase recebe INSERT mínimo com chave pública e sem retorno de linhas', async function () {
+  var oldUrl = process.env.SUPABASE_URL;
+  var oldKey = process.env.SUPABASE_PUBLISHABLE_KEY;
+  var oldFetch = global.fetch;
+  process.env.SUPABASE_URL = 'https://abc123.supabase.co';
+  process.env.SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_test';
+  global.fetch = async function (url, options) {
+    assert.equal(url, 'https://abc123.supabase.co/rest/v1/mensagens_contato');
+    assert.equal(options.method, 'POST');
+    assert.equal(options.headers.Prefer, 'return=minimal');
+    assert.equal(options.headers.apikey, 'sb_publishable_test');
+    var body = JSON.parse(options.body);
+    assert.equal(body.nome, 'Pessoa Teste');
+    assert.equal(body.origem, 'portfolio');
+    assert.equal(body.request_id, 'request-id-12345');
+    assert.equal(Object.prototype.hasOwnProperty.call(body, 'status'), false);
+    return { ok: true, status: 201, json: async function () { return {}; } };
+  };
+  try {
+    var result = await internal.saveContactToSupabase(validBody(), 'request-id-12345');
+    assert.equal(result.ok, true);
+    assert.equal(result.skipped, false);
+  } finally {
+    if (oldUrl === undefined) delete process.env.SUPABASE_URL; else process.env.SUPABASE_URL = oldUrl;
+    if (oldKey === undefined) delete process.env.SUPABASE_PUBLISHABLE_KEY; else process.env.SUPABASE_PUBLISHABLE_KEY = oldKey;
+    global.fetch = oldFetch;
+  }
+});
+
+test('falha do Supabase não causa crash quando Brevo envia com sucesso', async function () {
+  var snapshot = {
+    url: process.env.SUPABASE_URL,
+    key: process.env.SUPABASE_PUBLISHABLE_KEY,
+    provider: process.env.CONTACT_EMAIL_PROVIDER,
+    brevo: process.env.BREVO_API_KEY,
+    sender: process.env.BREVO_SENDER_EMAIL,
+    to: process.env.CONTACT_TO_EMAIL
+  };
+  var oldFetch = global.fetch;
+  process.env.SUPABASE_URL = 'https://abc123.supabase.co';
+  process.env.SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_test';
+  process.env.CONTACT_EMAIL_PROVIDER = 'brevo';
+  process.env.BREVO_API_KEY = 'brevo_test';
+  process.env.BREVO_SENDER_EMAIL = 'sender@example.com';
+  process.env.CONTACT_TO_EMAIL = 'destino@example.com';
+  global.fetch = async function (url) {
+    if (url.indexOf('supabase.co') !== -1) throw new Error('database offline');
+    return { ok: true, status: 201, json: async function () { return { messageId: 'brevo-ok' }; } };
+  };
+  try {
+    var res = createResponse();
+    await contact(createRequest(validBody(), { headers: { origin: 'http://localhost:3000' } }), res);
+    var payload = JSON.parse(res.body);
+    assert.equal(res.statusCode, 202);
+    assert.equal(payload.ok, true);
+    assert.equal(payload.stored, false);
+    assert.equal(payload.notified, true);
+  } finally {
+    for (var pair of [
+      ['SUPABASE_URL', snapshot.url],
+      ['SUPABASE_PUBLISHABLE_KEY', snapshot.key],
+      ['CONTACT_EMAIL_PROVIDER', snapshot.provider],
+      ['BREVO_API_KEY', snapshot.brevo],
+      ['BREVO_SENDER_EMAIL', snapshot.sender],
+      ['CONTACT_TO_EMAIL', snapshot.to]
+    ]) {
+      if (pair[1] === undefined) delete process.env[pair[0]]; else process.env[pair[0]] = pair[1];
+    }
+    global.fetch = oldFetch;
+  }
+});
+
+test('estrutura inesperada de payload é rejeitada antes dos provedores', async function () {
+  var res = createResponse();
+  var body = validBody();
+  body.admin = true;
+  await contact(createRequest(body), res);
+  assert.equal(res.statusCode, 400);
+  assert.match(JSON.parse(res.body).message, /Estrutura/);
+});

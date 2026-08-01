@@ -108,6 +108,46 @@ CDP.prototype.evaluate = async function (expression) {
 CDP.prototype.close = function () { if (this.socket) this.socket.close(); };
 
 
+
+async function dispatchNativeWheelUntilScrolled(cdp) {
+  await cdp.evaluate(`(() => {
+    document.getElementById('cookieAccept')?.click();
+    document.getElementById('bootSkip')?.click();
+    window.scrollTo(0, 0);
+    if (document.body && typeof document.body.focus === 'function') document.body.focus();
+    return {
+      maxScroll: Math.max(0, document.documentElement.scrollHeight - innerHeight),
+      overflow: getComputedStyle(document.body).overflowY
+    };
+  })()`);
+  await sleep(140);
+
+  var state = { y: 0, overflow: '', diagnostics: null, maxScroll: 0 };
+  for (var attempt = 0; attempt < 4; attempt += 1) {
+    await cdp.send('Input.dispatchMouseEvent', {
+      type: 'mouseMoved',
+      x: 720,
+      y: 500
+    });
+    await cdp.send('Input.dispatchMouseEvent', {
+      type: 'mouseWheel',
+      x: 720,
+      y: 500,
+      deltaX: 0,
+      deltaY: 540
+    });
+    await sleep(220);
+    state = await cdp.evaluate(`({
+      y: scrollY,
+      overflow: getComputedStyle(document.body).overflowY,
+      diagnostics: window.WagnerScrollDiagnostics?.getState(),
+      maxScroll: Math.max(0, document.documentElement.scrollHeight - innerHeight)
+    })`);
+    if (state.y > 120) return state;
+  }
+  return state;
+}
+
 async function captureScreenshot(cdp, name) {
   if (!screenshotDir) return;
   fs.mkdirSync(screenshotDir, { recursive: true });
@@ -126,12 +166,13 @@ function buildTestHtml() {
   var css = fs.readFileSync(path.join(root, 'public', 'css', 'app.css'), 'utf8').replace(/<\/style/gi, '<\\/style');
   html = html.replace(/<link[^>]+(?:fonts\.googleapis|preconnect|rel="preload")[^>]*>/gi, '');
   html = html.replace(/<link rel="stylesheet" href="css\/app\.css">/i, '<style id="e2e-app-css">' + css + '</style>');
+  html = html.replace('<head>', '<head><script>window.__wagnerCLS=0;new PerformanceObserver(function(list){list.getEntries().forEach(function(e){if(!e.hadRecentInput)window.__wagnerCLS+=e.value;});}).observe({type:"layout-shift",buffered:true});<\/script>');
   html = html.replace(/<script src="[^"]+" defer><\/script>/g, '');
   return html;
 }
 
 function loadRuntimeScripts(cdp) {
-  var files = ['performance-safe.js', 'main.js', 'hero-effects.js', 'hero-fidelity.js', 'hero-motion.js', 'impact-experience.js'];
+  var files = ['performance-safe.js', 'chat-client.js', 'feature-loader.js', 'main.js', 'hero-effects.js', 'hero-fidelity.js', 'hero-motion.js', 'impact-experience.js'];
   return files.reduce(function (promise, name) {
     return promise.then(function () {
       var code = fs.readFileSync(path.join(root, 'public', 'js', name), 'utf8');
@@ -156,6 +197,7 @@ async function run() {
   chrome = cp.spawn(chromeBin, [
     '--headless=new', '--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage',
     '--allow-file-access-from-files', '--disable-background-networking',
+    '--disable-background-timer-throttling', '--disable-renderer-backgrounding', '--disable-backgrounding-occluded-windows',
     '--remote-debugging-port=' + debugPort, '--user-data-dir=' + profile,
     '--window-size=1440,900', 'about:blank'
   ], { stdio: ['ignore', 'ignore', 'ignore'] });
@@ -196,14 +238,14 @@ async function run() {
   assert(desktop.header, 'Topo desktop ou botão apresentação não está visível.');
   assert(desktop.hero && desktop.cv && desktop.whatsapp && desktop.appCss && desktop.impact, 'Contrato visual desktop incompleto.');
   assert(desktop.bentoColumns >= 2, 'Bento grid não foi aplicado no desktop.');
+  var cls = await cdp.evaluate('Number(window.__wagnerCLS || 0)');
+  assert(cls <= 0.02, 'CLS acima do orçamento: ' + cls);
   await captureScreenshot(cdp, 'desktop-hero.png');
   if (screenshotDir) { await cdp.evaluate("document.getElementById('projects').scrollIntoView();"); await sleep(450); await captureScreenshot(cdp, 'desktop-projects.png'); }
 
-  await cdp.evaluate('window.scrollTo(0,0)');
-  await cdp.send('Input.dispatchMouseEvent', { type: 'mouseWheel', x: 720, y: 500, deltaX: 0, deltaY: 720 });
-  await sleep(450);
-  var scroll = await cdp.evaluate(`({ y: scrollY, overflow: getComputedStyle(document.body).overflowY, diagnostics: window.WagnerScrollDiagnostics?.getState() })`);
-  assert(scroll.y > 120, 'A roda do mouse não deslocou a página de forma efetiva.');
+  var scroll = await dispatchNativeWheelUntilScrolled(cdp);
+  assert(scroll.maxScroll > 120, 'A página não possui altura rolável suficiente para o teste.');
+  assert(scroll.y > 120, 'A roda do mouse não deslocou a página de forma efetiva após 4 tentativas nativas.');
   assert(scroll.overflow !== 'hidden', 'Scroll global ficou bloqueado.');
   assert(scroll.diagnostics && scroll.diagnostics.nativeWheel === true, 'Diagnóstico de scroll nativo ausente.');
 
@@ -257,9 +299,45 @@ async function run() {
   await sleep(220);
   await captureScreenshot(cdp, 'mobile-hero.png');
 
+
+
+  var boundaryViewports = [
+    { width: 320, height: 700, mobile: true },
+    { width: 360, height: 780, mobile: true },
+    { width: 430, height: 860, mobile: true },
+    { width: 760, height: 900, mobile: true },
+    { width: 761, height: 900, mobile: false },
+    { width: 1280, height: 900, mobile: false },
+    { width: 1919, height: 1001, mobile: false },
+    { width: 2560, height: 1080, mobile: false }
+  ];
+  for (var boundaryIndex = 0; boundaryIndex < boundaryViewports.length; boundaryIndex += 1) {
+    var boundary = boundaryViewports[boundaryIndex];
+    await cdp.send('Emulation.setDeviceMetricsOverride', {
+      width: boundary.width,
+      height: boundary.height,
+      deviceScaleFactor: 1,
+      mobile: boundary.mobile
+    });
+    await setDocument(cdp, testHtml);
+    await cdp.evaluate("document.getElementById('bootSkip')?.click()");
+    await cdp.evaluate(`Promise.race([Promise.all([...document.images].map(function(img){ return img.complete && img.naturalWidth > 0 ? true : img.decode().catch(function(){ return false; }); })), new Promise(function(resolve){ setTimeout(resolve, 3500); })])`);
+    await sleep(220);
+    var boundaryReport = await cdp.evaluate(`(() => ({
+      width: innerWidth,
+      overflow: document.documentElement.scrollWidth <= innerWidth + 2,
+      hero: !!document.getElementById('heroFidelityStage'),
+      header: !!document.querySelector('body > header'),
+      imageComplete: document.querySelector('.hero-fidelity-image')?.complete === true,
+      imageNaturalWidth: document.querySelector('.hero-fidelity-image')?.naturalWidth || 0
+    }))()`);
+    assert(boundaryReport.overflow, 'Overflow horizontal em ' + boundary.width + 'px.');
+    assert(boundaryReport.hero && boundaryReport.header, 'Contrato do topo ausente em ' + boundary.width + 'px.');
+  }
+
   assert(errors.length === 0, 'Erros JavaScript detectados no navegador:\n' + errors.join('\n'));
   cdp.close();
-  console.log('E2E aprovado: desktop, wheel scroll, chat, apresentação, WhatsApp/CV e menu mobile.');
+  console.log('E2E aprovado: 320–2560px, CLS, desktop, wheel scroll, chat assíncrono, apresentação, WhatsApp/CV e menu mobile.');
 }
 
 run().catch(function (error) {

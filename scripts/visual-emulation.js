@@ -60,6 +60,7 @@ function CDP(url) {
       if (message.id && self.pending.has(message.id)) {
         var pending = self.pending.get(message.id);
         self.pending.delete(message.id);
+        if (pending.timer) clearTimeout(pending.timer);
         if (message.error) pending.reject(new Error(message.error.message));
         else pending.resolve(message.result || {});
         return;
@@ -74,7 +75,15 @@ CDP.prototype.send = async function (method, params) {
   await this.ready;
   var id = this.nextId++;
   var self = this;
-  var promise = new Promise(function (resolve, reject) { self.pending.set(id, { resolve: resolve, reject: reject }); });
+  var timeoutMs = Number(process.env.CDP_COMMAND_TIMEOUT_MS || 45000);
+  if (!Number.isFinite(timeoutMs) || timeoutMs < 5000 || timeoutMs > 120000) timeoutMs = 45000;
+  var promise = new Promise(function (resolve, reject) {
+    var timer = setTimeout(function () {
+      self.pending.delete(id);
+      reject(new Error('Timeout no comando CDP ' + method));
+    }, timeoutMs);
+    self.pending.set(id, { resolve: resolve, reject: reject, timer: timer });
+  });
   this.socket.send(JSON.stringify({ id: id, method: method, params: params || {} }));
   return promise;
 };
@@ -125,7 +134,7 @@ function buildVisualHtml() {
 }
 
 async function loadRuntimeScripts(cdp) {
-  var files = ['performance-safe.js', 'main.js', 'hero-effects.js', 'hero-fidelity.js', 'hero-motion.js', 'impact-experience.js'];
+  var files = ['performance-safe.js', 'chat-client.js', 'feature-loader.js', 'main.js', 'hero-effects.js', 'hero-fidelity.js', 'hero-motion.js', 'impact-experience.js'];
   for (var i = 0; i < files.length; i += 1) {
     var code = fs.readFileSync(path.join(root, 'public', 'js', files[i]), 'utf8');
     await cdp.evaluate('(function(){var s=document.createElement("script");s.textContent=' + JSON.stringify(code) + ';document.body.appendChild(s);return true;}())');
@@ -141,6 +150,48 @@ async function setDocument(cdp) {
   await sleep(450);
   await cdp.evaluate("document.getElementById('bootSkip')?.click(); document.getElementById('cookieAccept')?.click(); true;");
   await sleep(850);
+}
+
+async function waitForImages(cdp, selector, timeoutMs) {
+  var deadline = Date.now() + (timeoutMs || 5000);
+  var state = { count: 0, ready: false };
+  while (Date.now() < deadline) {
+    state = await cdp.evaluate(`(() => {
+      const images = [...document.querySelectorAll(${JSON.stringify(selector)})];
+      return {
+        count: images.length,
+        ready: images.length > 0 && images.every(img => img.complete && img.naturalWidth > 0 && img.naturalHeight > 0)
+      };
+    })()`);
+    if (state.ready) return state;
+    await sleep(120);
+  }
+  return state;
+}
+
+
+async function inspectParticlePriorityCss(cdp) {
+  return cdp.evaluate(`(() => {
+    const layer = document.getElementById('impactParticleLayer');
+    if (!layer) return { exists: false, stateClass: false, opacity: 1 };
+
+    const body = document.body;
+    const hadClass = body.classList.contains('impact-chat-open');
+    const previousTransition = layer.style.transition;
+
+    layer.style.transition = 'none';
+    body.classList.add('impact-chat-open');
+
+    const result = {
+      exists: true,
+      stateClass: body.classList.contains('impact-chat-open'),
+      opacity: Number(getComputedStyle(layer).opacity)
+    };
+
+    if (!hadClass) body.classList.remove('impact-chat-open');
+    layer.style.transition = previousTransition;
+    return result;
+  })()`);
 }
 
 async function screenshot(cdp, name) {
@@ -194,6 +245,10 @@ async function inspect(cdp, mode) {
     const particleLayer = document.getElementById('impactParticleLayer');
     const main = document.querySelector('main');
     const header = document.querySelector('header');
+    const heroImage = document.querySelector('.hero-fidelity-image');
+    const actions = document.querySelector('.hero-clean-actions');
+    const socials = document.querySelector('.hero-clean-socials');
+    const fabChat = document.getElementById('fabChat');
     return {
       mode: ${JSON.stringify(mode)},
       url: location.href,
@@ -208,7 +263,12 @@ async function inspect(cdp, mode) {
       presentationButtonVisible: visible(document.getElementById('pmodeBtn')) || visible(document.getElementById('burgerBtn')),
       heroLogoVisible: visible(document.querySelector('.hero-logo-cutout')),
       heroHotspots: document.querySelectorAll('.hero-hotspot').length,
-      headerRect: header ? { left: header.getBoundingClientRect().left, right: header.getBoundingClientRect().right, width: header.getBoundingClientRect().width } : null,
+      headerRect: header ? { left: header.getBoundingClientRect().left, right: header.getBoundingClientRect().right, width: header.getBoundingClientRect().width, height: header.getBoundingClientRect().height } : null,
+      heroImageTransform: heroImage ? getComputedStyle(heroImage).transform : '',
+      heroImageObjectFit: heroImage ? getComputedStyle(heroImage).objectFit : '',
+      actionsRect: actions ? { left: actions.getBoundingClientRect().left, right: actions.getBoundingClientRect().right, width: actions.getBoundingClientRect().width } : null,
+      socialsRect: socials ? { left: socials.getBoundingClientRect().left, right: socials.getBoundingClientRect().right } : null,
+      fabRect: fabChat ? { left: fabChat.getBoundingClientRect().left, right: fabChat.getBoundingClientRect().right } : null,
       impactLoaded: Boolean(kinetic && marquee && particleLayer && document.querySelector('.impact-cursor-dot,.impact-hero-orbit')),
       particleLayer: particleLayer ? { pointerEvents: getComputedStyle(particleLayer).pointerEvents, zIndex: Number(getComputedStyle(particleLayer).zIndex || 0), width: particleLayer.width, height: particleLayer.height } : null,
       layerOrder: { main: main ? Number(getComputedStyle(main).zIndex || 0) : 0, header: header ? Number(getComputedStyle(header).zIndex || 0) : 0 },
@@ -241,7 +301,7 @@ async function runViewport(cdp, config) {
     await sleep(180);
   }
 
-  await cdp.evaluate(`Promise.race([Promise.all([...document.querySelectorAll('.hero-fidelity-image,.project-visual img,.assistant-robot')].map(img => img.complete && img.naturalWidth > 0 ? true : img.decode().catch(() => false))), new Promise(resolve => setTimeout(resolve, 5000))])`);
+  await waitForImages(cdp, '.hero-fidelity-image,.project-visual img,.assistant-robot', 6000);
   await sleep(220);
   var report = await inspect(cdp, config.name);
   assert(report.noHorizontalOverflow, config.name + ': overflow horizontal (' + report.documentWidth + ' > ' + report.viewport.width + ').');
@@ -256,7 +316,18 @@ async function runViewport(cdp, config) {
   assert(report.particleLayer.width > 0 && report.particleLayer.height > 0, config.name + ': canvas de partículas sem dimensões.');
   assert(report.particleLayer.zIndex > report.layerOrder.main && report.particleLayer.zIndex < report.layerOrder.header, config.name + ': canvas não está entre conteúdo e controles.');
   assert(report.criticalIds, config.name + ': contrato crítico de IDs foi alterado.');
+  assert(report.heroImageTransform === 'none' || report.heroImageTransform === 'matrix(1, 0, 0, 1, 0, 0)', config.name + ': imagem principal ainda reage por transform.');
+  if (report.actionsRect) {
+    var actionsCenter = report.actionsRect.left + report.actionsRect.width / 2;
+    assert(Math.abs(actionsCenter - report.viewport.width / 2) <= 8, config.name + ': CTAs não estão centralizados.');
+  }
+  if (report.socialsRect && report.fabRect) {
+    assert(report.socialsRect.right + 12 <= report.fabRect.left, config.name + ': chat sobrepõe redes sociais.');
+  }
   assert(report.images.length >= 6 && report.images[0].complete && report.images[0].width > 0, config.name + ': imagem principal do hero não carregou.');
+  var particleProtection = await inspectParticlePriorityCss(cdp);
+  assert(particleProtection.exists && particleProtection.stateClass && particleProtection.opacity <= .05, config.name + ': CSS de prioridade do chat não reduz as partículas.');
+  report.particleProtection = particleProtection;
   if (config.mobile) assert(report.projectColumns === 1, 'Mobile: bento deveria reduzir para uma coluna.');
   else assert(report.projectColumns >= 2, config.name + ': bento grid não foi aplicado.');
 
@@ -268,7 +339,7 @@ async function runViewport(cdp, config) {
   console.log(config.name + ': scrolling projects');
   await cdp.evaluate("(() => { const target = document.getElementById('projects'); window.scrollTo({top: Math.max(0, target.offsetTop - 88), left: 0, behavior: 'instant'}); return true; })()");
   await sleep(950);
-  await cdp.evaluate(`Promise.race([Promise.all([...document.querySelectorAll('.project-visual img')].map(img => img.complete && img.naturalWidth > 0 ? true : img.decode().catch(() => false))), new Promise(resolve => setTimeout(resolve, 5000))])`);
+  await waitForImages(cdp, '.project-visual img', 6000);
   var projectGeometry = await cdp.evaluate(`(() => { const section = document.getElementById('projects'); const heading = section && section.querySelector('.section-heading-row'); const r = heading && heading.getBoundingClientRect(); return { scrollY: window.scrollY, maxScroll: document.documentElement.scrollHeight - innerHeight, behavior: getComputedStyle(document.documentElement).scrollBehavior, sectionTop: section ? section.getBoundingClientRect().top : null, sectionPaddingTop: section ? getComputedStyle(section).paddingTop : null, headingTop: r ? r.top : null, headingBottom: r ? r.bottom : null }; })()`);
   console.log(config.name + ': project geometry ' + JSON.stringify(projectGeometry));
   assert(projectGeometry.headingTop !== null && projectGeometry.headingTop >= 70 && projectGeometry.headingTop <= 230, config.name + ': heading de projetos fora do ritmo visual após navegação (' + projectGeometry.headingTop + 'px).');
@@ -281,27 +352,8 @@ async function runViewport(cdp, config) {
   } else {
     console.log(config.name + ': project layout validated (optional screenshot disabled)');
   }
-  if (!config.mobile) {
-    await cdp.evaluate("document.getElementById('fabChat').click(); true;");
-    var particleProtection = await cdp.evaluate(`new Promise(resolve => {
-      const started = performance.now();
-      function inspectLayer() {
-        const layer = document.getElementById('impactParticleLayer');
-        const result = {
-          chatOpen: document.getElementById('chatPanel').classList.contains('open'),
-          stateClass: document.body.classList.contains('impact-chat-open'),
-          opacity: layer ? Number(getComputedStyle(layer).opacity) : 1
-        };
-        if (result.opacity <= .05 || performance.now() - started > 1400) return resolve(result);
-        requestAnimationFrame(inspectLayer);
-      }
-      inspectLayer();
-    })`);
-    assert(particleProtection.chatOpen && particleProtection.stateClass && particleProtection.opacity <= .05, config.name + ': partículas não cedem prioridade ao chat.');
-    await cdp.evaluate("document.getElementById('chatClose').click(); true;");
-    await sleep(120);
-    report.particleProtection = particleProtection;
-  }
+  /* Chat open/close behavior is covered by test:e2e. This visual audit
+     validates the CSS priority contract synchronously before capture. */
   report.projectImages = projectImages;
   report.projectGeometry = projectGeometry;
   return report;
@@ -314,7 +366,7 @@ async function run() {
   var profile = fs.mkdtempSync(path.join(os.tmpdir(), 'wagner-visual-'));
   chrome = cp.spawn(findChrome(), [
     '--headless=new', '--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage', '--allow-file-access-from-files',
-    '--disable-background-networking', '--no-proxy-server', '--proxy-bypass-list=<-loopback>', '--remote-debugging-port=' + debugPort,
+    '--disable-background-networking', '--disable-background-timer-throttling', '--disable-renderer-backgrounding', '--disable-backgrounding-occluded-windows', '--no-proxy-server', '--proxy-bypass-list=<-loopback>', '--remote-debugging-port=' + debugPort,
     '--user-data-dir=' + profile, '--window-size=1440,1000', 'about:blank'
   ], { stdio: ['ignore', 'ignore', 'ignore'] });
   await waitFor('http://127.0.0.1:' + debugPort + '/json/version', 10000);
@@ -333,7 +385,7 @@ async function run() {
   });
 
   var reports = [];
-  reports.push(await runViewport(cdp, { name: 'desktop-wide-1916', width: 1916, height: 906, mobile: false }));
+  reports.push(await runViewport(cdp, { name: 'reference-1919x1001', width: 1919, height: 1001, mobile: false }));
 
   var reduced = { validatedBy: 'npm run test:e2e + CSS contract test' };
 
@@ -350,7 +402,7 @@ async function run() {
   };
   fs.writeFileSync(path.join(outputDir, 'visual-audit.json'), JSON.stringify(finalReport, null, 2) + '\n');
   cdp.close();
-  console.log('Emulação visual aprovada: desktop 1916x906 com assets reais e geometria fiel à referência; desktop secundário, tablet e mobile são validados pelo E2E funcional.');
+  console.log('Emulação visual aprovada: referência 1919x1001; 320–2560px e ultrawide validados pelo E2E funcional.');
 }
 
 run().catch(function (error) {

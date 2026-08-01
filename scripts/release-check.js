@@ -66,7 +66,7 @@ for (var relative of auditedFiles) {
   if (relative === '.env.example' || /CHECKSUMS\.sha256$/i.test(relative) || relative === 'tests' || relative.startsWith('tests/')) continue;
   if (!/\.(?:js|json|html|css|md|txt|yml|yaml)$/i.test(relative)) continue;
   var text = fs.readFileSync(absolute, 'utf8');
-  if (/(?:VERCEL_OIDC_TOKEN|GEMINI_API_KEY|BREVO_API_KEY|RESEND_API_KEY|UPSTASH_REDIS_REST_TOKEN)\s*=\s*['\"]?(?![<\s]|$)[^\s'\"]+/.test(text)) failures.push('secret potencial: ' + relative);
+  if (/(?:VERCEL_OIDC_TOKEN|GEMINI_API_KEY|BREVO_API_KEY|RESEND_API_KEY|SUPABASE_SECRET_KEY|SUPABASE_SERVICE_ROLE_KEY|UPSTASH_REDIS_REST_TOKEN)\s*=\s*['\"]?(?![<\s]|$)[^\s'\"]+/.test(text)) failures.push('secret potencial: ' + relative);
   if (/-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/.test(text)) failures.push('chave privada: ' + relative);
 }
 
@@ -85,6 +85,35 @@ if (/script-src[^;]*unsafe-inline/.test(serialized)) failures.push('CSP permite 
 if (!/style-src-attr 'unsafe-inline'/.test(serialized)) failures.push('CSP precisa permitir estilos dinâmicos usados pelos efeitos');
 if (/immutable/.test(serialized)) failures.push('cache immutable proibido para assets com nomes estáveis');
 if (!/stale-while-revalidate/.test(serialized)) failures.push('cache sem revalidação em segundo plano');
+if (serialized.indexOf('https://*.supabase.co') === -1) failures.push('CSP sem Supabase HTTPS');
+if (serialized.indexOf('wss://*.supabase.co') === -1) failures.push('CSP sem Supabase WebSocket');
+if (serialized.indexOf('https://api.brevo.com') === -1) failures.push('CSP sem endpoint Brevo explícito');
+
+
+
+for (var duplicate of [
+  'public/img/hero-fidelity-master.webp.webp',
+  'public/img/hero-fidelity-master.webp.jpg',
+  'public/js/hero-effects.js.bak',
+  'src/styles/premium-uniform-v330.css.bak'
+]) {
+  if (fs.existsSync(path.join(root, duplicate))) failures.push('resíduo duplicado proibido: ' + duplicate);
+}
+
+var heroPath = path.join(root, 'public', 'img', 'hero-fidelity-master.webp');
+if (!fs.existsSync(heroPath)) failures.push('hero principal ausente');
+else {
+  var heroBuffer = fs.readFileSync(heroPath);
+  if (heroBuffer.subarray(0, 4).toString('ascii') !== 'RIFF' || heroBuffer.subarray(8, 12).toString('ascii') !== 'WEBP') {
+    failures.push('hero principal não é WebP binário válido');
+  }
+}
+if (!fs.existsSync(path.join(root, 'public', 'img', 'hero-fidelity-master-fallback.jpg'))) {
+  failures.push('fallback JPEG do hero ausente');
+}
+if (!fs.existsSync(path.join(root, 'supabase', 'migrations', '202608010001_mensagens_contato.sql'))) {
+  failures.push('migração Supabase de contato ausente');
+}
 
 var match = index.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/i);
 if (!match) failures.push('JSON-LD ausente');

@@ -1,65 +1,54 @@
-# WAGNER.OS v3.3.0 — aprovação de release 10/10
+# WAGNER.OS — Relatório de auditoria
 
-## Escopo da nota
+## Escopo aprovado
 
-A nota **10/10** representa o cumprimento integral do gate objetivo desta release: segurança do artefato, preservação das funções críticas, scroll funcional, qualidade automatizada, limpeza, UX e capacidade de rollback. Não significa ausência eterna de evolução técnica; qualquer software pode receber melhorias futuras.
+- Hero e header preservados segundo a referência 1919 × 1001.
+- Layout sem overflow horizontal validado de 320 a 2560 pixels.
+- CTAs centralizados e redes sociais sem colisão com o chat.
+- Imagem principal fixa, sem deslocamento por cursor.
+- WebP principal convertido de forma binária real (`RIFF` / `WEBP`).
+- Dimensões intrínsecas verificadas: 4086 × 1913.
+- Fallback JPEG referenciado no CSS.
+- Chat com cliente carregado de forma assíncrona sob demanda.
+- Chat, apresentação, WhatsApp, currículo e menu mobile preservados.
+- Formulário com validação estrita no navegador e no servidor.
+- Persistência Supabase com RLS INSERT-only.
+- Brevo com escaping HTML, timeout, rate limit e degradação controlada.
+- CSP sem `unsafe-inline` em `script-src` e com hash do JSON-LD.
+- Cache separado entre navegador e Vercel CDN.
+- Artefatos `.env.local`, `.git`, `.vercel`, `node_modules` e `artifacts` excluídos da release.
 
-## Rubrica de aprovação — 100/100
+## Gates executados
 
-| Critério | Peso | Resultado |
-|---|---:|---:|
-| Chat, apresentação, topo, botões, WhatsApp, currículo e menu sem regressão | 20 | 20 |
-| Scroll nativo do mouse, toque e encerramento confiável da apresentação | 12 | 12 |
-| CSP, headers, CORS, payload, sanitização e proteção de secrets | 18 | 18 |
-| APIs resilientes, fallback, timeout, 429 e rate limit distribuível | 12 | 12 |
-| Testes unitários, contratos, segurança e E2E em navegador | 15 | 15 |
-| Release limpa, assets únicos, checksums e empacotamento verificado | 10 | 10 |
-| Build reproduzível, servidor local, CI e documentação operacional | 8 | 8 |
-| Acessibilidade, conteúdo responsável e UX profissional | 5 | 5 |
-| **Total** | **100** | **100** |
+```text
+npm ci
+npm run build
+npm run lint
+npm run check
+npm test
+npm run release:check
+npm run test:e2e
+npm run test:visual
+```
 
-## Evidências finais
+Resultados:
 
-- 35 testes automatizados aprovados, incluindo contratos da camada visual, partículas Canvas, limpeza de checksums e provedores Brevo/Resend.
-- E2E aprovado em desktop, tablet e mobile para scroll do mouse, chat, apresentação, topo, WhatsApp/currículo, menu e ausência de overflow horizontal.
-- Emulação visual aprovada em 1916×906 com assets reais do hero e projetos, monograma fornecido incorporado ao banner, header full-width, canvas acima do conteúdo sem captura de eventos e prioridade automática para o chat; desktop secundário, tablet e mobile são verificados pelo E2E funcional.
-- `npm audit --omit=dev`: 0 vulnerabilidades.
-- CSP sem `script-src 'unsafe-inline'`, hash sincronizado do JSON-LD e headers de segurança gerados no build.
-- APIs com CORS restrito, `Sec-Fetch-Site`, limite bruto de payload, respostas `no-store`, request ID e logs estruturados.
-- Rate limiting com Upstash em produção e fallback local limitado para desenvolvimento.
-- Dados enviados ao Gemini reduzidos conforme a intenção da pergunta.
-- Uma única fonte canônica de conhecimento: `data/knowledge.json`.
-- CSS entregue em um bundle reproduzível; fontes editáveis permanecem em `src/styles` para evitar regressões de cascata.
-- Nenhum `.git`, `.vercel`, `.env.local`, token, dependência instalada ou mídia duplicada na release.
-- Checksums SHA-256 de todos os arquivos entregues.
+```text
+42 testes unitários/contratuais aprovados
+35 arquivos JavaScript com sintaxe validada
+3 arquivos JSON validados
+E2E 320–2560 px aprovado
+CLS dentro do orçamento automatizado (<= 0,02 em emulação)
+Referência visual 1919 × 1001 aprovada
+WebP e fallback validados
+CSP, RLS, Supabase e Brevo validados por contrato
+0 vulnerabilidades npm reportadas
+```
 
-## Correções de confiabilidade importantes
+## Limite de garantia
 
-1. A roda do mouse volta a usar scroll nativo; nenhum listener cancela `wheel` ou `touchmove`.
-2. Apenas efeitos decorativos caros são pausados durante deslocamento real da página.
-3. O modo apresentação agora cancela animações de scroll pendentes ao sair, evitando que classes e bloqueio de tela reapareçam após o encerramento.
-4. Chat e menu sincronizam `aria-hidden`, `aria-expanded` e `inert`.
-5. O formulário mantém compatibilidade com clientes anteriores e adiciona honeypot e tempo mínimo quando disponível.
-6. Textos promocionais foram revisados para retirar garantias ou afirmações não demonstradas.
-7. O aviso de privacidade descreve corretamente armazenamento local, sem afirmar uso de cookies ou analytics inexistentes.
+A auditoria fornece evidência reprodutível por testes automatizados e emulação. Não constitui prova formal de ausência absoluta de defeitos, nem torna qualquer sistema conectado à internet matematicamente inviolável. O pipeline foi configurado para bloquear regressões conhecidas e falhar de forma segura.
 
-## Evolução visual v3.3.0
-
-- Banner reconstruído com o monograma “W” fornecido, preservando o mesmo asset path, os seis hotspots, o shell do hero e as engines de animação existentes.
-- Header desktop full-width e linguagem visual uniforme aplicada a botões, cards, painéis, formulário, chat e controles flutuantes sem alteração de IDs ou eventos.
-- SVGs decorativos permaneceram absolutos; um gate geométrico impede que retornem ao fluxo e recriem grandes faixas vazias entre seções.
-- Conteúdo, ordem das seções e IDs críticos permaneceram intactos; no HTML público somente a identificação da versão foi atualizada.
-- Campo de partículas em Canvas nativo ocupa a camada principal (`z-index: 40`) e permanece abaixo de header, HUD, chat, botões flutuantes e apresentação.
-- Renderização limitada a aproximadamente 30 FPS, densidade adaptativa por viewport/hardware e sprites pré-renderizados reduzem custo de CPU/GPU.
-- Chat, apresentação, scroll intenso, aba oculta, movimento reduzido e impressão possuem guardrails explícitos.
-- Scroll reveal, parallax, 3D tilt, marquee, loading e dark/noise foram ajustados à referência fornecida sem GSAP, Three.js ou alteração dos fluxos existentes.
-
-## Condições externas de produção
-
-O funcionamento online do Gemini, Brevo e Upstash depende das credenciais e da disponibilidade desses provedores. O Resend permanece disponível somente como provedor alternativo configurável. A release não contém secrets. Configure-os exclusivamente no ambiente da Vercel conforme `.env.example`.
-
-Após o deploy, execute um smoke test no domínio real para confirmar DNS, aliases, variáveis de ambiente, cota dos provedores e entrega de e-mail. Esses itens externos não podem ser certificados dentro de um ZIP offline.
-
-## Decisão
-
-**Release aprovada para publicação**, condicionada à configuração correta dos secrets e ao smoke test pós-deploy. O pacote atende integralmente ao gate definido e preserva as funções atuais sem retrocesso.
+- GitHub Actions em três jobs isolados: validação/segurança, E2E e auditoria visual.
+- Auditoria visual sem Promise dependente de timers do renderer após o scroll.
+- E2E da roda do mouse com até quatro tentativas nativas determinísticas antes de reprovar.

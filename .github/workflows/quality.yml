@@ -1,17 +1,27 @@
 name: quality
+
 on:
   push:
     branches: [main]
   pull_request:
+
 permissions:
   contents: read
+
 concurrency:
   group: quality-${{ github.ref }}
   cancel-in-progress: true
+
+env:
+  NODE_OPTIONS: --unhandled-rejections=strict --throw-deprecation
+  CI: true
+  CHROME_BIN: google-chrome
+
 jobs:
   validate:
+    name: Validate, lint and security
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
         with:
@@ -20,17 +30,59 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
-      - run: npm audit --omit=dev --audit-level=high
-      - run: npm run validate
-      - name: End-to-end critical flows
-        env:
-          CHROME_BIN: google-chrome
-        run: npm run test:e2e
+      - name: Install deterministic dependencies
+        run: npm ci
+      - name: Block vulnerable production dependencies
+        run: npm audit --omit=dev --audit-level=high
+      - name: Build, lint, contract tests and release checks
+        run: npm run validate
       - name: Block sensitive artifacts
         shell: bash
         run: |
           test ! -e .env.local
           test ! -d .vercel
           test ! -d .git/modules
-          ! git grep -nE '(VERCEL_OIDC_TOKEN|GEMINI_API_KEY|RESEND_API_KEY|UPSTASH_REDIS_REST_TOKEN)=[^<[:space:]]+' -- ':!*.example' ':!tests/**'
+          ! find public -type f \( -name '*.bak' -o -name '*.webp.webp' -o -name '*.webp.jpg' \) -print -quit | grep -q .
+          ! git grep -nE '(VERCEL_OIDC_TOKEN|GEMINI_API_KEY|BREVO_API_KEY|RESEND_API_KEY|SUPABASE_SECRET_KEY|SUPABASE_SERVICE_ROLE_KEY|UPSTASH_REDIS_REST_TOKEN)=[^<[:space:]]+' -- ':!*.example' ':!tests/**'
+
+  e2e:
+    name: E2E 320–2560px
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install deterministic dependencies
+        run: npm ci
+      - name: Run browser contracts, CLS and responsive matrix
+        run: npm run test:e2e
+
+  visual:
+    name: Pixel-perfect visual audit
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      VISUAL_AUDIT_DEBUG_PORT: 9332
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install deterministic dependencies
+        run: npm ci
+      - name: Run reference visual audit
+        run: npm run test:visual
+      - name: Upload visual audit on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-audit
+          path: artifacts/visual-audit
+          if-no-files-found: ignore
+          retention-days: 7

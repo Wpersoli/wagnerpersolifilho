@@ -477,6 +477,7 @@ function trimChatHistory() {
 function openChat() {
   chatFocusBeforeOpen = document.activeElement;
   chatPanel.classList.add('open');
+  document.body.classList.add('chat-open');
   if ('inert' in chatPanel) chatPanel.inert = false;
   chatPanel.setAttribute('aria-hidden', 'false');
   fabChat.setAttribute('aria-expanded', 'true');
@@ -493,6 +494,7 @@ function openChat() {
 
 function closeChat() {
   chatPanel.classList.remove('open');
+  document.body.classList.remove('chat-open');
   if ('inert' in chatPanel) chatPanel.inert = true;
   chatPanel.setAttribute('aria-hidden', 'true');
   fabChat.setAttribute('aria-expanded', 'false');

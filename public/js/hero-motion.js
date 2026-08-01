@@ -25,15 +25,15 @@
   var lastPaint = 0;
   var nextBurst = 0;
   var burstTimer = 0;
-  var pointer = { x: .31, y: .56 };
+  var pointer = { x: .50, y: .52 };
   var pointerFrame = 0;
   var pointerEvent = null;
 
-  var logoBox = { x: .045, y: .084, w: .443, h: .66 };
+  var logoBox = { x: .355, y: .17, w: .28, h: .50 };
   var anchors = [
-    [.095, .17], [.155, .14], [.235, .19], [.32, .16], [.39, .23],
-    [.36, .37], [.29, .34], [.33, .46], [.29, .58], [.33, .73],
-    [.255, .63], [.205, .52], [.16, .39], [.12, .28]
+    [.385, .23], [.43, .20], [.49, .20], [.55, .22], [.60, .28],
+    [.57, .35], [.52, .40], [.50, .49], [.53, .60], [.50, .69],
+    [.45, .60], [.42, .50], [.39, .40], [.37, .30]
   ];
 
   function random(min, max) { return min + Math.random() * (max - min); }
@@ -57,13 +57,13 @@
     particles = [];
     for (var i = 0; i < count; i += 1) {
       particles.push({
-        x: random(.08, .48),
-        y: random(.18, .80),
-        r: random(.5, 1.9),
-        speed: random(.015, .055),
-        drift: random(-.018, .018),
+        x: random(.34, .66),
+        y: random(.20, .82),
+        r: random(.45, 1.35),
+        speed: random(.014, .042),
+        drift: random(-.014, .014),
         phase: random(0, Math.PI * 2),
-        alpha: random(.18, .8)
+        alpha: random(.16, .54)
       });
     }
   }
@@ -96,12 +96,12 @@
   function triggerBurst(x, y) {
     var now = performance.now();
     var target = typeof x === 'number' ? { x: x / width, y: y / height } : anchors[Math.floor(random(3, anchors.length))];
-    var originSet = [[.01, random(.12,.55)], [random(.16,.52), .01], [.52, random(.08,.4)]];
-    for (var i = 0; i < (reduceMotion ? 2 : 5); i += 1) {
+    var originSet = [[.36, random(.18,.62)], [random(.45,.55), .03], [.64, random(.18,.62)]];
+    for (var i = 0; i < (reduceMotion ? 2 : 4); i += 1) {
       var origin = originSet[i % originSet.length];
       arcs.push(makeLightning(origin, [target.x || target[0], target.y || target[1]], random(.75, 1.35)));
     }
-    for (var s = 0; s < (reduceMotion ? 8 : 30); s += 1) {
+    for (var s = 0; s < (reduceMotion ? 7 : 18); s += 1) {
       sparks.push({
         x: (target.x || target[0]) * width,
         y: (target.y || target[1]) * height,
@@ -174,17 +174,17 @@
       p.y -= p.speed * dt;
       p.x += Math.sin(time * .0016 + p.phase) * p.drift * dt;
       if (p.y < .12) {
-        p.y = random(.72, .86);
-        p.x = random(.09, .47);
+        p.y = random(.70, .86);
+        p.x = random(.36, .64);
       }
       var x = p.x * width;
       var y = p.y * height;
       var flicker = .35 + .65 * Math.abs(Math.sin(time * .003 + p.phase));
       ctx.fillStyle = 'rgba(126,229,255,' + (p.alpha * flicker).toFixed(3) + ')';
       ctx.shadowColor = 'rgba(44,184,255,.85)';
-      ctx.shadowBlur = 8;
+      ctx.shadowBlur = 6;
       ctx.beginPath();
-      ctx.arc(x, y, p.r * flicker + .35, 0, Math.PI * 2);
+      ctx.arc(x, y, p.r * flicker + .22, 0, Math.PI * 2);
       ctx.fill();
     }
     ctx.restore();
@@ -270,8 +270,8 @@
     var rect = stage.getBoundingClientRect();
     pointer.x = clamp((pointerEvent.clientX - rect.left) / rect.width, 0, 1);
     pointer.y = clamp((pointerEvent.clientY - rect.top) / rect.height, 0, 1);
-    hero.style.setProperty('--hero-logo-shift-x', ((pointer.x - .5) * 18).toFixed(2) + 'px');
-    hero.style.setProperty('--hero-logo-shift-y', ((pointer.y - .5) * 14).toFixed(2) + 'px');
+    hero.style.setProperty('--hero-logo-shift-x', '0px');
+    hero.style.setProperty('--hero-logo-shift-y', '0px');
   }
 
   stage.addEventListener('pointermove', function (event) {

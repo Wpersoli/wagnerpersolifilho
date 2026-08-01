@@ -110,9 +110,9 @@
   var maxBolts = 10;
   var maxSparks = 72;
   var logoAnchors = [
-    [.39, .25], [.44, .22], [.50, .22], [.56, .23], [.61, .28],
-    [.58, .35], [.53, .39], [.50, .49], [.52, .61], [.49, .69],
-    [.45, .60], [.42, .50], [.39, .39], [.37, .31]
+    [.095, .15], [.15, .18], [.22, .21], [.32, .17], [.42, .19],
+    [.39, .29], [.31, .34], [.35, .47], [.29, .58], [.31, .73],
+    [.25, .77], [.20, .63], [.15, .49], [.12, .37]
   ];
 
   function random(min, max) { return min + Math.random() * (max - min); }
@@ -124,8 +124,8 @@
     if (width < 720 || cores <= 2) quality = 'low';
     else if (width < 1180 || cores <= 4) quality = 'medium';
     else quality = 'high';
-    maxBolts = quality === 'high' ? 8 : quality === 'medium' ? 6 : 4;
-    maxSparks = quality === 'high' ? 44 : quality === 'medium' ? 30 : 18;
+    maxBolts = quality === 'high' ? 11 : quality === 'medium' ? 8 : 5;
+    maxSparks = quality === 'high' ? 72 : quality === 'medium' ? 48 : 26;
     hero.setAttribute('data-fx-quality', quality);
   }
 
@@ -179,7 +179,7 @@
       var index = Math.floor(random(points.length * .24, points.length * .78));
       var origin = points[clamp(index, 1, points.length - 2)];
       var angle = random(-1.35, 1.35);
-      var length = random(42, 112) * (overdrive ? 1.15 : 1);
+      var length = random(55, 150) * (overdrive ? 1.22 : 1);
       var bx = clamp(origin.x + Math.cos(angle) * length, 3, width - 3);
       var by = clamp(origin.y + Math.sin(angle) * length, 3, height - 3);
       branches.push(buildPath(origin.x, origin.y, bx, by, 28, quality === 'high' ? 8 : 11));
@@ -189,8 +189,8 @@
       points: points,
       branches: branches,
       born: performance.now(),
-      duration: random(180, overdrive ? 360 : 300),
-      width: random(.9, overdrive ? 1.85 : 1.45),
+      duration: random(220, overdrive ? 510 : 390),
+      width: random(1.05, overdrive ? 2.25 : 1.85),
       hue: Math.random() > .22 ? '72, 214, 255' : '238, 252, 255'
     };
   }
@@ -229,18 +229,18 @@
   }
 
   function emitSparks(x, y, count, force) {
-    var total = Math.min(count || 12, maxSparks);
+    var total = Math.min(count || 18, maxSparks);
     for (var i = 0; i < total; i += 1) {
       var angle = random(-Math.PI * .92, -Math.PI * .08);
-      var speed = random(18, force ? 112 : 74);
+      var speed = random(22, force ? 150 : 96);
       sparks.push({
         x: x + random(-8, 8),
         y: y + random(-5, 5),
         vx: Math.cos(angle) * speed,
         vy: Math.sin(angle) * speed,
         born: performance.now(),
-        life: random(280, force ? 760 : 560),
-        size: random(.45, force ? 1.7 : 1.25),
+        life: random(360, force ? 980 : 700),
+        size: random(.7, force ? 2.5 : 1.8),
         hue: Math.random() > .24 ? '112,226,255' : '244,253,255'
       });
     }
@@ -261,14 +261,14 @@
     ctx.arc(spark.x, spark.y, spark.size, 0, Math.PI * 2);
     ctx.fillStyle = 'rgba(' + spark.hue + ',' + alpha.toFixed(3) + ')';
     ctx.shadowColor = 'rgba(46,193,255,' + Math.min(.95, alpha).toFixed(3) + ')';
-    ctx.shadowBlur = quality === 'low' ? 4 : 8;
+    ctx.shadowBlur = quality === 'low' ? 5 : 12;
     ctx.fill();
     if (quality !== 'low') {
       ctx.beginPath();
       ctx.moveTo(spark.x, spark.y);
       ctx.lineTo(spark.x - spark.vx * .025, spark.y - spark.vy * .025);
       ctx.strokeStyle = 'rgba(210,249,255,' + (alpha * .65).toFixed(3) + ')';
-      ctx.lineWidth = Math.max(.35, spark.size * .48);
+      ctx.lineWidth = Math.max(.45, spark.size * .6);
       ctx.stroke();
     }
     ctx.restore();
@@ -318,8 +318,8 @@
   }
 
   function stageTarget() {
-    if (Math.random() > .24) return randomLogoTarget();
-    return { x: width * random(.46, .54), y: height * random(.70, .79) };
+    if (Math.random() > .34) return randomLogoTarget();
+    return { x: width * random(.245, .345), y: height * random(.69, .82) };
   }
 
   function pushBolt(options) {
@@ -338,20 +338,20 @@
       startY: from.y,
       targetX: to.x,
       targetY: to.y,
-      branches: intense ? 2 : 1
+      branches: intense ? 3 : 1
     });
     if (intense) {
-      var platform = { x: width * random(.47, .53), y: height * random(.70, .79) };
+      var platform = { x: width * random(.27, .33), y: height * random(.70, .79) };
       pushBolt({
         startX: to.x,
         startY: to.y,
         targetX: platform.x,
         targetY: platform.y,
-        branches: 2
+        branches: 3
       });
-      emitSparks(platform.x, platform.y, quality === 'high' ? 16 : 10, true);
+      emitSparks(platform.x, platform.y, quality === 'high' ? 28 : 16, true);
     } else if (Math.random() > .55) {
-      emitSparks(to.x, to.y, quality === 'high' ? 5 : 3, false);
+      emitSparks(to.x, to.y, quality === 'high' ? 8 : 5, false);
     }
     ensureAnimation();
   }
@@ -364,14 +364,14 @@
     var startX;
     var startY;
     if (startSide < .68) {
-      startX = target.x + random(-width * .12, width * .12);
-      startY = random(-16, height * .045);
+      startX = target.x + random(-width * .23, width * .24);
+      startY = random(-20, height * .08);
     } else if (startSide < .84) {
-      startX = random(-10, width * .035);
-      startY = clamp(target.y + random(-height * .10, height * .10), height * .16, height * .78);
+      startX = random(-15, width * .04);
+      startY = random(height * .12, height * .50);
     } else {
-      startX = random(width * .955, width);
-      startY = clamp(target.y + random(-height * .10, height * .10), height * .16, height * .76);
+      startX = random(width * .52, width * .70);
+      startY = random(height * .05, height * .34);
     }
 
     pushBolt({
@@ -379,30 +379,30 @@
       startY: startY,
       targetX: target.x,
       targetY: target.y,
-      branches: mode === 'burst' ? 3 : (overdrive ? 2 : 1)
+      branches: mode === 'burst' ? 4 : (overdrive ? 3 : 2)
     });
 
     if (mode === 'burst') {
       pushBolt({
-        startX: random(width * .02, width * .10),
-        startY: clamp(target.y + random(-height * .08, height * .04), height * .16, height * .74),
+        startX: random(width * .02, width * .23),
+        startY: random(height * .08, height * .40),
         targetX: target.x + random(-60, 55),
         targetY: target.y + random(-35, 30),
-        branches: 2
+        branches: 3
       });
       if (quality !== 'low') {
         pushBolt({
-          startX: target.x + random(-width * .08, width * .08),
-          startY: random(-10, height * .05),
+          startX: random(width * .44, width * .64),
+          startY: random(-12, height * .16),
           targetX: target.x + random(-40, 70),
           targetY: target.y + random(-20, 25),
           branches: 2
         });
       }
-      emitSparks(target.x, target.y, quality === 'high' ? 18 : quality === 'medium' ? 12 : 8, true);
+      emitSparks(target.x, target.y, quality === 'high' ? 34 : quality === 'medium' ? 22 : 12, true);
       activateFlash();
     } else if (Math.random() > .62) {
-      emitSparks(target.x, target.y, quality === 'high' ? 6 : 4, false);
+      emitSparks(target.x, target.y, quality === 'high' ? 12 : 7, false);
       activateFlash();
     }
     ensureAnimation();

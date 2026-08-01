@@ -12,6 +12,22 @@ var screenshotDir = String(process.env.E2E_SCREENSHOT_DIR || '').trim();
 
 function sleep(ms) { return new Promise(function (resolve) { setTimeout(resolve, ms); }); }
 function assert(condition, message) { if (!condition) throw new Error(message); }
+function terminateChromeTree(processHandle) {
+  if (!processHandle || !processHandle.pid) return;
+  if (process.platform === 'win32') {
+    cp.spawnSync('taskkill.exe', ['/PID', String(processHandle.pid), '/T', '/F'], {
+      stdio: 'ignore',
+      windowsHide: true
+    });
+    return;
+  }
+  try {
+    process.kill(-processHandle.pid, 'SIGKILL');
+  } catch (_) {
+    try { processHandle.kill('SIGKILL'); } catch (_) {}
+  }
+}
+
 
 function findChrome() {
   var direct = [
@@ -200,7 +216,7 @@ async function run() {
     '--disable-background-timer-throttling', '--disable-renderer-backgrounding', '--disable-backgrounding-occluded-windows',
     '--remote-debugging-port=' + debugPort, '--user-data-dir=' + profile,
     '--window-size=1440,900', 'about:blank'
-  ], { stdio: ['ignore', 'ignore', 'ignore'] });
+  ], { stdio: ['ignore', 'ignore', 'ignore'], detached: process.platform !== 'win32', windowsHide: true });
 
   await waitFor('http://127.0.0.1:' + debugPort + '/json/version', 10000);
   var targetResponse = await fetch('http://127.0.0.1:' + debugPort + '/json/new?' + encodeURIComponent('about:blank'), { method: 'PUT' });
@@ -344,5 +360,5 @@ run().catch(function (error) {
   console.error(error.stack || error);
   process.exitCode = 1;
 }).finally(function () {
-  if (chrome && !chrome.killed) chrome.kill('SIGTERM');
+  terminateChromeTree(chrome);
 });

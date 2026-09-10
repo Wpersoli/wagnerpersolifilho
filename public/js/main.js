@@ -317,16 +317,16 @@ if ('IntersectionObserver' in window) {
    TERMINAL — SESSION LOGS TYPING
    ───────────────────────────────────────────── */
 var logLines = [
-  { p: 'system', t: 'boot --module=career' },
-  { t: '> Sessão iniciada. Carregando histórico profissional...' },
-  { t: '> 2021 — primeiros deploys em produção. Fullstack, sem rede de segurança.' },
-  { t: '> 2022 — automação de processos com Node.js + AWS. Escala real, clientes reais.' },
-  { t: '> 2023 — mergulho em IA aplicada: modelos preditivos, pipelines de dados.' },
-  { t: '> 2024 — integração de LLMs em produtos internos. Automação vira inteligência.' },
-  { t: '> 2025 — Premium Dashboards e Device Simulator Engine entram em desenvolvimento.' },
-  { t: '> 2026 — este console. wagner.pers.f v2.7.0 — status: em constante deploy.' },
-  { p: 'system', t: 'log --status' },
-  { t: '> 20+ sistemas publicados · 100K+ linhas versionadas · uptime 24/7.' },
+  { p: 'system', t: 'cat perfil.txt' },
+  { t: '> Analista de Infraestrutura | Especialista N3' },
+  { t: '> 12+ anos de experiência em ambientes corporativos críticos' },
+  { t: '> Expertise: Active Directory, Windows Server, M365, Azure' },
+  { t: '> Automação: Python, PowerShell, IA/LLMs' },
+  { t: '> Governança: ITIL v4, SLA, TMA, FCR, KPIs' },
+  { p: 'system', t: 'status --check' },
+  { t: '✓ Infraestrutura · Redes · Identidades · Suporte N3' },
+  { t: '✓ Automação · Inteligência Artificial · Desenvolvimento' },
+  { t: '✓ Pronto para novos desafios' },
 ];
 
 function typeTerminal() {

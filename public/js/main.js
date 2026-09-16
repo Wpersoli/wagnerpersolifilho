@@ -713,6 +713,7 @@ var canvas = document.getElementById('bgCanvas');
 if (canvas && canvas.getContext) {
   var ctx = canvas.getContext('2d', { alpha: true, desynchronized: true });
   var W = 1, H = 1, dpr = 1, particles = [];
+  var matrixColumns = [], matrixFont = 13;
   var bgRaf = 0;
   var bgLastFrame = 0;
   var bgPageVisible = !document.hidden;
@@ -738,6 +739,22 @@ if (canvas && canvas.getContext) {
     }
   }
 
+  /* MATRIX_RAIN_CONSOLIDATED */
+  function buildMatrixRain() {
+    var columnCount = Math.max(22, Math.min(150, Math.ceil(W / 16)));
+    matrixFont = W < 600 ? 11 : 13;
+    matrixColumns = [];
+    for (var mi = 0; mi < columnCount; mi += 1) {
+      matrixColumns.push({
+        x: mi * (W / columnCount),
+        y: Math.random() * -H,
+        speed: 0.62 + Math.random() * 1.05,
+        length: 8 + Math.floor(Math.random() * 18),
+        seed: Math.floor(Math.random() * 9999)
+      });
+    }
+  }
+
   function resizeBackgroundCanvas() {
     W = Math.max(1, window.innerWidth);
     H = Math.max(1, window.innerHeight);
@@ -749,6 +766,7 @@ if (canvas && canvas.getContext) {
     canvas.style.height = H + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     buildBackgroundParticles();
+    buildMatrixRain();
   }
 
   var resizeTimer;
@@ -787,6 +805,28 @@ if (canvas && canvas.getContext) {
     }
     bgLastFrame = now;
     ctx.clearRect(0, 0, W, H);
+
+    // Matrix rain: canvas-only, capped at 36fps and paused while scrolling,
+    // in hidden tabs and whenever the visitor requests reduced motion.
+    ctx.font = matrixFont + 'px JetBrains Mono, monospace';
+    ctx.textAlign = 'center';
+    for (var mr = 0; mr < matrixColumns.length; mr += 1) {
+      var stream = matrixColumns[mr];
+      stream.y += stream.speed;
+      if (stream.y - stream.length * matrixFont > H) {
+        stream.y = -Math.random() * H * 0.35;
+        stream.speed = 0.62 + Math.random() * 1.05;
+      }
+      for (var mg = 0; mg < stream.length; mg += 1) {
+        var glyph = ((stream.seed + mg * 17 + Math.floor(now / 330)) % 2 === 0) ? '1' : '0';
+        var alpha = (1 - mg / stream.length) * 0.22;
+        if (mg === 0) alpha = 0.62;
+        ctx.fillStyle = mg === 0
+          ? 'rgba(244,255,0,' + alpha.toFixed(3) + ')'
+          : 'rgba(74,255,151,' + alpha.toFixed(3) + ')';
+        ctx.fillText(glyph, stream.x, stream.y - mg * matrixFont);
+      }
+    }
 
     var connectionLimit = 112;
     var connectionLimitSq = connectionLimit * connectionLimit;

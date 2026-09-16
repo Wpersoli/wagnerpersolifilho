@@ -13176,3 +13176,65 @@ h1.hero-title .grad {
   box-shadow: 0 0 0 3px rgba(46, 242, 255, .15), 0 0 20px rgba(46, 242, 255, .12);
 }
 @media (max-width: 700px) { #bgCanvas { opacity: .68; } }
+
+
+/* ── POST-HERO MATRIX SURFACE REFINEMENT ── */
+/* Matrix appears as an elegant surface behind the content after the hero,
+   while readable cards stay calm and visually stable. */
+section:not(.hero) { isolation: isolate; }
+section:not(.hero)::before {
+  content: "";
+  position: absolute;
+  inset: 54px 16px 24px;
+  z-index: -1;
+  pointer-events: none;
+  opacity: .44;
+  background:
+    linear-gradient(90deg, rgba(2, 8, 5, .94), rgba(2, 8, 5, .30) 19%, rgba(2, 8, 5, .12) 81%, rgba(2, 8, 5, .94)),
+    linear-gradient(180deg, rgba(2, 8, 5, .86), transparent 28%, transparent 76%, rgba(2, 8, 5, .90));
+  border-top: 1px solid rgba(46, 242, 255, .22);
+}
+section:not(.hero)::after {
+  content: "";
+  position: absolute;
+  top: 54px;
+  right: clamp(20px, 6vw, 84px);
+  width: min(30vw, 360px);
+  height: 1px;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(244, 255, 0, .78), transparent);
+  box-shadow: 0 0 18px rgba(244, 255, 0, .28);
+}
+.stack-group {
+  background:
+    linear-gradient(155deg, rgba(5, 22, 13, .89), rgba(2, 10, 6, .95)) !important;
+  border-color: rgba(46, 242, 255, .28) !important;
+  box-shadow: inset 0 1px 0 rgba(244, 255, 0, .10), 0 20px 42px rgba(0, 0, 0, .18);
+}
+.stack-group::before { background: linear-gradient(110deg, transparent 25%, rgba(244, 255, 0, .10) 49%, transparent 72%); }
+.stack-group h3,
+.stack-group .group-title,
+.stack-card h3 { color: #f4ff00 !important; text-shadow: 0 0 12px rgba(244, 255, 0, .26); }
+.stack-icons .tech-mark {
+  --tech-color: #2ef2ff;
+  background:
+    radial-gradient(circle at 50% 35%, rgba(46, 242, 255, .14), transparent 68%),
+    linear-gradient(180deg, rgba(5, 24, 15, .92), rgba(2, 10, 6, .96));
+  border-color: rgba(46, 242, 255, .30);
+}
+.stack-icons .tech-mark:hover {
+  color: #f4ff00;
+  border-color: #f4ff00;
+  box-shadow: 0 0 20px rgba(244, 255, 0, .20), inset 0 0 22px rgba(244, 255, 0, .08);
+}
+.footer-carousel-wrap {
+  background: #030a06;
+  border-image: linear-gradient(90deg, transparent, rgba(46,242,255,.36), rgba(244,255,0,.55), rgba(46,242,255,.36), transparent) 1;
+}
+.footer-carousel-wrap::before { background: linear-gradient(90deg, transparent, rgba(46,242,255,.40), rgba(244,255,0,.72), rgba(46,242,255,.40), transparent); }
+footer { background: rgba(2, 10, 6, .82); }
+@media (max-width: 700px) {
+  section:not(.hero)::before { inset: 34px 0 18px; opacity: .30; }
+  section:not(.hero)::after { top: 34px; width: 42vw; }
+}

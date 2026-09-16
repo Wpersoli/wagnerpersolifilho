@@ -13290,3 +13290,29 @@ footer { background: rgba(2, 10, 6, .82); }
   .cv-terminal-content::before,
   .cv-terminal-content::after { animation: none; }
 }
+
+
+/* ── MATRIX VEIL STACKING FIX ── */
+/* The cards intentionally have opaque security/terminal surfaces. Put the
+   narrow Matrix rails above those surfaces, but keep them out of interaction
+   and away from the central reading column. */
+.cv-terminal-content::before,
+.cv-terminal-content::after {
+  z-index: 4;
+  width: min(15vw, 190px);
+  opacity: .86;
+  mix-blend-mode: screen;
+}
+.cv-terminal-content::before { left: -18px; }
+.cv-terminal-content::after { right: -18px; }
+.cv-terminal-content > .cv-section { z-index: 1; }
+.cv-terminal-content .cv-profile-box,
+.cv-terminal-content .cv-skill-card,
+.cv-terminal-content .cv-exp-item,
+.cv-terminal-content .cv-terminal {
+  position: relative;
+}
+@media (max-width: 760px) {
+  .cv-terminal-content::before,
+  .cv-terminal-content::after { opacity: .42; width: 58px; }
+}

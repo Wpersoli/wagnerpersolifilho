@@ -62,15 +62,24 @@ test('refinamento v3.3.0 mantém visual uniforme e prioridade dos controles crí
   assert.match(html, /BUILD <b>v3\.3\.0<\/b>/);
 });
 
-test('tema terminal preserva as duas camadas Matrix após a consolidação do CSS', function () {
+test('chuva Matrix usa canvas visível e mantém o conteúdo acima da animação', function () {
   var source = fs.readFileSync(path.join(root, 'src', 'styles', 'current-production.css'), 'utf8');
   var theme = fs.readFileSync(path.join(root, 'src', 'styles', 'terminal-neon-reference-v1.css'), 'utf8');
+  var matrix = fs.readFileSync(path.join(root, 'src', 'styles', 'matrix-rain-v2.css'), 'utf8');
+  var build = fs.readFileSync(path.join(root, 'scripts', 'build-css.js'), 'utf8');
   var generated = fs.readFileSync(path.join(root, 'public', 'css', 'app.css'), 'utf8');
+  var main = fs.readFileSync(path.join(root, 'public', 'js', 'main.js'), 'utf8');
   assert.match(source, /\.cv-terminal-content::before,\s*\n\.cv-terminal-content::after\s*\{[\s\S]*?background-image:\s*url\(/);
   assert.match(theme, /\.cv-terminal-content\s*\{[\s\S]*?background-image:/);
   assert.doesNotMatch(theme, /\.cv-terminal-content::before\s*\{[\s\S]{0,260}?z-index:\s*-1/);
   assert.doesNotMatch(theme, /\.cv-terminal-content::before\s*\{[\s\S]{0,260}?display:\s*none/);
-  assert.match(generated, /\.cv-terminal-content::before,\s*\n\.cv-terminal-content::after\s*\{[\s\S]*?z-index:\s*4;[\s\S]*?mix-blend-mode:\s*screen;/);
+  assert.match(build, /matrix-rain-v2\.css/);
+  assert.match(matrix, /#bgCanvas\s*\{[\s\S]*?z-index:\s*4;[\s\S]*?mix-blend-mode:\s*screen;/);
+  assert.match(generated, /#bgCanvas\s*\{[\s\S]*?z-index:\s*4;[\s\S]*?mix-blend-mode:\s*screen;/);
+  assert.match(generated, /\.cv-terminal-content::before,\s*\n\.cv-terminal-content::after\s*\{\s*display:\s*none\s*!important;/);
+  assert.match(main, /var columnGap = W < 600 \? 19 : 17;/);
+  assert.match(main, /var matrixStrength = matrixVisibility \* 0\.96;/);
+  assert.match(main, /1000 \/ 30/);
 });
 
 test('asset W prismatico permanece WebP e o HTML conserva os hotspots originais', function () {

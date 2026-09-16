@@ -7,6 +7,7 @@ var source = path.join(root, 'src', 'styles');
 var target = path.join(root, 'public', 'css', 'app.css');
 var recoveredProduction = path.join(source, 'current-production.css');
 var terminalNeonReference = path.join(source, 'terminal-neon-reference-v1.css');
+var matrixRainV2 = path.join(source, 'matrix-rain-v2.css');
 var order = [
   'main.css',
   'cyber.css',
@@ -35,8 +36,14 @@ if (fs.existsSync(recoveredProduction)) {
   var terminalNeonContent = fs.existsSync(terminalNeonReference)
     ? fs.readFileSync(terminalNeonReference, 'utf8').trim()
     : '';
+  var matrixRainContent = fs.existsSync(matrixRainV2)
+    ? fs.readFileSync(matrixRainV2, 'utf8').trim()
+    : '';
   if (terminalNeonContent) {
     recoveredContent += '\n\n/* ===== terminal-neon-reference-v1.css ===== */\n' + terminalNeonContent + '\n';
+  }
+  if (matrixRainContent) {
+    recoveredContent += '\n\n/* ===== matrix-rain-v2.css ===== */\n' + matrixRainContent + '\n';
   }
   fs.mkdirSync(path.dirname(target), { recursive: true });
   fs.writeFileSync(target, recoveredContent);

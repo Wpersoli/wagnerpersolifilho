@@ -6,6 +6,7 @@ var root = path.resolve(__dirname, '..');
 var source = path.join(root, 'src', 'styles');
 var target = path.join(root, 'public', 'css', 'app.css');
 var recoveredProduction = path.join(source, 'current-production.css');
+var terminalNeonReference = path.join(source, 'terminal-neon-reference-v1.css');
 var order = [
   'main.css',
   'cyber.css',
@@ -31,6 +32,12 @@ var output = [
 // Os módulos históricos permanecem no repositório para consulta.
 if (fs.existsSync(recoveredProduction)) {
   var recoveredContent = fs.readFileSync(recoveredProduction, 'utf8');
+  var terminalNeonContent = fs.existsSync(terminalNeonReference)
+    ? fs.readFileSync(terminalNeonReference, 'utf8').trim()
+    : '';
+  if (terminalNeonContent) {
+    recoveredContent += '\n\n/* ===== terminal-neon-reference-v1.css ===== */\n' + terminalNeonContent + '\n';
+  }
   fs.mkdirSync(path.dirname(target), { recursive: true });
   fs.writeFileSync(target, recoveredContent);
   var recoveredDigest = crypto.createHash('sha256').update(recoveredContent).digest('hex').slice(0, 12);

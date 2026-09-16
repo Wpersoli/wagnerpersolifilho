@@ -62,6 +62,17 @@ test('refinamento v3.3.0 mantém visual uniforme e prioridade dos controles crí
   assert.match(html, /BUILD <b>v3\.3\.0<\/b>/);
 });
 
+test('tema terminal preserva as duas camadas Matrix após a consolidação do CSS', function () {
+  var source = fs.readFileSync(path.join(root, 'src', 'styles', 'current-production.css'), 'utf8');
+  var theme = fs.readFileSync(path.join(root, 'src', 'styles', 'terminal-neon-reference-v1.css'), 'utf8');
+  var generated = fs.readFileSync(path.join(root, 'public', 'css', 'app.css'), 'utf8');
+  assert.match(source, /\.cv-terminal-content::before,\s*\n\.cv-terminal-content::after\s*\{[\s\S]*?background-image:\s*url\(/);
+  assert.match(theme, /\.cv-terminal-content\s*\{[\s\S]*?background-image:/);
+  assert.doesNotMatch(theme, /\.cv-terminal-content::before\s*\{[\s\S]{0,260}?z-index:\s*-1/);
+  assert.doesNotMatch(theme, /\.cv-terminal-content::before\s*\{[\s\S]{0,260}?display:\s*none/);
+  assert.match(generated, /\.cv-terminal-content::before,\s*\n\.cv-terminal-content::after\s*\{[\s\S]*?z-index:\s*4;[\s\S]*?mix-blend-mode:\s*screen;/);
+});
+
 test('asset W prismatico permanece WebP e o HTML conserva os hotspots originais', function () {
   var html = fs.readFileSync(path.join(root, 'public', 'index.html'), 'utf8');
   var image = fs.readFileSync(path.join(root, 'public', 'img', 'hero-w-energy.webp'));

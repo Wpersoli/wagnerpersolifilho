@@ -741,15 +741,17 @@ if (canvas && canvas.getContext) {
 
   /* MATRIX_RAIN_CONSOLIDATED */
   function buildMatrixRain() {
-    var columnCount = Math.max(22, Math.min(150, Math.ceil(W / 16)));
-    matrixFont = W < 600 ? 11 : 13;
+    var columnGap = W < 600 ? 19 : 17;
+    var columnCount = Math.max(20, Math.min(132, Math.ceil(W / columnGap)));
+    matrixFont = W < 600 ? 11 : 12;
     matrixColumns = [];
     for (var mi = 0; mi < columnCount; mi += 1) {
       matrixColumns.push({
         x: mi * (W / columnCount),
         y: Math.random() * -H,
-        speed: 0.62 + Math.random() * 1.05,
-        length: 8 + Math.floor(Math.random() * 18),
+        speed: 0.78 + Math.random() * 1.55,
+        length: 10 + Math.floor(Math.random() * 24),
+        phase: Math.random() * 0.8 + 0.35,
         seed: Math.floor(Math.random() * 9999)
       });
     }
@@ -799,7 +801,7 @@ if (canvas && canvas.getContext) {
   function drawBackground(now) {
     bgRaf = 0;
     if (!bgPageVisible || bgScrollPaused || bgReduceMotion) return;
-    if (now - bgLastFrame < 1000 / 36) {
+    if (now - bgLastFrame < 1000 / 30) {
       scheduleBackgroundFrame();
       return;
     }
@@ -815,8 +817,8 @@ if (canvas && canvas.getContext) {
     // Matrix rain: canvas-only, capped at 36fps and paused while scrolling,
     // in hidden tabs and whenever the visitor requests reduced motion.
     /* MATRIX_ARTISTIC_STREAMS_V2 */
-    var matrixGlyphs = ['0', '1', '<', '>', '/', '_', '{', '}'];
-    var matrixStrength = matrixVisibility * 0.74;
+    var matrixGlyphs = ['0', '1', '2', '3', '5', '7', 'A', 'E', 'K', 'M', 'N', 'R', 'X', 'Z', '<', '>', '/', '_', '{', '}'];
+    var matrixStrength = matrixVisibility * 0.96;
     ctx.font = matrixFont + 'px JetBrains Mono, monospace';
     ctx.textAlign = 'center';
     for (var mr = 0; mr < matrixColumns.length; mr += 1) {
@@ -824,16 +826,21 @@ if (canvas && canvas.getContext) {
       stream.y += stream.speed;
       if (stream.y - stream.length * matrixFont > H) {
         stream.y = -Math.random() * H * 0.35;
-        stream.speed = 0.62 + Math.random() * 1.05;
+        stream.speed = 0.78 + Math.random() * 1.55;
+        stream.length = 10 + Math.floor(Math.random() * 24);
       }
       for (var mg = 0; mg < stream.length; mg += 1) {
-        var glyphIndex = Math.abs(stream.seed + mg * 17 + Math.floor(now / 430)) % matrixGlyphs.length;
+        var glyphIndex = Math.abs(stream.seed + mg * 17 + Math.floor(now / (150 + stream.phase * 160))) % matrixGlyphs.length;
         var glyph = matrixGlyphs[glyphIndex];
-        var alpha = (1 - mg / stream.length) * 0.18;
-        if (mg === 0) alpha = 0.46;
+        var fade = 1 - mg / stream.length;
+        var alpha = fade * fade * (0.34 + stream.phase * 0.18);
+        if (mg === 0) alpha = 0.98;
+        else if (mg < 3) alpha *= 1.32;
         ctx.fillStyle = mg === 0
-          ? 'rgba(224,255,72,' + (alpha * matrixStrength).toFixed(3) + ')'
-          : 'rgba(42,224,123,' + (alpha * matrixStrength).toFixed(3) + ')';
+          ? 'rgba(224,255,204,' + (alpha * matrixStrength).toFixed(3) + ')'
+          : (mg < 3
+            ? 'rgba(76,255,132,' + (alpha * matrixStrength).toFixed(3) + ')'
+            : 'rgba(0,196,72,' + (alpha * matrixStrength).toFixed(3) + ')');
         ctx.fillText(glyph, stream.x, stream.y - mg * matrixFont);
       }
     }

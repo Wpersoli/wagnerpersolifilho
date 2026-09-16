@@ -72,11 +72,14 @@ nav.mainnav a::after { background: var(--ref-green) !important; box-shadow: var(
 .terminal-access { color: var(--ref-cyan) !important; }
 .pmode-btn { color: var(--ref-yellow) !important; border-color: rgba(255,230,0,.3) !important; }
 
-.cv-terminal-content { position: relative; }
-.cv-terminal-content::before {
-  content: ""; position: absolute; inset: 0 -3vw; z-index: -1; pointer-events: none;
-  background: repeating-linear-gradient(0deg, transparent 0 4px, rgba(0,255,65,.009) 5px), linear-gradient(90deg, transparent, rgba(0,255,65,.025) 50%, transparent);
-  opacity: .65;
+.cv-terminal-content {
+  position: relative;
+  /* Keep the subtle scan texture on the element itself. The Matrix artwork
+     owns ::before and ::after in current-production.css; reusing ::before
+     here erased the left Matrix rail after the CSS files were concatenated. */
+  background-image:
+    repeating-linear-gradient(0deg, transparent 0 4px, rgba(0,255,65,.009) 5px),
+    linear-gradient(90deg, transparent, rgba(0,255,65,.025) 50%, transparent);
 }
 .cv-section-title, .cv-mini-title { color: var(--ref-cyan) !important; text-shadow: var(--ref-cyan-glow) !important; }
 .cv-prefix, .cv-cursor { color: var(--ref-yellow) !important; text-shadow: var(--ref-yellow-glow) !important; }
@@ -132,4 +135,7 @@ nav.mainnav a::after { background: var(--ref-green) !important; box-shadow: var(
   .cv-section { margin: 46px 0 !important; }
   .cv-section-title { text-shadow: 0 0 7px rgba(0,240,255,.7), 0 0 16px rgba(0,240,255,.22) !important; }
 }
-@media (prefers-reduced-motion: reduce) { .cv-terminal-content::before { display: none !important; } }
+@media (prefers-reduced-motion: reduce) {
+  .cv-terminal-content::before,
+  .cv-terminal-content::after { animation: none !important; }
+}

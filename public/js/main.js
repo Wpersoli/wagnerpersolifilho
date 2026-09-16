@@ -806,6 +806,12 @@ if (canvas && canvas.getContext) {
     bgLastFrame = now;
     ctx.clearRect(0, 0, W, H);
 
+    /* MATRIX_POST_HERO_INTENSITY */
+    // Keep the hero clean. The matrix gains presence only once the visitor
+    // reaches the content below it, without adding scroll listeners or DOM nodes.
+    var matrixStart = Math.min(420, H * 0.42);
+    var matrixVisibility = Math.max(0, Math.min(1, (window.scrollY - matrixStart) / Math.max(220, H * 0.34)));
+
     // Matrix rain: canvas-only, capped at 36fps and paused while scrolling,
     // in hidden tabs and whenever the visitor requests reduced motion.
     ctx.font = matrixFont + 'px JetBrains Mono, monospace';
@@ -822,8 +828,8 @@ if (canvas && canvas.getContext) {
         var alpha = (1 - mg / stream.length) * 0.22;
         if (mg === 0) alpha = 0.62;
         ctx.fillStyle = mg === 0
-          ? 'rgba(244,255,0,' + alpha.toFixed(3) + ')'
-          : 'rgba(74,255,151,' + alpha.toFixed(3) + ')';
+          ? 'rgba(244,255,0,' + (alpha * matrixVisibility).toFixed(3) + ')'
+          : 'rgba(74,255,151,' + (alpha * matrixVisibility).toFixed(3) + ')';
         ctx.fillText(glyph, stream.x, stream.y - mg * matrixFont);
       }
     }

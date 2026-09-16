@@ -1,0 +1,21 @@
+/* =====================================================================
+   WAGNER.OS — MATRIX RAIN v2
+   Procedural full-screen rain. This module is appended last by build-css.js
+   so older decorative SVG rails cannot replace the live canvas.
+   ===================================================================== */
+#bgCanvas {
+  z-index: 4;
+  opacity: .92;
+  mix-blend-mode: screen;
+}
+
+/* Retire the old two-column SVG rails. The canvas supplies the complete,
+   responsive animation while the main stacking context protects readability. */
+.cv-terminal-content::before,
+.cv-terminal-content::after {
+  display: none !important;
+}
+
+@media (max-width: 760px) {
+  #bgCanvas { opacity: .76; }
+}

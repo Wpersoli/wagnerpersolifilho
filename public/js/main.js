@@ -814,6 +814,9 @@ if (canvas && canvas.getContext) {
 
     // Matrix rain: canvas-only, capped at 36fps and paused while scrolling,
     // in hidden tabs and whenever the visitor requests reduced motion.
+    /* MATRIX_ARTISTIC_STREAMS_V2 */
+    var matrixGlyphs = ['0', '1', '<', '>', '/', '_', '{', '}'];
+    var matrixStrength = matrixVisibility * 0.74;
     ctx.font = matrixFont + 'px JetBrains Mono, monospace';
     ctx.textAlign = 'center';
     for (var mr = 0; mr < matrixColumns.length; mr += 1) {
@@ -824,12 +827,13 @@ if (canvas && canvas.getContext) {
         stream.speed = 0.62 + Math.random() * 1.05;
       }
       for (var mg = 0; mg < stream.length; mg += 1) {
-        var glyph = ((stream.seed + mg * 17 + Math.floor(now / 330)) % 2 === 0) ? '1' : '0';
-        var alpha = (1 - mg / stream.length) * 0.22;
-        if (mg === 0) alpha = 0.62;
+        var glyphIndex = Math.abs(stream.seed + mg * 17 + Math.floor(now / 430)) % matrixGlyphs.length;
+        var glyph = matrixGlyphs[glyphIndex];
+        var alpha = (1 - mg / stream.length) * 0.18;
+        if (mg === 0) alpha = 0.46;
         ctx.fillStyle = mg === 0
-          ? 'rgba(244,255,0,' + (alpha * matrixVisibility).toFixed(3) + ')'
-          : 'rgba(74,255,151,' + (alpha * matrixVisibility).toFixed(3) + ')';
+          ? 'rgba(224,255,72,' + (alpha * matrixStrength).toFixed(3) + ')'
+          : 'rgba(42,224,123,' + (alpha * matrixStrength).toFixed(3) + ')';
         ctx.fillText(glyph, stream.x, stream.y - mg * matrixFont);
       }
     }

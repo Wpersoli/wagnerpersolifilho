@@ -102,6 +102,7 @@
 
 <!-- ===== BACKGROUND ===== -->
 <canvas id="bgCanvas" aria-hidden="true"></canvas>
+<canvas id="matrixCanvas" aria-hidden="true"></canvas>
 <div class="grid-overlay" aria-hidden="true"></div>
 <div class="vignette" aria-hidden="true"></div>
 <div class="bg-hero-art" aria-hidden="true"></div>
@@ -635,9 +636,2327 @@
 <script src="js/performance-safe.js" defer></script>
 <script src="js/feature-loader.js" defer></script>
 <script src="js/main.js" defer></script>
+<script src="js/matrix-rain.js" defer></script>
 <script src="js/hero-effects.js" defer></script>
 <script src="js/hero-fidelity.js" defer></script>
 <script src="js/hero-motion.js" defer></script>
 <script src="js/impact-experience.js" defer></script>
 </body>
 </html>
+
+---FILE0---
+(function() {
+'use strict';
+
+/* ─────────────────────────────────────────────
+   SECURITY HELPERS
+   ─────────────────────────────────────────────
+   - All user-generated content rendered as textContent (not innerHTML)
+   - All external URLs validated before navigation
+   - No eval(), no Function(), no document.write()
+   ───────────────────────────────────────────── */
+var MAX_RENDERED_TEXT_LENGTH = 10000;
+function sanitizeText(str, maxLength) {
+  // Pure text — no HTML entities needed since textContent or an escaped markdown subset is used.
+  var limit = Number.isFinite(maxLength) ? maxLength : MAX_RENDERED_TEXT_LENGTH;
+  return String(str).slice(0, limit);
+}
+
+/* ─────────────────────────────────────────────
+   BOOT SEQUENCE — cinematic typed terminal + synced progress
+   ───────────────────────────────────────────── */
+var bootEl = document.getElementById('boot');
+var bootTypeItems = [];
+var bootStarted = false;
+var bootCancelled = false;
+var bootMaxTimer = 0;
+var bootTotalChars = 0;
+var bootTypedChars = 0;
+
+function waitMs(ms) {
+  return new Promise(function(resolve) { setTimeout(resolve, ms); });
+}
+
+function prepareBootSequence() {
+  if (!bootEl) return;
+  bootTypeItems = Array.prototype.map.call(
+    bootEl.querySelectorAll('.boot-type-line'),
+    function(el) {
+      var template = el.cloneNode(true);
+      var plainText = template.textContent || '';
+      bootTotalChars += plainText.length;
+      el.textContent = '';
+      return {
+        el: el,
+        template: template,
+        kind: el.classList.contains('boot-title') ? 'title' :
+              (el.classList.contains('boot-meta') ? 'meta' : 'line')
+      };
+    }
+  );
+  bootEl.classList.add('is-prepared');
+  setBootProgress(0);
+}
+
+function buildBootTypingSegments(item) {
+  var segments = [];
+  item.el.textContent = '';
+
+  function cloneChildren(sourceParent, targetParent) {
+    Array.prototype.forEach.call(sourceParent.childNodes, function(sourceNode) {
+      if (sourceNode.nodeType === Node.TEXT_NODE) {
+        var targetText = document.createTextNode('');
+        targetParent.appendChild(targetText);
+        if (sourceNode.nodeValue) {
+          segments.push({ text: sourceNode.nodeValue, target: targetText });
+        }
+        return;
+      }
+
+      if (sourceNode.nodeType === Node.ELEMENT_NODE) {
+        var targetElement = sourceNode.cloneNode(false);
+        targetParent.appendChild(targetElement);
+        cloneChildren(sourceNode, targetElement);
+      }
+    });
+  }
+
+  cloneChildren(item.template, item.el);
+  return segments;
+}
+
+function setBootProgress(value) {
+  if (!bootEl) return;
+  var progress = Math.max(0, Math.min(100, Math.round(value)));
+  var fillEl = bootEl.querySelector('.boot-bar-fill');
+  var valueEl = bootEl.querySelector('.boot-progress-value');
+  if (fillEl) fillEl.style.width = progress + '%';
+  if (valueEl) valueEl.textContent = String(progress).padStart(3, '0') + '%';
+}
+
+function updateBootProgressFromTyping() {
+  var ratio = bootTotalChars > 0 ? bootTypedChars / bootTotalChars : 1;
+  setBootProgress(3 + ratio * 84);
+}
+
+function bootCharDelay(baseSpeed, char, index) {
+  var delay = baseSpeed;
+  if (/[.:;!?]/.test(char)) delay += 46;
+  else if (/[,·—]/.test(char)) delay += 28;
+  else if (char === ' ') delay += 5;
+  if (index > 0 && index % 11 === 0) delay += 12;
+  return delay;
+}
+
+async function typeBootItem(item, speed) {
+  var segments = buildBootTypingSegments(item);
+  item.el.classList.add('is-typing');
+
+  for (var si = 0; si < segments.length; si++) {
+    var segment = segments[si];
+    for (var ci = 0; ci < segment.text.length; ci++) {
+      if (bootCancelled) return;
+      var char = segment.text.charAt(ci);
+      segment.target.nodeValue += char;
+      bootTypedChars += 1;
+      updateBootProgressFromTyping();
+      await waitMs(bootCharDelay(speed, char, ci));
+    }
+  }
+
+  item.el.classList.remove('is-typing');
+  item.el.classList.add('is-typed');
+}
+
+function finishBootSequence() {
+  if (!bootEl || bootEl.classList.contains('hide')) return;
+  bootCancelled = true;
+  window.clearTimeout(bootMaxTimer);
+  try { window.sessionStorage.setItem('wagnerBootSeen', '1'); } catch (_) {}
+  bootEl.classList.add('hide');
+  bootEl.setAttribute('aria-busy', 'false');
+
+  function removeBoot(event) {
+    if (event && event.target !== bootEl) return;
+    bootEl.style.display = 'none';
+    bootEl.setAttribute('aria-hidden', 'true');
+    bootEl.removeEventListener('animationend', removeBoot);
+  }
+
+  bootEl.addEventListener('animationend', removeBoot);
+  setTimeout(function() { removeBoot(); }, 1050);
+}
+
+async function startBootSequence() {
+  if (!bootEl || bootStarted) return;
+  bootStarted = true;
+
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var seen = false;
+  try { seen = window.sessionStorage.getItem('wagnerBootSeen') === '1'; } catch (_) {}
+  if (reduceMotion) bootEl.classList.add('boot-motion-safe');
+
+  bootEl.classList.add('is-running');
+  if (seen || reduceMotion) {
+    setBootProgress(100);
+    await waitMs(180);
+    finishBootSequence();
+    return;
+  }
+
+  bootMaxTimer = window.setTimeout(finishBootSequence, 3200);
+  setBootProgress(2);
+  await waitMs(120);
+
+  for (var i = 0; i < bootTypeItems.length && !bootCancelled; i++) {
+    var item = bootTypeItems[i];
+    var speed = item.kind === 'title' ? 9 : (item.kind === 'meta' ? 4 : 3);
+    await typeBootItem(item, speed);
+    await waitMs(item.kind === 'title' ? 45 : 22);
+  }
+  if (bootCancelled) return;
+  bootEl.classList.add('is-signature-ready', 'is-complete');
+  setBootProgress(100);
+  await waitMs(240);
+  finishBootSequence();
+}
+
+var bootSkip = document.getElementById('bootSkip');
+if (bootSkip) bootSkip.addEventListener('click', finishBootSequence);
+if (bootEl) bootEl.addEventListener('keydown', function (event) {
+  if (event.key === 'Escape') finishBootSequence();
+});
+
+prepareBootSequence();
+if (document.readyState === 'complete') {
+  startBootSequence();
+} else {
+  window.addEventListener('load', startBootSequence, { once: true });
+}
+
+/* ─────────────────────────────────────────────
+   CLOCK
+   ───────────────────────────────────────────── */
+var clockEl = document.getElementById('clock');
+function tickClock() {
+  if (!clockEl) return;
+  var d = new Date();
+  clockEl.textContent = d.toLocaleTimeString('pt-BR', { hour12: false });
+}
+setInterval(tickClock, 1000);
+tickClock();
+
+/* ─────────────────────────────────────────────
+   HUD — uptime, fake latency, requests
+   ───────────────────────────────────────────── */
+var bootTime = Date.now();
+var hudUptime = document.getElementById('hudUptime');
+var hudReq    = document.getElementById('hudReq');
+var hudLat    = document.getElementById('hudLatency');
+
+function pad(n) { return String(n).padStart(2, '0'); }
+
+function tickHud() {
+  var elapsed = Math.floor((Date.now() - bootTime) / 1000);
+  var h = Math.floor(elapsed / 3600), m = Math.floor((elapsed % 3600) / 60), sec = elapsed % 60;
+  if (hudUptime) hudUptime.textContent = pad(h) + ':' + pad(m) + ':' + pad(sec);
+  if (hudReq && window.performance) hudReq.textContent = String(performance.getEntriesByType('resource').length);
+  if (hudLat && window.performance) {
+    var nav = performance.getEntriesByType('navigation')[0];
+    var renderMs = nav ? Math.max(0, Math.round(nav.domContentLoadedEventEnd - nav.startTime)) : 0;
+    hudLat.textContent = renderMs ? renderMs + 'ms' : '--ms';
+  }
+}
+setInterval(tickHud, 1000);
+tickHud();
+
+/* Presentation Mode — see PMODE ENGINE below */
+
+/* ─────────────────────────────────────────────
+   MOBILE NAV — burger
+   ───────────────────────────────────────────── */
+var burgerBtn    = document.getElementById('burgerBtn');
+var mobileNav    = document.getElementById('mobileNav');
+var mobileClose  = document.getElementById('mobileNavClose');
+var mobileLinks  = mobileNav ? mobileNav.querySelectorAll('a.mobile-nav-link') : [];
+var navOverflowBeforeOpen = '';
+if (mobileNav && 'inert' in mobileNav) mobileNav.inert = true;
+
+function openMobileNav() {
+  if (!mobileNav || !burgerBtn) return;
+  navOverflowBeforeOpen = document.body.style.overflow;
+  mobileNav.classList.add('open');
+  if ('inert' in mobileNav) mobileNav.inert = false;
+  mobileNav.setAttribute('aria-hidden', 'false');
+  burgerBtn.setAttribute('aria-expanded', 'true');
+  burgerBtn.setAttribute('aria-label', 'Fechar menu');
+  burgerBtn.classList.add('active');
+  document.body.style.overflow = 'hidden';
+  setTimeout(function() { if (mobileClose) mobileClose.focus(); }, 50);
+}
+function closeMobileNav(options) {
+  if (!mobileNav || !burgerBtn) return;
+  mobileNav.classList.remove('open');
+  if ('inert' in mobileNav) mobileNav.inert = true;
+  mobileNav.setAttribute('aria-hidden', 'true');
+  burgerBtn.setAttribute('aria-expanded', 'false');
+  burgerBtn.setAttribute('aria-label', 'Abrir menu');
+  burgerBtn.classList.remove('active');
+  document.body.style.overflow = navOverflowBeforeOpen;
+  if (!options || options.restoreFocus !== false) burgerBtn.focus();
+}
+
+if (burgerBtn) burgerBtn.addEventListener('click', function() {
+  if (mobileNav && mobileNav.classList.contains('open')) closeMobileNav();
+  else openMobileNav();
+});
+if (mobileClose) mobileClose.addEventListener('click', function() { closeMobileNav(); });
+mobileLinks.forEach(function(link) {
+  link.addEventListener('click', function() { closeMobileNav({ restoreFocus: false }); });
+});
+// Close on Escape
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    if (mobileNav && mobileNav.classList.contains('open')) closeMobileNav();
+    if (chatPanel && chatPanel.classList.contains('open')) closeChat();
+  }
+});
+
+/* ─────────────────────────────────────────────
+   ANIMATED COUNTERS
+   ───────────────────────────────────────────── */
+function animateCounters() {
+  document.querySelectorAll('[data-count]').forEach(function(el) {
+    var target = parseInt(el.getAttribute('data-count'), 10);
+    var suffix = el.getAttribute('data-suffix') || '';
+    var cur = 0;
+    var step = Math.max(1, Math.floor(target / 40));
+    var iv = setInterval(function() {
+      cur += step;
+      if (cur >= target) { cur = target; clearInterval(iv); }
+      el.textContent = cur + suffix;
+    }, 30);
+  });
+}
+// Trigger after boot completes
+setTimeout(animateCounters, 3900);
+
+/* ─────────────────────────────────────────────
+   SCROLL REVEAL — IntersectionObserver
+   ───────────────────────────────────────────── */
+var revealEls = document.querySelectorAll('.reveal');
+if ('IntersectionObserver' in window) {
+  var io = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  revealEls.forEach(function(el) { io.observe(el); });
+} else {
+  // Fallback for old browsers
+  revealEls.forEach(function(el) { el.classList.add('in'); });
+}
+
+/* ─────────────────────────────────────────────
+   TERMINAL — SESSION LOGS TYPING
+   ───────────────────────────────────────────── */
+var logLines = [
+  { p: 'system', t: 'cat perfil.txt' },
+  { t: '> Analista de Infraestrutura | Especialista N3' },
+  { t: '> 12+ anos de experiência em ambientes corporativos críticos' },
+  { t: '> Expertise: Active Directory, Windows Server, M365, Azure' },
+  { t: '> Automação: Python, PowerShell, IA/LLMs' },
+  { t: '> Governança: ITIL v4, SLA, TMA, FCR, KPIs' },
+  { p: 'system', t: 'status --check' },
+  { t: '✓ Infraestrutura · Redes · Identidades · Suporte N3' },
+  { t: '✓ Automação · Inteligência Artificial · Desenvolvimento' },
+  { t: '✓ Pronto para novos desafios' },
+];
+
+function typeTerminal() {
+  var body = document.getElementById('termBody');
+  if (!body) return;
+  var i = 0;
+  function nextLine() {
+    if (i >= logLines.length) return;
+    var line = logLines[i];
+    var div = document.createElement('div');
+    div.className = 'l';
+    div.style.animation = 'bootIn .3s forwards';
+    body.appendChild(div);
+    var txt = sanitizeText(line.t);
+    var j = 0;
+    var speed = line.p ? 25 : 8;
+    function typeChar() {
+      if (j <= txt.length) {
+        if (line.p) {
+          div.textContent = 'wagner@lab $ ' + txt.slice(0, j);
+          // Color the prompt part — safe since we're setting textContent then replacing
+          div.innerHTML = '<span class="p">wagner@lab</span> $ ' + txt.slice(0, j).replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        } else {
+          div.textContent = txt.slice(0, j);
+        }
+        j++;
+        setTimeout(typeChar, speed);
+      } else {
+        i++;
+        setTimeout(nextLine, 180);
+      }
+    }
+    typeChar();
+  }
+  nextLine();
+}
+
+var termSection = document.getElementById('logs');
+var termStarted = false;
+if (termSection && 'IntersectionObserver' in window) {
+  var termObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting && !termStarted) {
+        termStarted = true;
+        typeTerminal();
+        termObserver.disconnect();
+      }
+    });
+  }, { threshold: 0.25 });
+  termObserver.observe(termSection);
+}
+
+/* ─────────────────────────────────────────────
+   CONTACT PROMPT TYPING LOOP
+   ───────────────────────────────────────────── */
+var contactMsgs = [
+  'abrir_canal --contato',
+  'echo "vamos construir algo brutal"',
+  'connect --email --whatsapp --linkedin',
+  'deploy --project=next_breakthrough',
+];
+var cmIdx = 0;
+function typeContact() {
+  var el = document.getElementById('typedContact');
+  if (!el) return;
+  var msg = contactMsgs[cmIdx % contactMsgs.length];
+  var j = 0;
+  function type() {
+    if (j <= msg.length) {
+      el.textContent = msg.slice(0, j);
+      j++;
+      setTimeout(type, 45);
+    } else {
+      setTimeout(erase, 1800);
+    }
+  }
+  function erase() {
+    if (j >= 0) {
+      el.textContent = msg.slice(0, j);
+      j--;
+      setTimeout(erase, 22);
+    } else {
+      cmIdx++;
+      setTimeout(typeContact, 400);
+    }
+  }
+  type();
+}
+setTimeout(typeContact, 4200);
+
+/* ─────────────────────────────────────────────
+   FLOATING BUTTONS — scroll-triggered
+   ───────────────────────────────────────────── */
+var fabTop   = document.getElementById('fabTop');
+var fabWhats = document.getElementById('fabWhats');
+
+function toggleFabs() {
+  var threshold = window.innerHeight * 0.55;
+  var visible = window.scrollY > threshold;
+  if (fabTop)   { fabTop.classList.toggle('show', visible);   }
+  if (fabWhats) { fabWhats.classList.toggle('show', visible); }
+}
+
+var fabFrame = 0;
+function requestFabUpdate() {
+  if (fabFrame) return;
+  fabFrame = window.requestAnimationFrame(function() {
+    fabFrame = 0;
+    toggleFabs();
+  });
+}
+window.addEventListener('scroll', requestFabUpdate, { passive: true });
+window.addEventListener('resize', requestFabUpdate, { passive: true });
+toggleFabs();
+
+if (fabTop) {
+  fabTop.addEventListener('click', function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}
+
+/* ─────────────────────────────────────────────
+   AI CHAT WIDGET — Gemini API powered
+   Security: all user output via textContent, no innerHTML injection
+   ───────────────────────────────────────────── */
+var assistantPreviewOpen = document.getElementById('assistantPreviewOpen');
+var assistantPreviewChips = document.querySelectorAll('.assistant-preview-chip');
+var chatPanel  = document.getElementById('chatPanel');
+var fabChat    = document.getElementById('fabChat');
+var chatClose  = document.getElementById('chatClose');
+var chatBody   = document.getElementById('chatBody');
+var chatInput  = document.getElementById('chatInput');
+var chatSend   = document.getElementById('chatSend');
+var chatSuggest= document.getElementById('chatSuggest');
+var chatOpened = false;
+var chatHistory = [];
+var chatBusy   = false;
+var chatFocusBeforeOpen = null;
+var CHAT_HISTORY_LIMIT = 24;
+if (chatPanel && 'inert' in chatPanel) chatPanel.inert = true;
+
+function trimChatHistory() {
+  if (chatHistory.length > CHAT_HISTORY_LIMIT) {
+    chatHistory = chatHistory.slice(-CHAT_HISTORY_LIMIT);
+  }
+}
+
+function openChat() {
+  chatFocusBeforeOpen = document.activeElement;
+  chatPanel.classList.add('open');
+  document.body.classList.add('chat-open');
+  if ('inert' in chatPanel) chatPanel.inert = false;
+  chatPanel.setAttribute('aria-hidden', 'false');
+  fabChat.setAttribute('aria-expanded', 'true');
+  var ping = fabChat.querySelector('.ping');
+  if (ping) ping.style.display = 'none';
+  if (!chatOpened) {
+    chatOpened = true;
+    setTimeout(function() {
+      addMsg('Olá! Sou o assistente do WAGNER.OS, integrado ao Gemini AI quando o serviço está disponível. Posso responder sobre a trajetória, projetos e stack do Wagner, além de ajudar com perguntas gerais. Como posso ajudar?', 'bot');
+    }, 350);
+  }
+  setTimeout(function() { if (chatInput) chatInput.focus(); }, 350);
+}
+
+function closeChat() {
+  chatPanel.classList.remove('open');
+  document.body.classList.remove('chat-open');
+  if ('inert' in chatPanel) chatPanel.inert = true;
+  chatPanel.setAttribute('aria-hidden', 'true');
+  fabChat.setAttribute('aria-expanded', 'false');
+  if (chatFocusBeforeOpen && typeof chatFocusBeforeOpen.focus === 'function') chatFocusBeforeOpen.focus();
+  else if (fabChat) fabChat.focus();
+}
+
+if (fabChat) fabChat.addEventListener('click', function() {
+  chatPanel.classList.contains('open') ? closeChat() : openChat();
+});
+if (assistantPreviewOpen) assistantPreviewOpen.addEventListener('click', function() {
+  openChat();
+});
+assistantPreviewChips.forEach(function(chip) {
+  chip.addEventListener('click', function() {
+    openChat();
+    var q = chip.getAttribute('data-preview-q') || '';
+    if (chatInput && q) {
+      chatInput.value = q;
+      chatInput.focus();
+    }
+  });
+});
+if (chatClose) chatClose.addEventListener('click', closeChat);
+
+if (chatPanel) chatPanel.addEventListener('keydown', function(e) {
+  if (e.key !== 'Tab' || !chatPanel.classList.contains('open')) return;
+  var focusable = Array.from(chatPanel.querySelectorAll('button:not([disabled]), input:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])'));
+  if (!focusable.length) return;
+  var first = focusable[0];
+  var last = focusable[focusable.length - 1];
+  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+});
+
+function escapeChatHtml(raw) {
+  return String(raw || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function renderBotInline(raw) {
+  return escapeChatHtml(raw)
+    .replace(/`([^`\n]+)`/g, '<code>$1</code>')
+    .replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+}
+
+function renderBotText(raw) {
+  // Safe markdown subset: paragraphs, hyphen bullets, bold and inline code.
+  // Single asterisks are intentionally not parsed, preventing malformed italics.
+  var lines = String(raw || '').split(/\r?\n/);
+  var html = [];
+  var inList = false;
+
+  function closeList() {
+    if (inList) {
+      html.push('</ul>');
+      inList = false;
+    }
+  }
+
+  lines.forEach(function(line) {
+    var bullet = line.match(/^\s*[-•]\s+(.+)$/);
+    if (bullet) {
+      if (!inList) {
+        html.push('<ul>');
+        inList = true;
+      }
+      html.push('<li>' + renderBotInline(bullet[1]) + '</li>');
+      return;
+    }
+
+    closeList();
+    if (!line.trim()) {
+      html.push('<span class="msg-gap" aria-hidden="true"></span>');
+      return;
+    }
+    html.push('<p>' + renderBotInline(line.trim()) + '</p>');
+  });
+
+  closeList();
+  return html.join('');
+}
+
+function addMsg(text, who, options) {
+  var div = document.createElement('div');
+  div.className = 'msg ' + who;
+  if (options && options.presentation) div.setAttribute('data-presentation-chat', 'true');
+  var safe = sanitizeText(text);
+  if (who === 'bot') {
+    div.innerHTML = renderBotText(safe);
+  } else {
+    div.textContent = safe;
+  }
+  chatBody.appendChild(div);
+  chatBody.scrollTop = chatBody.scrollHeight;
+  return div;
+}
+
+function showTyping() {
+  var typing = document.createElement('div');
+  typing.className = 'msg bot typing';
+  typing.id = 'chatTyping';
+  typing.innerHTML = '<span></span><span></span><span></span>';
+  chatBody.appendChild(typing);
+  chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+function hideTyping() {
+  var t = document.getElementById('chatTyping');
+  if (t) t.remove();
+}
+
+async function sendUserMsg(text) {
+  text = text.trim();
+  if (!text || text.length > 500 || chatBusy) return;
+  addMsg(text, 'user');
+  if (chatInput) chatInput.value = '';
+  chatBusy = true;
+  if (chatSend) chatSend.disabled = true;
+
+  chatHistory.push({ role: 'user', content: text });
+  trimChatHistory();
+  showTyping();
+
+  try {
+    var chatClient = window.WagnerChatClient;
+    if (!chatClient && typeof window.WagnerLoadChatClient === 'function') {
+      chatClient = await window.WagnerLoadChatClient();
+    }
+    if (!chatClient || typeof chatClient.request !== 'function') {
+      throw new Error('CHAT_CLIENT_UNAVAILABLE');
+    }
+
+    var chatResult = await chatClient.request(chatHistory);
+    var reply = sanitizeText(chatResult && chatResult.text || '', 4000);
+    if (!reply) reply = 'Não consegui uma resposta agora. Tente novamente ou fale direto com o Wagner no WhatsApp!';
+
+    chatHistory.push({ role: 'assistant', content: reply });
+    trimChatHistory();
+    hideTyping();
+    addMsg(reply, 'bot');
+
+    // Hide suggestions after first real answer
+    if (chatSuggest) chatSuggest.style.display = 'none';
+
+  } catch(err) {
+    hideTyping();
+    var errMsg;
+    if (err.name === 'AbortError') {
+      errMsg = 'A resposta está demorando mais que o esperado. Tente novamente em instantes.\n\nPosso ajudar com: **experiência profissional**, **projetos**, **stack** ou **contato**.';
+    } else if (err.message && err.message.indexOf('Failed to fetch') !== -1) {
+      errMsg = 'Não consegui conectar ao servidor agora. Verifique sua conexão e tente novamente.\n\nEnquanto isso, fale direto com o Wagner: **WhatsApp +55 11 98150-4061** 📱';
+    } else {
+      errMsg = 'Não encontrei uma resposta específica para isso no momento.\n\nPosso ajudar com informações sobre:\n- **Experiência profissional** (12+ anos em TI)\n- **Projetos** (Device Simulator, AI Engine)\n- **Stack técnico** (React, Node, Python, IA)\n- **Contato** (WhatsApp, Email, LinkedIn)';
+    }
+    // Remove the failed user message from history so user can retry
+    chatHistory.pop();
+    addMsg(errMsg, 'bot');
+  }
+
+  chatBusy = false;
+  if (chatSend) chatSend.disabled = false;
+  if (chatInput) chatInput.focus();
+}
+
+if (chatSend)  chatSend.addEventListener('click', function() { sendUserMsg(chatInput ? chatInput.value : ''); });
+if (chatInput) chatInput.addEventListener('keydown', function(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendUserMsg(chatInput.value); } });
+if (chatSuggest) {
+  chatSuggest.addEventListener('click', function(e) {
+    var btn = e.target.closest('.sugg-chip');
+    if (!btn) return;
+    if (!chatPanel.classList.contains('open')) openChat();
+    var q = sanitizeText(btn.getAttribute('data-q') || '');
+    setTimeout(function() { sendUserMsg(q); }, 200);
+  });
+}
+
+/* ─────────────────────────────────────────────
+   DEVICE SCREEN AI ART — matrix-style code rain
+   ───────────────────────────────────────────── */
+var deviceArtEl = document.getElementById('deviceAiArt');
+if (deviceArtEl) {
+  var chars = ['0','1','<','>','/','_','{','}','AI','ML','::','→','λ','∑','⟨','⟩'];
+  var artLines = [];
+  for (var ai = 0; ai < 8; ai++) {
+    var line = '';
+    for (var aj = 0; aj < 24; aj++) {
+      line += (Math.random() > 0.7 ? chars[Math.floor(Math.random()*chars.length)] : '·') + ' ';
+    }
+    artLines.push(line);
+  }
+  // Safe: textContent only
+  deviceArtEl.textContent = artLines.join('\n');
+  // Animate: refresh random chars
+  setInterval(function() {
+    var lines = [];
+    for (var bi = 0; bi < 8; bi++) {
+      var line2 = '';
+      for (var bj = 0; bj < 24; bj++) {
+        line2 += (Math.random() > 0.72 ? chars[Math.floor(Math.random()*chars.length)] : '·') + ' ';
+      }
+      lines.push(line2);
+    }
+    deviceArtEl.textContent = lines.join('\n');
+  }, 2000);
+}
+
+/* ─────────────────────────────────────────────
+   BACKGROUND PARTICLES CANVAS — adaptive and scroll-safe
+   ───────────────────────────────────────────── */
+var canvas = document.getElementById('bgCanvas');
+if (canvas && canvas.getContext) {
+  var ctx = canvas.getContext('2d', { alpha: true, desynchronized: true });
+  var W = 1, H = 1, dpr = 1, particles = [];
+  var bgRaf = 0;
+  var bgLastFrame = 0;
+  var bgPageVisible = !document.hidden;
+  var bgScrollPaused = false;
+  var bgReduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var bgColors = ['53,207,255', '20,123,255', '121,103,255'];
+  var mouse = { x: -9999, y: -9999 };
+
+  function buildBackgroundParticles() {
+    var area = W * H;
+    var maxCount = W < 760 ? 32 : 56;
+    var count = Math.max(18, Math.min(maxCount, Math.floor(area / 26000)));
+    particles = [];
+    for (var pi = 0; pi < count; pi++) {
+      particles.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        vx: (Math.random() - 0.5) * 0.22,
+        vy: (Math.random() - 0.5) * 0.22,
+        r: Math.random() * 1.35 + 0.55,
+        c: bgColors[pi % 7 === 0 ? 1 : (pi % 5 === 0 ? 2 : 0)]
+      });
+    }
+  }
+
+  function resizeBackgroundCanvas() {
+    W = Math.max(1, window.innerWidth);
+    H = Math.max(1, window.innerHeight);
+    var dprCap = W < 760 ? 1 : 1.25;
+    dpr = Math.min(dprCap, window.devicePixelRatio || 1);
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    buildBackgroundParticles();
+  }
+
+  var resizeTimer;
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(resizeBackgroundCanvas, 160);
+  }, { passive: true });
+
+  window.addEventListener('mousemove', function(e) {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+  }, { passive: true });
+  window.addEventListener('touchmove', function(e) {
+    if (e.touches[0]) {
+      mouse.x = e.touches[0].clientX;
+      mouse.y = e.touches[0].clientY;
+    }
+  }, { passive: true });
+  window.addEventListener('touchend', function() {
+    mouse.x = -9999;
+    mouse.y = -9999;
+  }, { passive: true });
+
+  function scheduleBackgroundFrame() {
+    if (!bgRaf && bgPageVisible && !bgScrollPaused && !bgReduceMotion) {
+      bgRaf = window.requestAnimationFrame(drawBackground);
+    }
+  }
+
+  function drawBackground(now) {
+    bgRaf = 0;
+    if (!bgPageVisible || bgScrollPaused || bgReduceMotion) return;
+    if (now - bgLastFrame < 1000 / 30) {
+      scheduleBackgroundFrame();
+      return;
+    }
+    bgLastFrame = now;
+    ctx.clearRect(0, 0, W, H);
+
+    var connectionLimit = 112;
+    var connectionLimitSq = connectionLimit * connectionLimit;
+    for (var i = 0; i < particles.length; i++) {
+      var particle = particles[i];
+      particle.x += particle.vx;
+      particle.y += particle.vy;
+      if (particle.x < 0 || particle.x > W) particle.vx *= -1;
+      if (particle.y < 0 || particle.y > H) particle.vy *= -1;
+
+      var dx = particle.x - mouse.x;
+      var dy = particle.y - mouse.y;
+      var distanceSq = dx * dx + dy * dy;
+      if (distanceSq < 19600 && distanceSq > 0) {
+        var distance = Math.sqrt(distanceSq);
+        var force = (140 - distance) / 140;
+        particle.x += (dx / distance) * force * 0.6;
+        particle.y += (dy / distance) * force * 0.6;
+      }
+
+      ctx.beginPath();
+      ctx.arc(particle.x, particle.y, particle.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(' + particle.c + ',0.62)';
+      ctx.fill();
+
+      for (var j = i + 1; j < particles.length; j++) {
+        var other = particles[j];
+        var ddx = particle.x - other.x;
+        var ddy = particle.y - other.y;
+        var pairDistanceSq = ddx * ddx + ddy * ddy;
+        if (pairDistanceSq < connectionLimitSq) {
+          var ratio = 1 - pairDistanceSq / connectionLimitSq;
+          ctx.beginPath();
+          ctx.moveTo(particle.x, particle.y);
+          ctx.lineTo(other.x, other.y);
+          ctx.strokeStyle = 'rgba(38,151,220,' + (0.16 * ratio).toFixed(3) + ')';
+          ctx.lineWidth = 0.75;
+          ctx.stroke();
+        }
+      }
+    }
+    scheduleBackgroundFrame();
+  }
+
+  document.addEventListener('visibilitychange', function() {
+    bgPageVisible = !document.hidden;
+    if (!bgPageVisible && bgRaf) {
+      window.cancelAnimationFrame(bgRaf);
+      bgRaf = 0;
+    }
+    if (bgPageVisible) {
+      bgLastFrame = 0;
+      scheduleBackgroundFrame();
+    }
+  });
+
+  document.addEventListener('wagner:scroll-start', function() {
+    bgScrollPaused = true;
+    if (bgRaf) window.cancelAnimationFrame(bgRaf);
+    bgRaf = 0;
+  });
+  document.addEventListener('wagner:scroll-end', function() {
+    bgScrollPaused = false;
+    bgLastFrame = 0;
+    scheduleBackgroundFrame();
+  });
+
+  resizeBackgroundCanvas();
+  scheduleBackgroundFrame();
+}
+
+/* ─────────────────────────────────────────────
+   ACTIVE NAV LINK — highlight on scroll
+   ───────────────────────────────────────────── */
+var sections = ['top','featured','projects','stack','logs','contact'];
+var navLinks  = document.querySelectorAll('nav.mainnav a');
+
+function updateActiveNav() {
+  var scrollY = window.scrollY + 100;
+  var activeId = sections[0];
+  sections.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el && el.offsetTop <= scrollY) activeId = id;
+  });
+  navLinks.forEach(function(link) {
+    var href = link.getAttribute('href').replace('#','');
+    link.style.color = href === activeId ? 'var(--accent-teal-bright)' : '';
+    link.style.background = href === activeId ? 'rgba(53,207,255,0.07)' : '';
+  });
+}
+
+var activeNavFrame = 0;
+function requestActiveNavUpdate() {
+  if (activeNavFrame) return;
+  activeNavFrame = window.requestAnimationFrame(function() {
+    activeNavFrame = 0;
+    updateActiveNav();
+  });
+}
+window.addEventListener('scroll', requestActiveNavUpdate, { passive: true });
+window.addEventListener('resize', requestActiveNavUpdate, { passive: true });
+updateActiveNav();
+
+/* ─────────────────────────────────────────────
+   CARD HOVER TILT — subtle 3D effect on desktop
+   ───────────────────────────────────────────── */
+if (window.matchMedia('(hover: hover)').matches) {
+  document.querySelectorAll('.proj-card').forEach(function(card) {
+    card.addEventListener('mousemove', function(e) {
+      var rect = card.getBoundingClientRect();
+      var x = (e.clientX - rect.left) / rect.width  - 0.5;
+      var y = (e.clientY - rect.top)  / rect.height - 0.5;
+      card.style.transform = 'translateY(-8px) rotateX(' + (-y * 6) + 'deg) rotateY(' + (x * 6) + 'deg)';
+    });
+    card.addEventListener('mouseleave', function() {
+      card.style.transform = '';
+    });
+  });
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   PRESENTATION MODE ENGINE v2 — CINEMATIC AUTO TOUR
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+'use strict';
+
+/* ── Tour stops ── */
+var TOUR = [
+  {
+    sel: 'header',
+    mobileSel: 'header',
+    icon: '🖥️',
+    title: 'Header — Cabeçalho',
+    desc: 'Além de organizar a identidade visual, o header melhora a experiência do usuário (UX). Exibido em todas as páginas, facilita o acesso rápido às seções principais, gera praticidade otimizando o tempo e torna a navegação mais confortável.'
+  },
+  {
+    sel: '.hero',
+    mobileSel: '.hero-fidelity-stage',
+    icon: '⚡',
+    title: 'Banner Principal',
+    desc: 'São a primeira impressão do seu site. Apresentam sua marca, destacam as informações mais importantes, direcionam o visitante para as principais ações e tornam a navegação mais clara, profissional e atrativa.'
+  },
+  {
+    sel: '#featured',
+    mobileSel: '#featured .feature-panel',
+    icon: '🚀',
+    title: 'Projeto em Destaque',
+    desc: 'Atração inicial do site, onde o usuário decide demonstrar interesse interagindo com o conteúdo em questão — ou não. É o cartão de visitas técnico do portfólio.'
+  },
+  {
+    sel: '#projects',
+    mobileSel: '#projects .proj-grid',
+    icon: '⚙️',
+    title: 'Soluções em Destaque',
+    desc: 'Vitrine de soluções apresentadas no portfólio. Cada card descreve uma proposta técnica em IA, automação, emulação responsiva ou visualização de dados, com escopo e status identificados na própria interface.'
+  },
+  {
+    sel: '#stack',
+    mobileSel: '#stack .stack-groups',
+    icon: '🧰',
+    title: 'Stack Tecnológico',
+    desc: 'Conjunto de tecnologias apresentadas no perfil: React, Node.js, Python, Docker, LLMs e outras ferramentas relacionadas aos projetos e à experiência profissional documentada.'
+  },
+  {
+    sel: '#logs',
+    mobileSel: '#logs .terminal-wrap',
+    icon: '📋',
+    title: 'Session Logs — Trajetória',
+    desc: 'Histórico profissional em formato de terminal. Cada linha registra uma etapa real da carreira — de suporte técnico a especialista fullstack e consultor de IA.'
+  },
+  {
+    sel: '#contact',
+    mobileSel: '#contact .contact-panel',
+    icon: '📡',
+    title: 'Open Channel — Contato',
+    desc: 'Canal direto para oportunidades, projetos e parcerias por WhatsApp, e-mail, LinkedIn ou GitHub. O retorno depende da disponibilidade informada no momento do contato.'
+  },
+  {
+    sel: '#chatPanel',
+    mobileSel: '#chatPanel',
+    icon: '🤖',
+    title: 'Assistente AI',
+    desc: 'Demonstração local do assistente, sem consumo de API durante o tour. Fora da apresentação, o chat integrado ao Gemini continua disponível; quando o provedor estiver indisponível, respostas locais essenciais preservam a experiência.',
+    isChat: true
+  },
+  {
+    sel: 'footer',
+    mobileSel: 'footer',
+    icon: '✅',
+    title: 'Rodapé — Fim do Tour',
+    desc: 'Tour concluído. Os principais módulos do portfólio foram apresentados, com foco em performance, segurança, acessibilidade, clareza e qualidade de entrega.'
+  }
+];
+
+var AUTO_INTERVAL = 5000; // ms per step in auto mode
+
+/* ── DOM helpers ── */
+function cel(tag, cls) { var d = document.createElement(tag); if (cls) d.className = cls; return d; }
+
+var lightning  = cel('div','pmode-lightning');
+var energy     = cel('div','pmode-energy');
+var overlay    = cel('div','pmode-overlay');
+var spotlight  = cel('div','pmode-spotlight');
+var balloon    = cel('div','pmode-balloon');
+var controls   = cel('div','pmode-controls');
+var progressEl = cel('div','pmode-progress');
+var modalBg    = cel('div','pmode-modal-bg');
+var toast      = cel('div','pmode-toast');
+
+balloon.setAttribute('role','status');
+balloon.setAttribute('aria-live','polite');
+balloon.innerHTML =
+  '<div class="pmode-balloon-step" id="pmBStep"></div>' +
+  '<span class="pmode-balloon-icon" id="pmBIcon" aria-hidden="true"></span>' +
+  '<div class="pmode-balloon-title" id="pmBTitle"></div>' +
+  '<div class="pmode-balloon-desc" id="pmBDesc"></div>';
+
+controls.setAttribute('role','toolbar');
+controls.setAttribute('aria-label','Controles da apresentação');
+controls.innerHTML =
+  '<button class="pmode-ctrl-btn" id="pmPrev" aria-label="Etapa anterior">← ANTERIOR</button>' +
+  '<div class="pmode-ctrl-sep" aria-hidden="true"></div>' +
+  '<span class="pmode-ctrl-step" id="pmStep" aria-live="polite">1 / ' + TOUR.length + '</span>' +
+  '<div class="pmode-ctrl-sep" aria-hidden="true"></div>' +
+  '<button class="pmode-ctrl-btn primary" id="pmNext" aria-label="Próxima etapa">PRÓXIMO →</button>' +
+  '<div class="pmode-ctrl-sep" aria-hidden="true"></div>' +
+  '<button class="pmode-ctrl-btn auto-btn" id="pmAutoToggle" aria-label="Pausar automático" aria-pressed="true">⏸ AUTO</button>' +
+  '<div class="pmode-ctrl-sep" aria-hidden="true"></div>' +
+  '<button class="pmode-ctrl-btn danger" id="pmExit" aria-label="Finalizar apresentação">✕ SAIR</button>';
+
+modalBg.setAttribute('role','dialog');
+modalBg.setAttribute('aria-modal','true');
+modalBg.setAttribute('aria-labelledby','pmModalTitle');
+modalBg.innerHTML =
+  '<div class="pmode-modal">' +
+  '<h3 id="pmModalTitle">Sair do modo apresentação?</h3>' +
+  '<p>Tem certeza de que deseja interromper a apresentação? Você poderá iniciá-la novamente a qualquer momento.</p>' +
+  '<div class="pmode-modal-btns">' +
+  '<button class="pmode-modal-btn cancel" id="pmModalCancel">CANCELAR</button>' +
+  '<button class="pmode-modal-btn exit" id="pmModalExit">SAIR DA APRESENTAÇÃO</button>' +
+  '</div></div>';
+
+toast.setAttribute('role','status');
+toast.innerHTML =
+  '<span class="pmode-toast-icon" aria-hidden="true">✅</span>' +
+  '<div class="pmode-toast-title">Apresentação concluída.</div>' +
+  '<div class="pmode-toast-sub">Todos os módulos apresentados com sucesso.</div>';
+
+[lightning,energy,overlay,spotlight,balloon,controls,progressEl,modalBg,toast]
+  .forEach(function(n){ document.body.appendChild(n); });
+
+/* ── State ── */
+var active      = false;
+var step        = 0;
+var autoMode    = true;
+var autoTimer   = null;
+var chatTimer   = null;
+var escCount    = 0;
+var escResetTmr = null;
+var presentationMotionToken = 0;
+
+/* ── Helpers ── */
+function raf(fn){ requestAnimationFrame(fn); }
+
+function smoothScrollTo(y, cb) {
+  var token = ++presentationMotionToken;
+  var start = window.scrollY, dist = y - start;
+  var dur = Math.min(700 + Math.abs(dist)*0.2, 1100), t0 = null;
+  function ease(t){ return t<0.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2; }
+  function tick(ts){
+    if(token !== presentationMotionToken || !active) return;
+    if(!t0) t0=ts;
+    var p = Math.min((ts-t0)/dur,1);
+    window.scrollTo(0, start+dist*ease(p));
+    if(p<1){ raf(tick); } else if(cb) cb();
+  }
+  raf(tick);
+}
+
+function getEl(sel){
+  if (!sel) return null;
+  var parts=sel.split(',');
+  for(var i=0;i<parts.length;i++){
+    var e=document.querySelector(parts[i].trim());
+    if(e) return e;
+  }
+  return null;
+}
+
+function isCompactPresentation(){
+  return window.matchMedia && window.matchMedia('(max-width: 980px)').matches;
+}
+
+function getTourTarget(tourStep){
+  if (!tourStep) return null;
+  return getEl(isCompactPresentation() && tourStep.mobileSel ? tourStep.mobileSel : tourStep.sel);
+}
+
+function positionSpotlight(t){
+  if(!t) return;
+  var r=t.getBoundingClientRect();
+  var compact=isCompactPresentation();
+  var pad=compact ? 6 : 10;
+  var top=r.top-pad, left=r.left-pad, width=r.width+pad*2, height=r.height+pad*2;
+
+  if(compact){
+    var vw=window.innerWidth, vh=window.innerHeight;
+    var safeTop=68, safeBottom=118, edge=8;
+    left=Math.max(edge,left);
+    width=Math.min(width,vw-left-edge);
+    top=Math.max(safeTop,top);
+    var visibleBottom=Math.min(vh-safeBottom,r.bottom+pad);
+    height=Math.max(48,visibleBottom-top);
+    height=Math.min(height,Math.max(48,vh-safeTop-safeBottom));
+  }
+
+  // Position the neon border div (position:fixed => viewport coordinates).
+  spotlight.style.top    = top+'px';
+  spotlight.style.left   = left+'px';
+  spotlight.style.width  = width+'px';
+  spotlight.style.height = height+'px';
+  spotlight.classList.add('visible');
+  var root = document.documentElement;
+  root.style.setProperty('--pm-x', left+'px');
+  root.style.setProperty('--pm-y', top+'px');
+  root.style.setProperty('--pm-w', width+'px');
+  root.style.setProperty('--pm-h', height+'px');
+  document.body.classList.add('pmode-active','pmode-visible');
+}
+
+function positionBalloon(t){
+  if(!t) return;
+  var r=t.getBoundingClientRect(), vw=window.innerWidth, vh=window.innerHeight;
+  var s=TOUR[step];
+  document.getElementById('pmBStep').textContent  = 'ETAPA '+(step+1)+' DE '+TOUR.length;
+  document.getElementById('pmBIcon').textContent  = s.icon;
+  document.getElementById('pmBTitle').textContent = s.title;
+  document.getElementById('pmBDesc').textContent  = s.desc;
+
+  balloon.classList.toggle('pmode-balloon-chat', Boolean(s.isChat));
+  var bw=Math.min(340,vw-32), top, left;
+  balloon.style.bottom='auto';
+
+  if(isCompactPresentation()){
+    bw=Math.max(0,vw-24);
+    left=12;
+    if(s.isChat){
+      top=Math.max(70,Math.min(88,vh*0.1));
+      balloon.style.top=top+'px';
+      balloon.style.bottom='auto';
+    } else {
+      balloon.style.top='auto';
+      balloon.style.bottom='calc(82px + env(safe-area-inset-bottom, 0px))';
+    }
+  } else {
+    var spaceBelow = vh-r.bottom;
+    var spaceAbove = r.top;
+    if(s.isChat && r.left > bw+48){
+      left=Math.max(16,r.left-bw-20);
+      top=Math.max(80,Math.min(r.top,vh-230));
+    } else if(spaceBelow>200){ top=r.bottom+18; left=Math.max(16,Math.min(r.left,vw-bw-16)); }
+    else if(spaceAbove>200){ top=r.top-195; left=Math.max(16,Math.min(r.left,vw-bw-16)); }
+    else { top=Math.max(80,vh/2-90); left=Math.max(16,vw-bw-24); }
+    balloon.style.top=top+'px';
+  }
+
+  balloon.style.left=left+'px';
+  balloon.style.width=bw+'px';
+  balloon.classList.remove('visible');
+  raf(function(){ raf(function(){ balloon.classList.add('visible'); }); });
+}
+
+function updateProgress(){
+  progressEl.style.width = ((step+1)/TOUR.length*100)+'%';
+  document.getElementById('pmStep').textContent = (step+1)+' / '+TOUR.length;
+  var prev=document.getElementById('pmPrev');
+  if(prev) prev.disabled = step===0;
+}
+
+/* ── Auto timer ── */
+function startAutoTimer(){
+  clearTimeout(autoTimer);
+  if(!autoMode || !active) return;
+  var btn=document.getElementById('pmAutoToggle');
+  if(btn){ btn.textContent='⏸ AUTO'; btn.setAttribute('aria-pressed','true'); }
+  autoTimer = setTimeout(function(){
+    if(!active || !autoMode) return;
+    if(step < TOUR.length-1) goToStep(step+1);
+    else finishPresentation();
+  }, AUTO_INTERVAL);
+}
+
+function pauseAuto(){
+  autoMode = false;
+  clearTimeout(autoTimer);
+  var btn=document.getElementById('pmAutoToggle');
+  if(btn){ btn.textContent='▶ AUTO'; btn.setAttribute('aria-pressed','false'); }
+}
+
+function resumeAuto(){
+  autoMode = true;
+  startAutoTimer();
+}
+
+function toggleAuto(){
+  if(autoMode) pauseAuto(); else resumeAuto();
+}
+
+/* ── Chat simulation: local-only, never calls /api/chat or changes real history ── */
+function clearPresentationChat(){
+  document.querySelectorAll('[data-presentation-chat="true"]').forEach(function(node){ node.remove(); });
+}
+
+function addPresentationTyping(){
+  var typing=document.createElement('div');
+  typing.className='msg bot typing';
+  typing.setAttribute('data-presentation-chat','true');
+  typing.innerHTML='<span></span><span></span><span></span>';
+  chatBody.appendChild(typing);
+  chatBody.scrollTop=chatBody.scrollHeight;
+  return typing;
+}
+
+function simulateChat(){
+  var fab=document.getElementById('fabChat');
+  var panel=document.getElementById('chatPanel');
+  if(fab && panel && !panel.classList.contains('open')) openChat();
+  clearPresentationChat();
+
+  var dialogue=[
+    {
+      q:'Quais são seus projetos?',
+      a:'Atuo em projetos de emulação responsiva, automação, IA aplicada e dashboards. Esta resposta é uma demonstração local do modo apresentação; o chat real continua disponível normalmente fora do tour.'
+    },
+    {
+      q:'Como funciona seu stack?',
+      a:'Combino frontend, backend, cloud, automação e inteligência artificial conforme o objetivo do projeto. O detalhamento técnico completo está na seção Stack.'
+    }
+  ];
+  var index=0;
+
+  function playNext(){
+    if(!active || index>=dialogue.length) return;
+    var item=dialogue[index++];
+    addMsg(item.q,'user',{presentation:true});
+    var typing=addPresentationTyping();
+    chatTimer=setTimeout(function(){
+      if(typing && typing.parentNode) typing.remove();
+      if(!active) return;
+      addMsg(item.a,'bot',{presentation:true});
+      chatTimer=setTimeout(playNext,1100);
+    },750);
+  }
+
+  chatTimer=setTimeout(playNext,500);
+}
+
+/* ── Go to step ── */
+function goToStep(i, cb){
+  if(!active || i<0 || i>=TOUR.length) return;
+  clearTimeout(autoTimer);
+  step=i;
+  var s=TOUR[step], t=getTourTarget(s);
+  balloon.classList.remove('visible');
+  if(!t){ updateProgress(); startAutoTimer(); if(cb) cb(); return; }
+  var rect=t.getBoundingClientRect();
+  var ty=rect.top+window.scrollY;
+  var visibleHeight=Math.min(rect.height,window.innerHeight*(isCompactPresentation()?0.52:0.72));
+  var scrollTo=Math.max(0,ty-(window.innerHeight/2)+(visibleHeight/2));
+  smoothScrollTo(scrollTo, function(){
+    setTimeout(function(){
+      if(!active) return;
+      positionSpotlight(t);
+      positionBalloon(t);
+      updateProgress();
+      if(s.isChat) simulateChat();
+      startAutoTimer();
+      if(cb) cb();
+    }, 100);
+  });
+}
+
+function setPresentationButtonState(isActive){
+  var label=isActive?'SAIR':'APRESENTAR';
+  [document.getElementById('pmodeBtn'),document.getElementById('pmodeMobileBtn')].forEach(function(btn){
+    if(!btn) return;
+    btn.setAttribute('data-active',isActive?'true':'false');
+    btn.setAttribute('aria-label',isActive?'Sair do modo apresentação':'Ativar modo apresentação');
+    var span=btn.querySelector('.pmode-label');
+    if(span) span.textContent=label; else btn.textContent=label;
+  });
+}
+
+/* ── Start ceremony ── */
+function startCinematic(){
+  if(active) return;
+  active=true; autoMode=true; step=0;
+  if(mobileNav && mobileNav.classList.contains('open')) closeMobileNav({restoreFocus:false});
+  setPresentationButtonState(true);
+  document.body.classList.add('pmode-shaking');
+  setTimeout(function(){ if(active) document.body.classList.remove('pmode-shaking'); },420);
+  lightning.classList.add('active');
+  setTimeout(function(){ lightning.classList.remove('active'); },720);
+  setTimeout(function(){
+    if(!active) return;
+    energy.classList.add('active');
+    setTimeout(function(){ energy.classList.remove('active'); },680);
+  },200);
+  setTimeout(function(){
+    if(!active) return;
+    overlay.classList.add('active');
+    progressEl.classList.add('visible');
+    document.body.classList.add('pmode-active');
+    document.body.style.overflow='hidden';
+    // Disable native smooth-scroll so it stops fighting our own rAF-driven scroll animation
+    document.documentElement.style.scrollBehavior='auto';
+    setTimeout(function(){
+      if(!active) return;
+      controls.classList.add('visible');
+      goToStep(0);
+    },350);
+  },550);
+}
+
+/* ── Exit ── */
+function exitPresentation(){
+  if(!active) return;
+  active=false; escCount=0;
+  presentationMotionToken += 1;
+  clearTimeout(autoTimer); clearTimeout(chatTimer); clearTimeout(escResetTmr);
+  var cp=document.getElementById('chatPanel'),cc=document.getElementById('chatClose');
+  if(cp&&cp.classList.contains('open')&&cc) cc.click();
+  balloon.classList.remove('visible');
+  spotlight.classList.remove('visible');
+  controls.classList.remove('visible');
+  overlay.classList.remove('active');
+  modalBg.classList.remove('active');
+  progressEl.classList.remove('visible');
+  progressEl.style.width='0%';
+  document.body.style.overflow='';
+  document.documentElement.style.scrollBehavior='';
+  document.body.classList.remove('pmode-active','pmode-visible','presenting');
+  var root=document.documentElement;
+  root.style.removeProperty('--pm-x');
+  root.style.removeProperty('--pm-y');
+  root.style.removeProperty('--pm-w');
+  root.style.removeProperty('--pm-h');
+  clearPresentationChat();
+  setPresentationButtonState(false);
+}
+
+function finishPresentation(){
+  exitPresentation();
+  toast.classList.add('visible');
+  setTimeout(function(){ toast.classList.remove('visible'); }, 3500);
+}
+
+/* ── Controls wiring ── */
+document.getElementById('pmNext').addEventListener('click',function(){
+  pauseAuto();
+  if(step<TOUR.length-1) goToStep(step+1); else finishPresentation();
+});
+document.getElementById('pmPrev').addEventListener('click',function(){
+  pauseAuto();
+  if(step>0) goToStep(step-1);
+});
+document.getElementById('pmAutoToggle').addEventListener('click', toggleAuto);
+document.getElementById('pmExit').addEventListener('click',function(){
+  modalBg.classList.add('active');
+  setTimeout(function(){ document.getElementById('pmModalExit').focus(); },50);
+});
+document.getElementById('pmModalCancel').addEventListener('click',function(){
+  modalBg.classList.remove('active');
+  document.getElementById('pmNext').focus();
+});
+document.getElementById('pmModalExit').addEventListener('click',function(){
+  modalBg.classList.remove('active');
+  exitPresentation();
+});
+
+/* ── Keyboard ── */
+document.addEventListener('keydown',function(e){
+  if(!active) return;
+  if(e.key==='Escape'){
+    e.preventDefault();
+    if(modalBg.classList.contains('active')){
+      // ESC again while modal open = confirm exit
+      modalBg.classList.remove('active');
+      exitPresentation();
+      return;
+    }
+    escCount++;
+    clearTimeout(escResetTmr);
+    escResetTmr = setTimeout(function(){ escCount=0; }, 1200);
+    if(escCount >= 2){
+      escCount=0;
+      exitPresentation();
+    } else {
+      // First ESC = show modal
+      modalBg.classList.add('active');
+      setTimeout(function(){ document.getElementById('pmModalExit').focus(); },50);
+    }
+    return;
+  }
+  // ENTER = advance to next
+  if(e.key==='Enter'){
+    e.preventDefault();
+    pauseAuto();
+    if(step<TOUR.length-1) goToStep(step+1); else finishPresentation();
+    return;
+  }
+  // BACKSPACE = toggle pause/resume auto
+  if(e.key==='Backspace'){
+    e.preventDefault();
+    if(autoMode) pauseAuto(); else resumeAuto();
+    return;
+  }
+  // Arrow keys
+  if(e.key==='ArrowRight'||e.key==='ArrowDown'){
+    e.preventDefault(); pauseAuto();
+    if(step<TOUR.length-1) goToStep(step+1); else finishPresentation();
+  }
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp'){
+    e.preventDefault(); pauseAuto();
+    if(step>0) goToStep(step-1);
+  }
+});
+
+/* ── Resize reposition ── */
+var rTimer;
+window.addEventListener('resize',function(){
+  clearTimeout(rTimer); if(!active) return;
+  rTimer=setTimeout(function(){
+    var t=getTourTarget(TOUR[step]);
+    if(t){ positionSpotlight(t); positionBalloon(t); }
+  },150);
+});
+// Re-sync clip-path on scroll (fixed vs scrollY offset), once per frame.
+var presentationScrollFrame=0;
+window.addEventListener('scroll',function(){
+  if(!active || presentationScrollFrame) return;
+  presentationScrollFrame=window.requestAnimationFrame(function(){
+    presentationScrollFrame=0;
+    if(!active) return;
+    var t=getTourTarget(TOUR[step]);
+    if(!t) return;
+    positionSpotlight(t);
+  });
+}, {passive:true});
+
+/* ── Wire presentation buttons (desktop + mobile drawer) ── */
+function handlePresentationButton(){
+  if(active) modalBg.classList.add('active');
+  else startCinematic();
+}
+['pmodeBtn','pmodeMobileBtn'].forEach(function(id){
+  var btn=document.getElementById(id);
+  if(btn) btn.addEventListener('click',handlePresentationButton);
+});
+setPresentationButtonState(false);
+
+/* ── Footer year ── */
+document.querySelectorAll('.footer-year').forEach(function(el){ el.textContent=new Date().getFullYear(); });
+
+/* ─────────────────────────────────────────────
+   COOKIE / LGPD BANNER
+   ─────────────────────────────────────────────
+   Respeita LGPD: não registra nada sem consentimento.
+   Armazena preferência em localStorage apenas.
+   ───────────────────────────────────────────── */
+(function() {
+  var banner = document.getElementById('cookieBanner');
+  var acceptBtn = document.getElementById('cookieAccept');
+  var declineBtn = document.getElementById('cookieDecline');
+
+  if (!banner) return;
+
+  var COOKIE_KEY = 'wp_cookie_consent';
+  var stored = null;
+
+  try { stored = localStorage.getItem(COOKIE_KEY); } catch(e) {}
+
+  if (stored !== null) return; // já decidiu antes
+
+  // Mostra o banner após a tela de boot
+  setTimeout(function() {
+    banner.classList.add('show');
+  }, 3800);
+
+  function hideBanner() {
+    banner.classList.remove('show');
+    banner.style.pointerEvents = 'none';
+    setTimeout(function(){ banner.style.display = 'none'; }, 500);
+  }
+
+  if (acceptBtn) {
+    acceptBtn.addEventListener('click', function() {
+      try { localStorage.setItem(COOKIE_KEY, 'accepted'); } catch(e) {}
+      hideBanner();
+      // Apenas registra a data/hora e origem de forma anônima (sem dados pessoais)
+      var log = {
+        ts: new Date().toISOString(),
+        device: /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
+        browser: navigator.userAgent.split(' ').pop().split('/')[0] || 'unknown',
+        referrer: document.referrer ? new URL(document.referrer).hostname : 'direct'
+      };
+      try { localStorage.setItem('wp_visit_log', JSON.stringify(log)); } catch(e) {}
+    });
+  }
+
+  if (declineBtn) {
+    declineBtn.addEventListener('click', function() {
+      try { localStorage.setItem(COOKIE_KEY, 'declined'); } catch(e) {}
+      hideBanner();
+    });
+  }
+})();
+
+})();
+
+/* ─────────────────────────────────────────────
+   CONTACT FORM — creative in-site email channel
+   ───────────────────────────────────────────── */
+var contactForm = document.getElementById('contactForm');
+var contactSubmit = document.getElementById('contactSubmit');
+var contactInlineStatus = document.getElementById('contactInlineStatus');
+var contactToast = document.getElementById('contactToast');
+var contactToastTitle = contactToast ? contactToast.querySelector('.contact-toast-title') : null;
+var contactToastSub = contactToast ? contactToast.querySelector('.contact-toast-sub') : null;
+var contactToastIcon = contactToast ? contactToast.querySelector('.contact-toast-icon') : null;
+var contactToastTimer = 0;
+var contactStartedAt = document.getElementById('contactStartedAt');
+if (contactStartedAt) contactStartedAt.value = String(Date.now());
+
+function setContactStatus(message, kind) {
+  if (!contactInlineStatus) return;
+  contactInlineStatus.textContent = sanitizeText(message || '', 220);
+  contactInlineStatus.classList.remove('ok', 'err');
+  if (kind === 'ok') contactInlineStatus.classList.add('ok');
+  if (kind === 'err') contactInlineStatus.classList.add('err');
+}
+
+function setContactLoading(isLoading) {
+  if (!contactSubmit) return;
+  contactSubmit.disabled = Boolean(isLoading);
+  var label = contactSubmit.querySelector('span');
+  if (label) label.textContent = isLoading ? 'ENVIANDO...' : 'ENVIAR MENSAGEM';
+}
+
+function showContactToast(title, subtitle, isError) {
+  if (!contactToast) return;
+  if (contactToastTitle) contactToastTitle.textContent = sanitizeText(title || '', 120);
+  if (contactToastSub) contactToastSub.textContent = sanitizeText(subtitle || '', 220);
+  if (contactToastIcon) contactToastIcon.textContent = isError ? '⚠' : '✦';
+  contactToast.classList.toggle('error', Boolean(isError));
+  contactToast.classList.add('show');
+  contactToast.setAttribute('aria-hidden', 'false');
+  clearTimeout(contactToastTimer);
+  contactToastTimer = setTimeout(function() {
+    contactToast.classList.remove('show');
+    contactToast.setAttribute('aria-hidden', 'true');
+  }, isError ? 5200 : 4200);
+}
+
+if (contactForm) {
+  contactForm.addEventListener('submit', async function(event) {
+    event.preventDefault();
+    if (contactSubmit && contactSubmit.disabled) return;
+
+    var formData = new FormData(contactForm);
+    var payload = {
+      name: sanitizeText((formData.get('name') || '').trim(), 80),
+      email: sanitizeText((formData.get('email') || '').trim(), 120),
+      subject: sanitizeText((formData.get('subject') || '').trim(), 120),
+      phone: sanitizeText((formData.get('phone') || '').trim(), 40),
+      message: sanitizeText((formData.get('message') || '').trim(), 2000),
+      company: sanitizeText((formData.get('company') || '').trim(), 120),
+      startedAt: Number(formData.get('startedAt') || Date.now())
+    };
+
+    var payloadHasStrictTypes =
+      typeof payload.name === 'string' &&
+      typeof payload.email === 'string' &&
+      typeof payload.subject === 'string' &&
+      typeof payload.phone === 'string' &&
+      typeof payload.message === 'string' &&
+      typeof payload.company === 'string' &&
+      Number.isFinite(payload.startedAt);
+    if (!payloadHasStrictTypes) {
+      setContactStatus('Os dados informados possuem formato inválido.', 'err');
+      showContactToast('Dados inválidos.', 'Revise os campos e tente novamente.', true);
+      return;
+    }
+
+    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!payload.name || payload.name.length < 2) {
+      setContactStatus('Informe seu nome para abrir o canal.', 'err');
+      showContactToast('Nome obrigatório.', 'Digite pelo menos 2 caracteres no campo nome.', true);
+      return;
+    }
+    if (!emailRegex.test(payload.email)) {
+      setContactStatus('Informe um e-mail válido para retorno.', 'err');
+      showContactToast('E-mail inválido.', 'Use um endereço de e-mail válido para receber o retorno.', true);
+      return;
+    }
+    if (!payload.subject || payload.subject.length < 3) {
+      setContactStatus('Defina um assunto curto para contextualizar a mensagem.', 'err');
+      showContactToast('Assunto obrigatório.', 'Escreva um assunto com pelo menos 3 caracteres.', true);
+      return;
+    }
+    if (!payload.message || payload.message.length < 12) {
+      setContactStatus('Descreva a demanda com um pouco mais de detalhe.', 'err');
+      showContactToast('Mensagem muito curta.', 'Escreva pelo menos 12 caracteres na mensagem.', true);
+      return;
+    }
+
+    setContactLoading(true);
+    setContactStatus('Transmitindo mensagem para o canal de e-mail...', '');
+
+    try {
+      var contactController = new AbortController();
+      var contactTimeout = setTimeout(function() { contactController.abort(); }, 16000);
+      var response;
+      try {
+        response = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify(payload),
+          signal: contactController.signal
+        });
+      } finally {
+        clearTimeout(contactTimeout);
+      }
+
+      var data = null;
+      try {
+        data = await response.json();
+      } catch (parseError) {
+        data = null;
+      }
+
+      if (!response.ok || !data || !data.ok) {
+        var errorMessage = data && data.message ? data.message : 'O canal de e-mail está indisponível no momento. Tente novamente em instantes.';
+        setContactStatus(errorMessage, 'err');
+        showContactToast('Falha no envio.', errorMessage, true);
+        return;
+      }
+
+      contactForm.reset();
+      if (contactStartedAt) contactStartedAt.value = String(Date.now());
+      setContactStatus(data.message || 'Mensagem enviada com sucesso. Wagner receberá seu contato por e-mail.', 'ok');
+      showContactToast(
+        'Mensagem enviada com sucesso.',
+        data.message || 'O canal foi aberto. Wagner receberá seu contato por e-mail.',
+        false
+      );
+    } catch (error) {
+      var connectionMessage = error && error.name === 'AbortError'
+        ? 'O envio excedeu o tempo seguro. Tente novamente em instantes.'
+        : 'Não foi possível conectar ao canal agora. Tente novamente em alguns instantes.';
+      setContactStatus(connectionMessage, 'err');
+      showContactToast('Canal temporariamente indisponível.', connectionMessage, true);
+    } finally {
+      setContactLoading(false);
+    }
+  });
+}
+
+})(); // end IIFE
+
+/* ================================================================
+   HERO POINTER FIELD — progressive enhancement only
+   Uses CSS custom properties so the hero remains fully visible and usable
+   when JavaScript, motion or a precise pointer is unavailable.
+   ================================================================ */
+(function initHeroPointerField() {
+  'use strict';
+  var hero = document.querySelector('.cyber-hero');
+  if (!hero || !window.matchMedia) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!window.matchMedia('(pointer: fine)').matches) return;
+
+  var frame = 0;
+  var lastEvent = null;
+  function render() {
+    frame = 0;
+    if (!lastEvent) return;
+    var rect = hero.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    var x = Math.max(0, Math.min(1, (lastEvent.clientX - rect.left) / rect.width));
+    var y = Math.max(0, Math.min(1, (lastEvent.clientY - rect.top) / rect.height));
+    hero.style.setProperty('--hero-pointer-x', (x * 100).toFixed(2) + '%');
+    hero.style.setProperty('--hero-pointer-y', (y * 100).toFixed(2) + '%');
+    hero.style.setProperty('--hero-ry', ((x - .5) * 5.2).toFixed(2) + 'deg');
+    hero.style.setProperty('--hero-rx', ((.5 - y) * 3.8).toFixed(2) + 'deg');
+    hero.style.setProperty('--hero-tx', ((x - .5) * 5).toFixed(2) + 'px');
+    hero.style.setProperty('--hero-ty', ((y - .5) * 3).toFixed(2) + 'px');
+  }
+  hero.addEventListener('pointermove', function(event) {
+    lastEvent = event;
+    if (!frame) frame = window.requestAnimationFrame(render);
+  }, { passive: true });
+  hero.addEventListener('pointerleave', function() {
+    lastEvent = null;
+    if (frame) window.cancelAnimationFrame(frame);
+    frame = 0;
+    hero.style.setProperty('--hero-pointer-x', '28%');
+    hero.style.setProperty('--hero-pointer-y', '43%');
+    hero.style.setProperty('--hero-rx', '0deg');
+    hero.style.setProperty('--hero-ry', '0deg');
+    hero.style.setProperty('--hero-tx', '0px');
+    hero.style.setProperty('--hero-ty', '0px');
+  }, { passive: true });
+})();
+
+---FILE1---
+/* =====================================================================
+   WAGNER.OS — MATRIX REFERENCE INTEGRATION
+   Dedicated canvas based on efeito-matrix-master. Appended last so the
+   animation cannot be hidden by legacy theme layers.
+   ===================================================================== */
+#matrixCanvas {
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  opacity: .82;
+  mix-blend-mode: screen;
+  contain: strict;
+}
+
+.cv-terminal-content::before,
+.cv-terminal-content::after {
+  display: none !important;
+}
+
+@media (max-width: 760px) {
+  #matrixCanvas { opacity: .68; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #matrixCanvas { display: block !important; opacity: .56; }
+}
+
+---FILE2---
+'use strict';
+var test = require('node:test');
+var assert = require('node:assert/strict');
+var fs = require('fs');
+var path = require('path');
+var root = path.resolve(__dirname, '..');
+
+test('camada visual impactante permanece isolada dos contratos críticos', function () {
+  var html = fs.readFileSync(path.join(root, 'public', 'index.html'), 'utf8');
+  var css = fs.readFileSync(path.join(root, 'src', 'styles', 'impact-experience.css'), 'utf8');
+  var js = fs.readFileSync(path.join(root, 'public', 'js', 'impact-experience.js'), 'utf8');
+  assert.match(html, /impact-kinetic-wordmark/);
+  assert.match(html, /impact-skill-marquee/);
+  assert.match(html, /impact-experience\.js/);
+  assert.match(css, /body\.pmode-active/);
+  assert.match(css, /prefers-reduced-motion/);
+  assert.match(css, /pointer: coarse/);
+  assert.match(css, /\.impact-particle-layer/);
+  assert.match(css, /pointer-events:\s*none/);
+  assert.match(css, /body\.impact-chat-open \.impact-particle-layer/);
+  assert.match(js, /impactParticleLayer/);
+  assert.match(js, /globalCompositeOperation = 'lighter'/);
+  assert.match(js, /presentationActive\(\)/);
+  assert.match(js, /chatPanel\.classList\.contains\('open'\)/);
+  assert.doesNotMatch(js, /preventDefault\s*\(/);
+  assert.doesNotMatch(js, /openChat\s*=/);
+  assert.doesNotMatch(js, /addMsg\s*=/);
+  assert.doesNotMatch(js, /scrollTo\s*\(/);
+});
+
+
+test('partículas canvas ficam sobre o conteúdo sem capturar eventos ou cobrir controles críticos', function () {
+  var css = fs.readFileSync(path.join(root, 'src', 'styles', 'impact-experience.css'), 'utf8');
+  var js = fs.readFileSync(path.join(root, 'public', 'js', 'impact-experience.js'), 'utf8');
+  assert.match(css, /\.impact-particle-layer\s*\{[\s\S]*?z-index:\s*40;[\s\S]*?pointer-events:\s*none;/);
+  assert.match(css, /body\.pmode-active \.impact-particle-layer/);
+  assert.match(css, /body\.impact-chat-open \.impact-particle-layer/);
+  assert.match(js, /body\.appendChild\(particleCanvas\)/);
+  assert.match(js, /particleCanvas\.setAttribute\('aria-hidden', 'true'\)/);
+  assert.doesNotMatch(js, /innerHTML\s*=/);
+});
+
+test('Brevo está documentada sem remover compatibilidade Resend', function () {
+  var env = fs.readFileSync(path.join(root, '.env.example'), 'utf8');
+  var contact = fs.readFileSync(path.join(root, 'api', 'contact.js'), 'utf8');
+  assert.match(env, /CONTACT_EMAIL_PROVIDER=brevo/);
+  assert.match(env, /BREVO_API_KEY=/);
+  assert.match(contact, /api\.brevo\.com\/v3\/smtp\/email/);
+  assert.match(contact, /api\.resend\.com\/emails/);
+});
+
+test('refinamento v3.3.0 mantém visual uniforme e prioridade dos controles críticos', function () {
+  var css = fs.readFileSync(path.join(root, 'src', 'styles', 'premium-uniform-v330.css'), 'utf8');
+  var build = fs.readFileSync(path.join(root, 'scripts', 'build-css.js'), 'utf8');
+  var html = fs.readFileSync(path.join(root, 'public', 'index.html'), 'utf8');
+  assert.match(build, /premium-uniform-v330\.css/);
+  assert.match(css, /body > header/);
+  assert.match(css, /hero-logo-cutout/);
+  assert.match(css, /body\.impact-chat-open \.impact-particle-layer/);
+  assert.match(css, /body\.pmode-active \.impact-particle-layer/);
+  assert.match(css, /pointer-events/);
+  assert.match(html, /BUILD <b>v3\.3\.0<\/b>/);
+});
+
+test('chuva Matrix usa canvas visível e mantém o conteúdo acima da animação', function () {
+  var source = fs.readFileSync(path.join(root, 'src', 'styles', 'current-production.css'), 'utf8');
+  var theme = fs.readFileSync(path.join(root, 'src', 'styles', 'terminal-neon-reference-v1.css'), 'utf8');
+  var matrix = fs.readFileSync(path.join(root, 'src', 'styles', 'matrix-rain-v2.css'), 'utf8');
+  var build = fs.readFileSync(path.join(root, 'scripts', 'build-css.js'), 'utf8');
+  var generated = fs.readFileSync(path.join(root, 'public', 'css', 'app.css'), 'utf8');
+  var html = fs.readFileSync(path.join(root, 'public', 'index.html'), 'utf8');
+  var runtime = fs.readFileSync(path.join(root, 'public', 'js', 'matrix-rain.js'), 'utf8');
+  assert.match(source, /\.cv-terminal-content::before,\s*\n\.cv-terminal-content::after\s*\{[\s\S]*?background-image:\s*url\(/);
+  assert.match(theme, /\.cv-terminal-content\s*\{[\s\S]*?background-image:/);
+  assert.doesNotMatch(theme, /\.cv-terminal-content::before\s*\{[\s\S]{0,260}?z-index:\s*-1/);
+  assert.doesNotMatch(theme, /\.cv-terminal-content::before\s*\{[\s\S]{0,260}?display:\s*none/);
+  assert.match(build, /matrix-rain-v2\.css/);
+  assert.match(matrix, /#matrixCanvas\s*\{[\s\S]*?z-index:\s*4;[\s\S]*?mix-blend-mode:\s*screen;/);
+  assert.match(generated, /#matrixCanvas\s*\{[\s\S]*?z-index:\s*4;[\s\S]*?mix-blend-mode:\s*screen;/);
+  assert.match(generated, /\.cv-terminal-content::before,\s*\n\.cv-terminal-content::after\s*\{\s*display:\s*none\s*!important;/);
+  assert.match(html, /<canvas id="matrixCanvas" aria-hidden="true"><\/canvas>/);
+  assert.match(html, /<script src="js\/matrix-rain\.js" defer><\/script>/);
+  assert.match(runtime, /rgba\(0, 4, 2, 0\.075\)/);
+  assert.match(runtime, /window\.WagnerMatrixRain/);
+  assert.match(runtime, /1000 \/ \(reduceMotion \? 18 : 30\)/);
+});
+
+test('asset W prismatico permanece WebP e o HTML conserva os hotspots originais', function () {
+  var html = fs.readFileSync(path.join(root, 'public', 'index.html'), 'utf8');
+  var image = fs.readFileSync(path.join(root, 'public', 'img', 'hero-w-energy.webp'));
+  assert.equal(image.subarray(0, 4).toString('ascii'), 'RIFF');
+  assert.equal(image.subarray(8, 12).toString('ascii'), 'WEBP');
+  assert.equal((html.match(/class="hero-hotspot /g) || []).length, 6);
+  assert.match(html, /id="heroFidelityStage"/);
+});
+
+---FILE3---
+'use strict';
+var cp = require('child_process');
+var fs = require('fs');
+var os = require('os');
+var path = require('path');
+
+var root = path.resolve(__dirname, '..');
+var debugPort = Number(process.env.E2E_DEBUG_PORT || 9223);
+var chrome;
+var errors = [];
+var screenshotDir = String(process.env.E2E_SCREENSHOT_DIR || '').trim();
+
+function sleep(ms) { return new Promise(function (resolve) { setTimeout(resolve, ms); }); }
+function assert(condition, message) { if (!condition) throw new Error(message); }
+function terminateChromeTree(processHandle) {
+  if (!processHandle || !processHandle.pid) return;
+  if (process.platform === 'win32') {
+    cp.spawnSync('taskkill.exe', ['/PID', String(processHandle.pid), '/T', '/F'], {
+      stdio: 'ignore',
+      windowsHide: true
+    });
+    return;
+  }
+  try {
+    process.kill(-processHandle.pid, 'SIGKILL');
+  } catch (_) {
+    try { processHandle.kill('SIGKILL'); } catch (_) {}
+  }
+}
+
+
+function findChrome() {
+  var direct = [
+    process.env.CHROME_BIN,
+    process.platform === 'win32' && process.env.PROGRAMFILES && path.join(process.env.PROGRAMFILES, 'Google', 'Chrome', 'Application', 'chrome.exe'),
+    process.platform === 'win32' && process.env['PROGRAMFILES(X86)'] && path.join(process.env['PROGRAMFILES(X86)'], 'Google', 'Chrome', 'Application', 'chrome.exe'),
+    process.platform === 'win32' && process.env.LOCALAPPDATA && path.join(process.env.LOCALAPPDATA, 'Google', 'Chrome', 'Application', 'chrome.exe'),
+    process.platform === 'win32' && process.env.PROGRAMFILES && path.join(process.env.PROGRAMFILES, 'Microsoft', 'Edge', 'Application', 'msedge.exe'),
+    process.platform === 'win32' && process.env['PROGRAMFILES(X86)'] && path.join(process.env['PROGRAMFILES(X86)'], 'Microsoft', 'Edge', 'Application', 'msedge.exe')
+  ].filter(Boolean);
+  for (var i = 0; i < direct.length; i += 1) {
+    if (fs.existsSync(direct[i])) return direct[i];
+  }
+  var commands = process.platform === 'win32'
+    ? ['chrome.exe', 'msedge.exe', 'chromium.exe']
+    : ['chromium', 'chromium-browser', 'google-chrome', 'google-chrome-stable'];
+  for (var j = 0; j < commands.length; j += 1) {
+    var found = process.platform === 'win32'
+      ? cp.spawnSync('where.exe', [commands[j]], { encoding: 'utf8' })
+      : cp.spawnSync('sh', ['-lc', 'command -v ' + commands[j]], { encoding: 'utf8' });
+    if (found.status === 0 && found.stdout.trim()) return found.stdout.trim().split(/\r?\n/)[0];
+  }
+  throw new Error('Chrome, Chromium ou Edge não encontrado. Defina CHROME_BIN.');
+}
+
+async function waitFor(url, timeoutMs) {
+  var deadline = Date.now() + timeoutMs;
+  var last;
+  while (Date.now() < deadline) {
+    try {
+      var response = await fetch(url);
+      if (response.ok) return response;
+      last = new Error('status ' + response.status);
+    } catch (error) { last = error; }
+    await sleep(100);
+  }
+  throw new Error('Timeout aguardando ' + url + ': ' + String(last && last.message || last));
+}
+
+function CDP(url) {
+  var self = this;
+  this.nextId = 1;
+  this.pending = new Map();
+  this.listeners = new Map();
+  this.ready = new Promise(function (resolve, reject) {
+    self.socket = new WebSocket(url);
+    self.socket.addEventListener('open', resolve, { once: true });
+    self.socket.addEventListener('error', reject, { once: true });
+    self.socket.addEventListener('message', function (event) {
+      var message = JSON.parse(String(event.data));
+      if (message.id && self.pending.has(message.id)) {
+        var pending = self.pending.get(message.id);
+        self.pending.delete(message.id);
+        if (message.error) pending.reject(new Error(message.error.message));
+        else pending.resolve(message.result || {});
+        return;
+      }
+      if (message.method && self.listeners.has(message.method)) {
+        self.listeners.get(message.method).slice().forEach(function (listener) { listener(message.params || {}); });
+      }
+    });
+  });
+}
+CDP.prototype.send = async function (method, params) {
+  await this.ready;
+  var id = this.nextId++;
+  var self = this;
+  var promise = new Promise(function (resolve, reject) { self.pending.set(id, { resolve: resolve, reject: reject }); });
+  this.socket.send(JSON.stringify({ id: id, method: method, params: params || {} }));
+  return promise;
+};
+CDP.prototype.on = function (name, listener) {
+  if (!this.listeners.has(name)) this.listeners.set(name, []);
+  this.listeners.get(name).push(listener);
+};
+CDP.prototype.once = function (name, timeoutMs) {
+  var self = this;
+  return new Promise(function (resolve, reject) {
+    var timer = setTimeout(function () { reject(new Error('Timeout no evento ' + name)); }, timeoutMs || 10000);
+    function listener(params) {
+      clearTimeout(timer);
+      var list = self.listeners.get(name) || [];
+      self.listeners.set(name, list.filter(function (item) { return item !== listener; }));
+      resolve(params);
+    }
+    self.on(name, listener);
+  });
+};
+CDP.prototype.evaluate = async function (expression) {
+  var result = await this.send('Runtime.evaluate', { expression: expression, returnByValue: true, awaitPromise: true });
+  if (result.exceptionDetails) throw new Error(result.exceptionDetails.text || 'Erro ao avaliar JavaScript');
+  return result.result ? result.result.value : undefined;
+};
+CDP.prototype.close = function () { if (this.socket) this.socket.close(); };
+
+
+
+async function dispatchNativeWheelUntilScrolled(cdp) {
+  await cdp.evaluate(`(() => {
+    document.getElementById('cookieAccept')?.click();
+    document.getElementById('bootSkip')?.click();
+    window.scrollTo(0, 0);
+    if (document.body && typeof document.body.focus === 'function') document.body.focus();
+    return {
+      maxScroll: Math.max(0, document.documentElement.scrollHeight - innerHeight),
+      overflow: getComputedStyle(document.body).overflowY
+    };
+  })()`);
+  await sleep(140);
+
+  var state = { y: 0, overflow: '', diagnostics: null, maxScroll: 0 };
+  for (var attempt = 0; attempt < 4; attempt += 1) {
+    await cdp.send('Input.dispatchMouseEvent', {
+      type: 'mouseMoved',
+      x: 720,
+      y: 500
+    });
+    await cdp.send('Input.dispatchMouseEvent', {
+      type: 'mouseWheel',
+      x: 720,
+      y: 500,
+      deltaX: 0,
+      deltaY: 540
+    });
+    await sleep(220);
+    state = await cdp.evaluate(`({
+      y: scrollY,
+      overflow: getComputedStyle(document.body).overflowY,
+      diagnostics: window.WagnerScrollDiagnostics?.getState(),
+      maxScroll: Math.max(0, document.documentElement.scrollHeight - innerHeight)
+    })`);
+    if (state.y > 120) return state;
+  }
+  return state;
+}
+
+async function captureScreenshot(cdp, name) {
+  if (!screenshotDir) return;
+  fs.mkdirSync(screenshotDir, { recursive: true });
+  var shot = await cdp.send('Page.captureScreenshot', { format: 'png', fromSurface: true, captureBeyondViewport: false });
+  fs.writeFileSync(path.join(screenshotDir, name), Buffer.from(shot.data, 'base64'));
+}
+
+async function navigate(cdp, url) {
+  var loaded = cdp.once('Page.loadEventFired', 15000);
+  await cdp.send('Page.navigate', { url: url });
+  await loaded;
+}
+
+function buildTestHtml() {
+  var html = fs.readFileSync(path.join(root, 'public', 'index.html'), 'utf8');
+  var css = fs.readFileSync(path.join(root, 'public', 'css', 'app.css'), 'utf8').replace(/<\/style/gi, '<\\/style');
+  html = html.replace(/<link[^>]+(?:fonts\.googleapis|preconnect|rel="preload")[^>]*>/gi, '');
+  html = html.replace(/<link rel="stylesheet" href="css\/app\.css">/i, '<style id="e2e-app-css">' + css + '</style>');
+  html = html.replace('<head>', '<head><script>window.__wagnerCLS=0;new PerformanceObserver(function(list){list.getEntries().forEach(function(e){if(!e.hadRecentInput)window.__wagnerCLS+=e.value;});}).observe({type:"layout-shift",buffered:true});<\/script>');
+  html = html.replace(/<script src="[^"]+" defer><\/script>/g, '');
+  return html;
+}
+
+function loadRuntimeScripts(cdp) {
+  var files = ['performance-safe.js', 'chat-client.js', 'feature-loader.js', 'main.js', 'matrix-rain.js', 'hero-effects.js', 'hero-fidelity.js', 'hero-motion.js', 'impact-experience.js'];
+  return files.reduce(function (promise, name) {
+    return promise.then(function () {
+      var code = fs.readFileSync(path.join(root, 'public', 'js', name), 'utf8');
+      var expression = '(function(){var s=document.createElement("script");s.textContent=' + JSON.stringify(code) + ';document.body.appendChild(s);return true;}())';
+      return cdp.evaluate(expression);
+    });
+  }, Promise.resolve());
+}
+
+async function setDocument(cdp, html) {
+  var tree = await cdp.send('Page.getFrameTree');
+  var frameId = tree.frameTree.frame.id;
+  await cdp.send('Page.setDocumentContent', { frameId: frameId, html: html });
+  await sleep(100);
+  await loadRuntimeScripts(cdp);
+  await sleep(150);
+}
+
+async function run() {
+  var chromeBin = findChrome();
+  var profile = fs.mkdtempSync(path.join(os.tmpdir(), 'wagner-e2e-'));
+  chrome = cp.spawn(chromeBin, [
+    '--headless=new', '--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage',
+    '--allow-file-access-from-files', '--disable-background-networking',
+    '--disable-background-timer-throttling', '--disable-renderer-backgrounding', '--disable-backgrounding-occluded-windows',
+    '--remote-debugging-port=' + debugPort, '--user-data-dir=' + profile,
+    '--window-size=1440,900', 'about:blank'
+  ], { stdio: ['ignore', 'ignore', 'ignore'], detached: process.platform !== 'win32', windowsHide: true });
+
+  await waitFor('http://127.0.0.1:' + debugPort + '/json/version', 10000);
+  var targetResponse = await fetch('http://127.0.0.1:' + debugPort + '/json/new?' + encodeURIComponent('about:blank'), { method: 'PUT' });
+  var target = await targetResponse.json();
+  var cdp = new CDP(target.webSocketDebuggerUrl);
+  await cdp.ready;
+  await Promise.all([cdp.send('Page.enable'), cdp.send('Runtime.enable'), cdp.send('Log.enable')]);
+  await cdp.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: screenshotDir ? 'no-preference' : 'reduce' }] });
+  cdp.on('Runtime.exceptionThrown', function (event) { errors.push('exception: ' + JSON.stringify(event.exceptionDetails)); });
+  cdp.on('Log.entryAdded', function (event) {
+    var entry = event.entry || {};
+    if (entry.level === 'error' && entry.source === 'javascript') errors.push('console: ' + entry.text);
+  });
+
+  var testHtml = buildTestHtml();
+  await setDocument(cdp, testHtml);
+  await cdp.evaluate("document.getElementById('bootSkip')?.click()");
+  await sleep(500);
+
+  var desktop = await cdp.evaluate(`(() => {
+    const visible = id => { const el=document.getElementById(id); if(!el) return false; const r=el.getBoundingClientRect(); const cs=getComputedStyle(el); return r.width>0&&r.height>0&&cs.display!=='none'&&cs.visibility!=='hidden'; };
+    return {
+      width: innerWidth,
+      noHorizontalOverflow: document.documentElement.scrollWidth <= innerWidth + 2,
+      header: visible('pmodeBtn') && visible('burgerBtn') === false,
+      hero: visible('heroFidelityStage'),
+      cv: !!document.querySelector('a[href="curriculo.html"]'),
+      whatsapp: document.getElementById('fabWhats')?.href.includes('wa.me/5511981504061'),
+      appCss: !!document.getElementById('e2e-app-css'),
+      impact: !!document.querySelector('.impact-kinetic-wordmark') && !!document.querySelector('.impact-skill-marquee'),
+      bentoColumns: getComputedStyle(document.querySelector('.proj-grid')).gridTemplateColumns.split(' ').length
+    };
+  })()`);
+  assert(desktop.noHorizontalOverflow, 'Desktop possui overflow horizontal.');
+  assert(desktop.header, 'Topo desktop ou botão apresentação não está visível.');
+  assert(desktop.hero && desktop.cv && desktop.whatsapp && desktop.appCss && desktop.impact, 'Contrato visual desktop incompleto.');
+  assert(desktop.bentoColumns >= 2, 'Bento grid não foi aplicado no desktop.');
+  var cls = await cdp.evaluate('Number(window.__wagnerCLS || 0)');
+  assert(cls <= 0.02, 'CLS acima do orçamento: ' + cls);
+  await captureScreenshot(cdp, 'desktop-hero.png');
+  if (screenshotDir) {
+    await cdp.evaluate("window.scrollTo(0, Math.max(720, document.querySelector('.hero')?.offsetHeight || 0));");
+    await sleep(650);
+    var matrixBefore = await cdp.evaluate('window.WagnerMatrixRain && window.WagnerMatrixRain.getState()');
+    await captureScreenshot(cdp, 'desktop-matrix-a.png');
+    await sleep(650);
+    var matrixAfter = await cdp.evaluate('window.WagnerMatrixRain && window.WagnerMatrixRain.getState()');
+    await captureScreenshot(cdp, 'desktop-matrix-b.png');
+    assert(matrixBefore && matrixAfter && matrixAfter.active, 'Canvas Matrix não ficou ativo após o Hero.');
+    assert(matrixAfter.frames > matrixBefore.frames + 5, 'Canvas Matrix não apresentou movimento contínuo entre os quadros.');
+    assert(matrixAfter.columns >= 60, 'Densidade Matrix insuficiente no desktop.');
+  }
+
+  var scroll = await dispatchNativeWheelUntilScrolled(cdp);
+  assert(scroll.maxScroll > 120, 'A página não possui altura rolável suficiente para o teste.');
+  assert(scroll.y > 120, 'A roda do mouse não deslocou a página de forma efetiva após 4 tentativas nativas.');
+  assert(scroll.overflow !== 'hidden', 'Scroll global ficou bloqueado.');
+  assert(scroll.diagnostics && scroll.diagnostics.nativeWheel === true, 'Diagnóstico de scroll nativo ausente.');
+
+  await cdp.evaluate(`window.fetch = async function () { return { ok:true, status:200, json:async function(){ return { content:[{type:'text',text:'Projetos do Wagner: Device Simulator Engine, AI Systems & Automation e Premium Dashboards.'}] }; } }; };`);
+  await cdp.evaluate("document.getElementById('fabChat').click()");
+  await sleep(250);
+  var chatOpen = await cdp.evaluate(`(() => { const p=document.getElementById('chatPanel'); return p.classList.contains('open') && p.getAttribute('aria-hidden')==='false' && !p.inert; })()`);
+  assert(chatOpen, 'Chat não abriu.');
+  await cdp.evaluate(`(() => { const i=document.getElementById('chatInput'); i.value='Quais são os projetos do Wagner?'; i.dispatchEvent(new Event('input',{bubbles:true})); document.getElementById('chatSend').click(); })()`);
+  await sleep(450);
+  var chatReply = await cdp.evaluate(`document.getElementById('chatBody').textContent`);
+  assert(/projet|Device Simulator|Wagner/i.test(chatReply), 'Chat não apresentou resposta.');
+  await cdp.evaluate("document.getElementById('chatClose').click()");
+  await sleep(150);
+  assert(await cdp.evaluate("document.getElementById('chatPanel').getAttribute('aria-hidden')==='true'"), 'Chat não fechou.');
+
+  await cdp.evaluate("window.scrollTo(0,0); document.getElementById('pmodeBtn').click()");
+  await sleep(1500);
+  assert(await cdp.evaluate("document.body.classList.contains('pmode-active') && !!document.getElementById('pmExit')"), 'Modo apresentação não iniciou.');
+  await cdp.evaluate("document.getElementById('pmExit').click()");
+  await sleep(100);
+  await cdp.evaluate("document.getElementById('pmModalExit').click()");
+  await sleep(250);
+  assert(await cdp.evaluate("!document.body.classList.contains('pmode-active') && getComputedStyle(document.body).overflowY !== 'hidden'"), 'Modo apresentação não encerrou corretamente.');
+
+  await cdp.send('Emulation.setDeviceMetricsOverride', { width: 1024, height: 900, deviceScaleFactor: 1, mobile: false });
+  await setDocument(cdp, testHtml);
+  await cdp.evaluate("document.getElementById('bootSkip')?.click()");
+  await sleep(350);
+  var tablet = await cdp.evaluate(`(() => ({
+    overflow: document.documentElement.scrollWidth <= innerWidth + 2,
+    projects: getComputedStyle(document.querySelector('.proj-grid')).gridTemplateColumns.split(' ').filter(Boolean).length,
+    presentation: !!document.getElementById('pmodeBtn') && !!document.getElementById('pmodeMobileBtn'),
+    impact: !!document.querySelector('.impact-kinetic-wordmark') && !!document.querySelector('.impact-skill-marquee')
+  }))()`);
+  assert(tablet.overflow && tablet.projects >= 2 && tablet.presentation && tablet.impact, 'Layout tablet ou camada visual inválida.');
+
+  await cdp.send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
+  await setDocument(cdp, testHtml);
+  await cdp.evaluate("document.getElementById('bootSkip')?.click()");
+  await sleep(500);
+  var mobileBefore = await cdp.evaluate(`(() => { const b=document.getElementById('burgerBtn'); const r=b.getBoundingClientRect(); return { burger:r.width>0&&r.height>0, overflow:document.documentElement.scrollWidth<=innerWidth+2 }; })()`);
+  assert(mobileBefore.burger && mobileBefore.overflow, 'Layout mobile inválido ou menu ausente.');
+  await cdp.evaluate("document.getElementById('burgerBtn').click()");
+  await sleep(180);
+  assert(await cdp.evaluate("document.getElementById('mobileNav').classList.contains('open') && document.getElementById('mobileNav').getAttribute('aria-hidden')==='false'"), 'Menu mobile não abriu.');
+  await cdp.evaluate("document.getElementById('mobileNavClose').click()");
+  await sleep(120);
+  assert(await cdp.evaluate("!document.getElementById('mobileNav').classList.contains('open')"), 'Menu mobile não fechou.');
+  await cdp.evaluate('window.scrollTo(0,0)');
+  await sleep(220);
+  await captureScreenshot(cdp, 'mobile-hero.png');
+
+
+
+  var boundaryViewports = [
+    { width: 320, height: 700, mobile: true },
+    { width: 360, height: 780, mobile: true },
+    { width: 430, height: 860, mobile: true },
+    { width: 760, height: 900, mobile: true },
+    { width: 761, height: 900, mobile: false },
+    { width: 1280, height: 900, mobile: false },
+    { width: 1919, height: 1001, mobile: false },
+    { width: 2560, height: 1080, mobile: false }
+  ];
+  for (var boundaryIndex = 0; boundaryIndex < boundaryViewports.length; boundaryIndex += 1) {
+    var boundary = boundaryViewports[boundaryIndex];
+    await cdp.send('Emulation.setDeviceMetricsOverride', {
+      width: boundary.width,
+      height: boundary.height,
+      deviceScaleFactor: 1,
+      mobile: boundary.mobile
+    });
+    await setDocument(cdp, testHtml);
+    await cdp.evaluate("document.getElementById('bootSkip')?.click()");
+    await cdp.evaluate(`Promise.race([Promise.all([...document.images].map(function(img){ return img.complete && img.naturalWidth > 0 ? true : img.decode().catch(function(){ return false; }); })), new Promise(function(resolve){ setTimeout(resolve, 3500); })])`);
+    await sleep(220);
+    var boundaryReport = await cdp.evaluate(`(() => ({
+      width: innerWidth,
+      overflow: document.documentElement.scrollWidth <= innerWidth + 2,
+      hero: !!document.getElementById('heroFidelityStage'),
+      header: !!document.querySelector('body > header'),
+      imageComplete: document.querySelector('.hero-fidelity-image')?.complete === true,
+      imageNaturalWidth: document.querySelector('.hero-fidelity-image')?.naturalWidth || 0
+    }))()`);
+    assert(boundaryReport.overflow, 'Overflow horizontal em ' + boundary.width + 'px.');
+    assert(boundaryReport.hero && boundaryReport.header, 'Contrato do topo ausente em ' + boundary.width + 'px.');
+  }
+
+  assert(errors.length === 0, 'Erros JavaScript detectados no navegador:\n' + errors.join('\n'));
+  cdp.close();
+  console.log('E2E aprovado: 320–2560px, CLS, desktop, wheel scroll, chat assíncrono, apresentação, WhatsApp/CV e menu mobile.');
+}
+
+run().catch(function (error) {
+  console.error(error.stack || error);
+  process.exitCode = 1;
+}).finally(function () {
+  terminateChromeTree(chrome);
+});
+
+---FILE4---
+(function () {
+  'use strict';
+
+  var canvas = document.getElementById('matrixCanvas');
+  if (!canvas || !canvas.getContext) return;
+
+  var context = canvas.getContext('2d', { alpha: true, desynchronized: true });
+  var hero = document.querySelector('.hero');
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var fontSize = reduceMotion ? 17 : 14;
+  var frameInterval = 1000 / (reduceMotion ? 18 : 30);
+  var width = 1;
+  var height = 1;
+  var ratio = 1;
+  var drops = [];
+  var lastFrame = 0;
+  var frames = 0;
+  var active = false;
+  var raf = 0;
+  var glyphs = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ<>/{}[]'.split('');
+
+  function resize() {
+    width = Math.max(1, window.innerWidth);
+    height = Math.max(1, window.innerHeight);
+    ratio = Math.min(window.devicePixelRatio || 1, reduceMotion ? 1 : 1.25);
+    canvas.width = Math.round(width * ratio);
+    canvas.height = Math.round(height * ratio);
+    canvas.style.width = width + 'px';
+    canvas.style.height = height + 'px';
+    context.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+    var spacing = reduceMotion ? 24 : 14;
+    var columns = Math.ceil(width / spacing);
+    drops = new Array(columns);
+    for (var index = 0; index < columns; index += 1) {
+      drops[index] = Math.floor(Math.random() * -(height / fontSize));
+    }
+    context.clearRect(0, 0, width, height);
+  }
+
+  function isPostHero() {
+    var threshold = hero ? Math.max(320, hero.offsetHeight * 0.62) : 420;
+    return window.scrollY >= threshold;
+  }
+
+  function draw(now) {
+    raf = window.requestAnimationFrame(draw);
+    if (document.hidden || now - lastFrame < frameInterval) return;
+    lastFrame = now;
+
+    var shouldRun = isPostHero();
+    if (!shouldRun) {
+      if (active) context.clearRect(0, 0, width, height);
+      active = false;
+      return;
+    }
+
+    active = true;
+    frames += 1;
+    context.fillStyle = 'rgba(0, 4, 2, 0.075)';
+    context.fillRect(0, 0, width, height);
+    context.font = '600 ' + fontSize + 'px JetBrains Mono, Consolas, monospace';
+    context.textAlign = 'center';
+
+    var spacing = width / drops.length;
+    for (var index = 0; index < drops.length; index += 1) {
+      var glyph = glyphs[Math.floor(Math.random() * glyphs.length)];
+      var x = index * spacing + spacing / 2;
+      var y = drops[index] * fontSize;
+      context.fillStyle = Math.random() > 0.965 ? '#d9ffe2' : '#00ff41';
+      context.fillText(glyph, x, y);
+      if (y > height && Math.random() > 0.972) drops[index] = 0;
+      else drops[index] += 1;
+    }
+  }
+
+  var resizeTimer = 0;
+  window.addEventListener('resize', function () {
+    window.clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(resize, 140);
+  }, { passive: true });
+
+  resize();
+  raf = window.requestAnimationFrame(draw);
+
+  window.WagnerMatrixRain = {
+    getState: function () {
+      return {
+        active: active,
+        frames: frames,
+        columns: drops.length,
+        fpsLimit: reduceMotion ? 18 : 30,
+        width: width,
+        height: height
+      };
+    },
+    stop: function () {
+      if (raf) window.cancelAnimationFrame(raf);
+      raf = 0;
+    }
+  };
+}());

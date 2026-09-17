@@ -68,18 +68,21 @@ test('chuva Matrix usa canvas visível e mantém o conteúdo acima da animação
   var matrix = fs.readFileSync(path.join(root, 'src', 'styles', 'matrix-rain-v2.css'), 'utf8');
   var build = fs.readFileSync(path.join(root, 'scripts', 'build-css.js'), 'utf8');
   var generated = fs.readFileSync(path.join(root, 'public', 'css', 'app.css'), 'utf8');
-  var main = fs.readFileSync(path.join(root, 'public', 'js', 'main.js'), 'utf8');
+  var html = fs.readFileSync(path.join(root, 'public', 'index.html'), 'utf8');
+  var runtime = fs.readFileSync(path.join(root, 'public', 'js', 'matrix-rain.js'), 'utf8');
   assert.match(source, /\.cv-terminal-content::before,\s*\n\.cv-terminal-content::after\s*\{[\s\S]*?background-image:\s*url\(/);
   assert.match(theme, /\.cv-terminal-content\s*\{[\s\S]*?background-image:/);
   assert.doesNotMatch(theme, /\.cv-terminal-content::before\s*\{[\s\S]{0,260}?z-index:\s*-1/);
   assert.doesNotMatch(theme, /\.cv-terminal-content::before\s*\{[\s\S]{0,260}?display:\s*none/);
   assert.match(build, /matrix-rain-v2\.css/);
-  assert.match(matrix, /#bgCanvas\s*\{[\s\S]*?z-index:\s*4;[\s\S]*?mix-blend-mode:\s*screen;/);
-  assert.match(generated, /#bgCanvas\s*\{[\s\S]*?z-index:\s*4;[\s\S]*?mix-blend-mode:\s*screen;/);
+  assert.match(matrix, /#matrixCanvas\s*\{[\s\S]*?z-index:\s*4;[\s\S]*?mix-blend-mode:\s*screen;/);
+  assert.match(generated, /#matrixCanvas\s*\{[\s\S]*?z-index:\s*4;[\s\S]*?mix-blend-mode:\s*screen;/);
   assert.match(generated, /\.cv-terminal-content::before,\s*\n\.cv-terminal-content::after\s*\{\s*display:\s*none\s*!important;/);
-  assert.match(main, /var columnGap = W < 600 \? 19 : 17;/);
-  assert.match(main, /var matrixStrength = matrixVisibility \* 0\.96;/);
-  assert.match(main, /1000 \/ 30/);
+  assert.match(html, /<canvas id="matrixCanvas" aria-hidden="true"><\/canvas>/);
+  assert.match(html, /<script src="js\/matrix-rain\.js" defer><\/script>/);
+  assert.match(runtime, /rgba\(0, 4, 2, 0\.075\)/);
+  assert.match(runtime, /window\.WagnerMatrixRain/);
+  assert.match(runtime, /1000 \/ \(reduceMotion \? 18 : 30\)/);
 });
 
 test('asset W prismatico permanece WebP e o HTML conserva os hotspots originais', function () {

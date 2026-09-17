@@ -1,21 +1,30 @@
 /* =====================================================================
-   WAGNER.OS — MATRIX RAIN v2
-   Procedural full-screen rain. This module is appended last by build-css.js
-   so older decorative SVG rails cannot replace the live canvas.
+   WAGNER.OS — MATRIX REFERENCE INTEGRATION
+   Dedicated canvas based on efeito-matrix-master. Appended last so the
+   animation cannot be hidden by legacy theme layers.
    ===================================================================== */
-#bgCanvas {
+#matrixCanvas {
+  position: fixed;
+  inset: 0;
   z-index: 4;
-  opacity: .92;
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  opacity: .82;
   mix-blend-mode: screen;
+  contain: strict;
 }
 
-/* Retire the old two-column SVG rails. The canvas supplies the complete,
-   responsive animation while the main stacking context protects readability. */
 .cv-terminal-content::before,
 .cv-terminal-content::after {
   display: none !important;
 }
 
 @media (max-width: 760px) {
-  #bgCanvas { opacity: .76; }
+  #matrixCanvas { opacity: .68; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #matrixCanvas { display: block !important; opacity: .56; }
 }

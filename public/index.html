@@ -68,6 +68,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Orbitron:wght@500;600;700;800;900&family=Rajdhani:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/redesign-reference.css">
 </head>
 <body>
 <a class="skip-link" href="#mainContent">Pular para o conteúdo principal</a>
@@ -110,23 +111,22 @@
 <div class="film-grain" aria-hidden="true"></div>
 
 <!-- ===== HEADER ===== -->
-<header role="banner">
-  <a class="brand cyber-brand" href="#top" aria-label="Wagner Persoli — início">
-    <div class="brand-copy">
-      <strong>WAGNER<span>.OS</span></strong>
-      <small>FULL-STACK · AI SYSTEMS</small>
-    </div>
-  </a>
-
-  <nav class="mainnav" role="navigation" aria-label="Menu principal">
-    <a href="#top">HOME</a>
-    <a href="#featured">LAB</a>
-    <a href="#projects">PROJETOS</a>
-    <a href="#stack">STACK</a>
-    <a href="#logs">TERMINAL</a>
-    <a href="curriculo.html" target="_blank" rel="noopener noreferrer">CV</a>
-    <a href="#contact">CONTATO</a>
+<header role="banner" id="siteHeader">
+  <a class="brand redesign-brand" href="#top" aria-label="Wagner.OS — início"><span class="brand-mark" aria-hidden="true"><i></i><i></i></span><span class="brand-word">WAGNER<span>.OS</span></span></a>
+  <nav class="mainnav redesign-nav" aria-label="Menu principal">
+    <a href="#top">INÍCIO</a><a href="#projects">PROJETOS</a><a href="#about">SOBRE</a><a href="#stack">STACK</a><a href="#logs">NOTAS</a>
   </nav>
+  <div class="header-actions">
+    <a class="header-talk" href="#contact">VAMOS CONVERSAR <span>↗</span></a>
+    <button type="button" class="pmode-btn" id="pmodeBtn" aria-label="Ativar modo apresentação" data-active="false"><span class="pmode-label">APRESENTAR</span></button>
+    <button type="button" class="burger" id="burgerBtn" aria-label="Abrir menu" aria-expanded="false" aria-controls="mobileNav"><span></span><span></span><span></span></button>
+  </div>
+</header>
+<nav id="mobileNav" class="mobile-nav redesign-mobile-nav" role="navigation" aria-label="Menu mobile" aria-hidden="true">
+  <button type="button" class="mobile-nav-close" id="mobileNavClose" aria-label="Fechar menu">✕</button>
+  <a href="#top" class="mobile-nav-link">INÍCIO</a><a href="#projects" class="mobile-nav-link">PROJETOS</a><a href="#about" class="mobile-nav-link">SOBRE</a><a href="#stack" class="mobile-nav-link">STACK</a><a href="#logs" class="mobile-nav-link">NOTAS</a><a href="#contact" class="mobile-nav-link">CONTATO</a>
+  <button type="button" class="mobile-nav-link mobile-pmode-btn" id="pmodeMobileBtn" aria-label="Ativar modo apresentação" data-active="false">MODO APRESENTAÇÃO</button>
+</nav>
 
   <div class="status-cluster">
     <div class="status-pill" aria-label="Status do sistema: online"><span class="dot" aria-hidden="true"></span> ONLINE</div>
@@ -154,268 +154,45 @@
 
 <!-- ===== MAIN ===== -->
 <main id="mainContent">
+<section id="top" class="hero redesign-hero" aria-label="Apresentação profissional">
+  <div class="hero-grid-lines" aria-hidden="true"></div><div class="hero-orbit hero-orbit-a" aria-hidden="true"></div><div class="hero-orbit hero-orbit-b" aria-hidden="true"></div>
+  <div class="hero-wave" aria-hidden="true"><span class="wave wave-1"></span><span class="wave wave-2"></span><span class="wave wave-3"></span><i class="wave-core"></i></div>
+  <div class="hero-copy">
+    <div class="hero-badge">PORTFÓLIO DIGITAL · <b>2026</b></div>
+    <h1>Engenharia, IA e<br><span>experiências de impacto</span></h1>
+    <p>Transformo ideias complexas em sistemas digitais inteligentes, escaláveis e orientados a resultado. Design, código e automação trabalhando juntos para gerar impacto real.</p>
+    <div class="hero-cta-row"><a class="hero-explore" href="#projects">EXPLORAR PROJETOS <b>•</b></a><a class="hero-cv" href="docs/curriculo-wagner-persoli-filho.pdf" download>CV / PDF <span>↓</span></a></div>
+  </div>
+  <div class="hero-role-cue"><span>⌄</span> ROLE PARA EXPLORAR</div>
+  <div class="hero-brand-lockup" aria-hidden="true"><div class="lockup-main">WAGNER<span>.OS</span></div><div class="lockup-sub">WAGNER PERS. F. · AI SYSTEMS LAB</div></div>
+  <div class="hero-fidelity-stage" id="heroFidelityStage" aria-hidden="true"></div><button type="button" id="heroEnergyToggle" class="sr-only">Energy</button><span id="heroElectricFlash" class="sr-only"></span>
+</section>
 
-  <!-- HERO — fidelity master scene -->
-  <section class="hero cyber-hero fidelity-hero" id="top" aria-label="Apresentação profissional de Wagner Persoli">
-    <div class="impact-kinetic-wordmark" aria-hidden="true"><span>WAGNER</span><small>FULL-STACK · AI SYSTEMS · AUTOMATION</small></div>
-    <div class="impact-hero-orbit" aria-hidden="true"></div>
-    <div class="hero-atmosphere" aria-hidden="true">
-      <canvas id="heroLightningCanvas" class="hero-lightning-canvas"></canvas>
-      <canvas id="heroMotionCanvas" class="hero-motion-canvas" aria-hidden="true"></canvas>
-      <span class="hero-electric-flash" id="heroElectricFlash"></span>
-      <span class="hero-energy-column"></span>
-      <span class="hero-scanline"></span>
-      <span class="hero-fidelity-glow hero-fidelity-glow--left"></span>
-      <span class="hero-fidelity-glow hero-fidelity-glow--right"></span>
-      <span class="hero-fidelity-particles"></span>
-    </div>
+<section id="featured" class="feature-section" aria-label="Projetos em destaque">
+  <div class="section-intro-row"><div><span class="section-kicker">— DIREÇÕES CRIATIVAS</span><h2>Design para<br><span>elevar</span> o nível</h2></div><div class="section-intro-copy">Unindo impacto visual, performance e acessibilidade para criar experiências digitais que não apenas impressionam, mas também convertem e permanecem.</div><a class="section-pill" href="#projects">VER TODOS OS PROJETOS <b>＋</b></a></div>
+  <div id="projects" class="proj-grid">
+    <article class="proj-card proj-featured"><span class="proj-index">01 / 10</span><div class="proj-art art-dashboard"></div><div class="proj-copy"><h3>NEXUS DASHBOARD</h3><p>Plataforma analítica em tempo real</p><div class="tags"><b>REACT</b><b>TYPESCRIPT</b><b>CHART.JS</b></div></div><a href="#contact" class="proj-arrow">↗</a></article>
+    <article class="proj-card"><span class="proj-index">02 / 10</span><div class="proj-art art-elevate"></div><div class="proj-copy"><h3>ELEVATE</h3><p>Landing page institucional</p><div class="tags"><b>NEXT.JS</b><b>TAILWIND</b><b>ANIMATION</b></div></div><a href="#contact" class="proj-arrow">↗</a></article>
+    <article class="proj-card"><span class="proj-index">03 / 10</span><div class="proj-art art-finance"></div><div class="proj-copy"><h3>FINANCE FLOW</h3><p>App de gestão financeira</p><div class="tags"><b>REACT NATIVE</b><b>EXPO</b><b>ZUSTAND</b></div></div><a href="#contact" class="proj-arrow">↗</a></article>
+    <article class="proj-card"><span class="proj-index">04 / 10</span><div class="proj-art art-meta"></div><div class="proj-copy"><h3>METAVISÃO</h3><p>Experiência 3D imersiva</p><div class="tags"><b>WEBGL</b><b>THREE.JS</b><b>GLSL</b></div></div><a href="#contact" class="proj-arrow">↗</a></article>
+    <article class="proj-card"><span class="proj-index">05 / 10</span><div class="proj-art art-automate"></div><div class="proj-copy"><h3>AUTOMATE OS</h3><p>Sistema de automação</p><div class="tags"><b>PYTHON</b><b>FASTAPI</b><b>POSTGRES</b></div></div><a href="#contact" class="proj-arrow">↗</a></article>
+    <article class="proj-card"><span class="proj-index">06 / 10</span><div class="proj-art art-marketing"></div><div class="proj-copy"><h3>CORE MARKETING</h3><p>Site institucional</p><div class="tags"><b>NEXT.JS</b><b>SEO</b><b>ANIMATION</b></div></div><a href="#contact" class="proj-arrow">↗</a></article>
+    <article class="proj-card"><span class="proj-index">07 / 10</span><div class="proj-art art-data"></div><div class="proj-copy"><h3>DATA PULSE</h3><p>Visualização de dados</p><div class="tags"><b>D3.JS</b><b>TYPESCRIPT</b><b>SVG</b></div></div><a href="#contact" class="proj-arrow">↗</a></article>
+  </div>
+</section>
+<div class="skill-marquee impact-skill-marquee" aria-hidden="true"><div>FRONTEND <b>＋</b> UI/UX <b>＋</b> REACT <b>＋</b> DESIGN <b>＋</b> CSS <b>＋</b> ANIMATION <b>＋</b> WEBGL <b>＋</b> TYPESCRIPT <b>＋</b> IA <b>＋</b> AUTOMAÇÃO <b>＋</b> PERFORMANCE</div></div>
+<div class="skill-marquee marquee-alt" aria-hidden="true"><div>AUTOMAÇÃO <b>＋</b> IA <b>＋</b> TYPESCRIPT <b>＋</b> WEBGL <b>＋</b> ANIMATION <b>＋</b> CSS <b>＋</b> DESIGN <b>＋</b> REACT <b>＋</b> UI/UX <b>＋</b> FRONTEND <b>＋</b> A11Y</div></div>
 
-    <div class="hero-fidelity-shell">
-      <div class="hero-fidelity-stage hero-brand-stage" id="heroFidelityStage" tabindex="0" aria-label="Cena interativa WAGNER.OS. Clique ou pressione Enter para uma descarga elétrica.">
-        <img
-          src="img/hero-fidelity-master.webp"
-          class="hero-fidelity-image"
-          alt="Monograma W metálico de Wagner Persoli em cenário cyberpunk com iluminação neon amarela, ciano e verde"
-          width="4086"
-          height="1913"
-          decoding="async"
-          fetchpriority="high">
+<section id="about" class="system-section"><div class="system-panel"><div class="system-brand"><span class="system-line"></span><strong>WAGNER<span>.OS</span></strong><small>sistema operacional pessoal<br>v1.0.0</small></div><div class="system-terminal"><div>&gt; INICIANDO SISTEMA...</div><div>&gt; CARREGANDO MÓDULOS</div><div>&gt; VERIFICANDO DEPENDÊNCIAS</div><div>&gt; SISTEMA <b>ONLINE</b></div><div class="system-status">STATUS: 100% <span></span></div></div><div class="system-globe" aria-hidden="true"></div></div></section>
 
-        <span class="hero-stage-bleed hero-stage-bleed--left" aria-hidden="true"></span>
-        <span class="hero-stage-bleed hero-stage-bleed--right" aria-hidden="true"></span>
-        <img src="img/hero-w-energy.webp" class="hero-logo-cutout hero-logo-cutout--glow" alt="" aria-hidden="true" width="645" height="550" decoding="async">
-        <img src="img/hero-w-energy.webp" class="hero-logo-cutout" alt="" aria-hidden="true" width="645" height="550" decoding="async">
-        <span class="hero-logo-aura" aria-hidden="true"></span>
-        <span class="hero-logo-sweep" aria-hidden="true"></span>
-        <span class="hero-logo-edge-energy" aria-hidden="true"></span>
-        <span class="hero-logo-core-flare" aria-hidden="true"></span>
-        <span class="hero-platform-energy" aria-hidden="true"></span>
-        <span class="hero-platform-ring hero-platform-ring--1" aria-hidden="true"></span>
-        <span class="hero-platform-ring hero-platform-ring--2" aria-hidden="true"></span>
-        <span class="hero-platform-ring hero-platform-ring--3" aria-hidden="true"></span>
-        <svg class="hero-logo-contour" viewBox="0 0 1456 834" aria-hidden="true" focusable="false">
-          <path d="M104 124 L224 128 L371 384 L459 237 L592 244 L527 366 L424 548 L309 548 L114 201"/>
-          <path d="M226 128 L339 132 L484 386 L412 520 L274 278"/>
-          <path d="M339 132 L596 135 L650 188 L617 238 L465 238"/>
-          <path d="M409 239 L542 240 L506 306 L443 306 L475 367"/>
-          <path d="M420 550 L504 438 L555 520 L476 617 Z"/>
-        </svg>
-        <span class="hero-logo-lightning" aria-hidden="true"></span>
-        <span class="hero-top-energy-rail" aria-hidden="true"></span>
-        <span class="hero-fidelity-reflection" aria-hidden="true"></span>
-        <span class="hero-fidelity-sheen" aria-hidden="true"></span>
-        <span class="hero-fidelity-vignette" aria-hidden="true"></span>
+<section id="stack" class="info-section"><div class="info-heading"><span class="section-kicker">— STACK & INFRAESTRUTURA</span><h2>Experiência que<br><span>vira sistema.</span></h2></div><div class="info-grid"><article><small>01</small><h3>INFRAESTRUTURA</h3><p>Windows Server, Active Directory, DNS, VPN, Microsoft 365, Azure, servidores físicos e virtuais, redes, backups e troubleshooting N1/N2/N3.</p></article><article><small>02</small><h3>FULL-STACK</h3><p>Interfaces web, APIs, automações, JavaScript, Node.js, React, Python e integração de serviços para produtos digitais.</p></article><article><small>03</small><h3>IA & AUTOMAÇÃO</h3><p>Integração de LLMs, RPA, fluxos inteligentes e automação orientada a ganho operacional e experiência.</p></article></div></section>
 
-        <!-- Hotspots preservam a composição visual e mantêm controles acessíveis sobre o hero. -->
-        <a class="hero-hotspot hero-hotspot--projects" href="#projects" aria-label="Ver projetos" title="Ver projetos"></a>
-        <a class="hero-hotspot hero-hotspot--cv" href="docs/curriculo-wagner-persoli-filho.pdf" download aria-label="Baixar currículo em PDF" title="Baixar currículo em PDF"></a>
-        <a class="hero-hotspot hero-hotspot--github" href="https://github.com/Wpersoli" target="_blank" rel="noopener noreferrer" aria-label="Abrir GitHub" title="GitHub"></a>
-        <a class="hero-hotspot hero-hotspot--linkedin" href="https://www.linkedin.com/in/wagner-persoli-f-3004bb91" target="_blank" rel="noopener noreferrer" aria-label="Abrir LinkedIn" title="LinkedIn"></a>
-        <a class="hero-hotspot hero-hotspot--x" href="https://x.com/covildosloboss" target="_blank" rel="noopener noreferrer" aria-label="Abrir perfil no X" title="X"></a>
-        <a class="hero-hotspot hero-hotspot--email" href="mailto:wagnerpersoli@hotmail.com" aria-label="Enviar e-mail" title="Enviar e-mail"></a>
+<section id="logs" class="notes-section"><div class="notes-terminal terminal-wrap"><div class="notes-top"><span>●</span><span>●</span><span>●</span><b>wagner@systems-lab: ~/notes</b></div><div class="notes-body" id="termBody"><div>&gt; 12+ ANOS EM TI CORPORATIVO</div><div>&gt; SUPORTE AVANÇADO / INFRAESTRUTURA / FULL-STACK</div><div>&gt; APPLE · TIVIT · INFOPLUS · CONSULTORIA</div><div>&gt; AUTOMAÇÃO + IA + SISTEMAS</div><div class="ok">&gt; STATUS: READY FOR NEXT BUILD</div></div></div><div class="notes-copy"><span class="section-kicker">— SESSION NOTES</span><h2>Construído com<br><span>código e propósito.</span></h2><p>Um portfólio técnico que conecta experiência corporativa, engenharia de software, IA e automação em uma única linguagem visual.</p></div></section>
 
-        <button type="button" class="hero-energy-toggle fidelity-energy-toggle" id="heroEnergyToggle" aria-pressed="false" aria-keyshortcuts="E" title="Ativar intensidade elétrica máxima (tecla E)">ENERGY // AUTO</button>
-
-
-        <div class="hero-clean-overlay" aria-label="Ações rápidas do topo">
-          <div class="hero-clean-actions">
-            <a class="hero-clean-btn hero-clean-btn--primary" href="#projects">VER PROJETOS <span aria-hidden="true">↗</span></a>
-            <a class="hero-clean-btn" href="docs/curriculo-wagner-persoli-filho.pdf" download>DOWNLOAD CV <span aria-hidden="true">⇩</span></a>
-          </div>
-          <div class="hero-clean-socials" aria-label="Redes profissionais">
-            <a href="https://github.com/Wpersoli" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GH</a>
-            <a href="https://www.linkedin.com/in/wagner-persoli-f-3004bb91" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">IN</a>
-            <a href="https://x.com/covildosloboss" target="_blank" rel="noopener noreferrer" aria-label="X">X</a>
-            <a href="mailto:wagnerpersoli@hotmail.com" aria-label="Enviar e-mail">@</a>
-          </div>
-        </div>
-
-        <div class="hero-live-semantics">
-          <div class="hero-eyebrow">DEVELOPER · INNOVATOR · PROBLEM SOLVER</div>
-          <h1 class="hero-title"><span>WAGNER</span> <span>PERSOLI F.</span></h1>
-          <p class="hero-desc">Desenvolvedor Full-Stack e IA. Construo sistemas digitais inteligentes, escaláveis e orientados a resultado.</p>
-          <div class="hero-copy-panel">
-            <div class="hero-actions">
-              <a href="#projects">Ver projetos</a>
-              <a href="curriculo.html" target="_blank" rel="noopener noreferrer">Visualizar currículo</a>
-              <a href="#contact">Abrir contato</a>
-            </div>
-          </div>
-          <div class="hero-stats" aria-label="Indicadores profissionais">
-            <span>12+ anos em TI</span><span>20+ projetos</span><span>24/7 systems online</span><span>100K+ linhas versionadas</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="hero-mobile-action-dock" aria-label="Ações rápidas">
-        <a href="#projects" class="hero-mobile-primary">VER PROJETOS <span aria-hidden="true">↗</span></a>
-        <a href="docs/curriculo-wagner-persoli-filho.pdf" download>BAIXAR CV <span aria-hidden="true">⇩</span></a>
-        <button type="button" data-open-chat="true" aria-label="Abrir assistente de IA">ABRIR CHAT <span aria-hidden="true">⌁</span></button>
-        <a href="#contact">CONTATO <span aria-hidden="true">→</span></a>
-      </div>
-    </div>
-  </section>
-
-  <!-- CURRICULUM / TERMINAL CONTENT — VISUAL REFERENCE REBUILD -->
-  <main class="cv-terminal-content" aria-label="Currículo profissional">
-
-    <!-- PERFIL PROFISSIONAL: keeps #projects as the stable navigation anchor -->
-    <section id="projects" class="cv-section cv-profile-section" data-impact-index="01" aria-label="Perfil profissional">
-      <div class="impact-kinetic-wordmark" aria-hidden="true"><span>W</span><small>WAGNER.OS</small></div>
-      <div class="cv-section-heading reveal">
-        <h2 class="cv-section-title"><span class="cv-prefix">&gt;</span> PERFIL PROFISSIONAL<span class="cv-cursor">_</span></h2>
-      </div>
-      <div class="cv-profile-box broken-border reveal">
-        <p>
-          Analista de Infraestrutura e Tecnologia da Informação com mais de <strong>12 anos de experiência</strong> em ambientes corporativos críticos, outsourcing e consultoria. Atuação sólida em Administração de Redes, Active Directory, Windows Server, Microsoft 365, Azure e suporte N1/N2/N3, com experiência prática em redes, identidades e acessos, DNS, DHCP, VPN, servidores físicos e virtuais, virtualização, backups e continuidade operacional. Perfil hands-on em troubleshooting e análise de causa raiz, incluindo montagem, configuração e manutenção de servidores físicos, provisionamento e sustentação de ambientes virtuais, além de diagnóstico e manutenção de hardware, endpoints e periféricos. Atuação orientada por ITIL, SLA e qualidade de serviço, com competência técnica em sistemas CFTV e diferencial em automação, Inteligência Artificial e desenvolvimento.
-        </p>
-      </div>
-    </section>
-
-    <!-- COMPETÊNCIAS TÉCNICAS -->
-    <section id="stack" class="cv-section cv-skills-section" data-impact-index="02" aria-label="Competências técnicas">
-      <div class="cv-section-heading reveal">
-        <span class="cv-section-kicker">EXPERTISE / INFRAESTRUTURA &amp; TECNOLOGIA</span>
-        <h2 class="cv-section-title"><span class="cv-prefix">&gt;</span> COMPETÊNCIAS TÉCNICAS<span class="cv-cursor">_</span></h2>
-        <p class="cv-section-intro">Conhecimento aplicado em ambientes corporativos críticos, da sustentação da infraestrutura à automação de processos.</p>
-      </div>
-      <div class="cv-skills-grid">
-        <article class="cv-skill-card reveal">
-          <span class="cv-skill-index" aria-hidden="true">01</span>
-          <div class="cv-skill-icon" aria-hidden="true">⌁</div>
-          <h3>REDES, AD &amp; IDENTIDADES</h3>
-          <p>Windows Server, AD, DNS, DHCP, VPN, Microsoft 365, Azure, usuários, grupos, permissões, políticas, GPO e governança de acessos.</p>
-        </article>
-        <article class="cv-skill-card reveal reveal-delay-1">
-          <span class="cv-skill-index" aria-hidden="true">02</span>
-          <div class="cv-skill-icon" aria-hidden="true">▤</div>
-          <h3>SERVIDORES &amp; VIRTUALIZAÇÃO</h3>
-          <p>Montagem, configuração e manutenção de servidores físicos; administração de servidores virtuais, virtualização, backups e Disaster Recovery.</p>
-        </article>
-        <article class="cv-skill-card reveal reveal-delay-2">
-          <span class="cv-skill-index" aria-hidden="true">03</span>
-          <div class="cv-skill-icon" aria-hidden="true">▣</div>
-          <h3>HARDWARE &amp; PERIFÉRICOS</h3>
-          <p>Análise de falhas, diagnóstico, montagem, manutenção preventiva/corretiva e substituição de componentes em desktops, notebooks, servidores, impressoras e periféricos.</p>
-        </article>
-        <article class="cv-skill-card reveal reveal-delay-3">
-          <span class="cv-skill-index" aria-hidden="true">04</span>
-          <div class="cv-skill-icon" aria-hidden="true">◉</div>
-          <h3>SUPORTE N1/N2/N3 &amp; ITIL</h3>
-          <p>Troubleshooting, incidentes, problemas e mudanças, SLA, TMA, FCR, KPIs, atendimento remoto/presencial, documentação e escalonamento técnico.</p>
-        </article>
-        <article class="cv-skill-card reveal reveal-delay-1">
-          <span class="cv-skill-index" aria-hidden="true">05</span>
-          <div class="cv-skill-icon" aria-hidden="true">◌</div>
-          <h3>CFTV &amp; MONITORAMENTO</h3>
-          <p>Técnico especialista em sistemas CFTV, com foco em diagnóstico, configuração, manutenção, suporte técnico e troubleshooting de soluções de monitoramento.</p>
-        </article>
-        <article class="cv-skill-card reveal reveal-delay-2">
-          <span class="cv-skill-index" aria-hidden="true">06</span>
-          <div class="cv-skill-icon" aria-hidden="true">&lt;/&gt;</div>
-          <h3>AUTOMAÇÃO, IA &amp; DESENVOLVIMENTO</h3>
-          <p>Python, JavaScript, Node.js, React, APIs REST, Git, Docker, CI/CD, RPA e integração de LLMs para automação e melhoria de processos.</p>
-        </article>
-      </div>
-      <div class="impact-skill-marquee cv-compat-marquee" aria-hidden="true">
-        <div class="impact-marquee-row"><span>INFRASTRUCTURE</span><span>NETWORKS</span><span>IDENTITY</span><span>AUTOMATION</span><span>AI</span></div>
-      </div>
-    </section>
-
-    <!-- Stable compatibility hook for the presentation engine; visual content is intentionally the reference layout. -->
-    <div id="featured" class="cv-compat-anchor" aria-hidden="true"><span class="feature-panel"></span>
-      <div class="cv-compat-visual-assets" aria-hidden="true">
-        <div class="project-visual"><img src="img/hero-fidelity-master-fallback.jpg" alt="" width="1" height="1">
-        <div class="project-visual"><img src="img/hero-w-energy.webp" alt="" width="1" height="1"></div>
-        <img class="assistant-robot" src="img/wp-concept-mark.webp" alt="" width="1" height="1">
-      </div>
-    </div>
-
-    <!-- EXPERIÊNCIA PROFISSIONAL -->
-    <section id="logs" class="cv-section cv-experience-section" data-impact-index="03" aria-label="Experiência profissional">
-      <div class="cv-section-heading reveal">
-        <h2 class="cv-section-title"><span class="cv-prefix">&gt;</span> EXPERIÊNCIA PROFISSIONAL<span class="cv-cursor">_</span></h2>
-      </div>
-
-      <div class="cv-timeline">
-        <article class="cv-exp-item reveal">
-          <span class="cv-exp-node" aria-hidden="true"></span>
-          <div class="cv-exp-head">
-            <div><h3>INFOPLUS</h3><div class="cv-role">IT Specialist · Analista de Infraestrutura Sênior</div></div>
-            <span class="cv-period">Mar 2022 – 2026</span>
-          </div>
-          <ul>
-            <li>Administração e governança de identidades e acessos via Active Directory e Microsoft 365, incluindo usuários, grupos, permissões e controles de acesso em ambiente corporativo de alta complexidade.</li>
-            <li>Administração e sustentação de redes corporativas, VPN, DNS e conectividade; montagem, configuração e manutenção de servidores físicos, provisionamento e sustentação de servidores virtuais e rotinas de backup.</li>
-            <li>Diagnóstico e manutenção preventiva/corretiva de hardware, endpoints e periféricos, com análise de falhas, substituição de componentes e foco em disponibilidade operacional.</li>
-            <li>Gestão de incidentes, problemas e mudanças alinhada às práticas ITIL, com priorização por criticidade, impacto e cumprimento de SLAs.</li>
-            <li>Acompanhamento de TMA, FCR e satisfação do cliente, com análise de recorrências, documentação e direcionamento de melhorias.</li>
-          </ul>
-        </article>
-
-        <article class="cv-exp-item reveal reveal-delay-1">
-          <span class="cv-exp-node" aria-hidden="true"></span>
-          <div class="cv-exp-head">
-            <div><h3>PARCEIRO AUTORIZADO APPLE</h3><div class="cv-role">Advisor · Suporte Técnico Avançado</div></div>
-            <span class="cv-period">Jan 2020 – Nov 2021</span>
-          </div>
-          <ul><li>Suporte técnico especializado N2/N3 para ecossistema Apple (macOS, iOS e iCloud), com diagnóstico de falhas complexas de software, hardware, rede e conectividade.</li><li>Atendimento multicanal por voz, chat e e-mail, com experiência do cliente, resolução no primeiro contato (FCR) e escalonamento de casos críticos.</li></ul>
-        </article>
-
-        <article class="cv-exp-item reveal reveal-delay-2">
-          <span class="cv-exp-node" aria-hidden="true"></span>
-          <div class="cv-exp-head">
-            <div><h3>CONNECTCOM</h3><div class="cv-role">Consultor de Suporte Técnico</div></div>
-            <span class="cv-period">Jul 2017 – Mar 2020</span>
-          </div>
-          <ul><li>Suporte técnico N1/N2 para hardware, software, redes e sistemas, diagnóstico e resolução de incidentes.</li></ul>
-        </article>
-
-        <article class="cv-exp-item reveal reveal-delay-1">
-          <span class="cv-exp-node" aria-hidden="true"></span>
-          <div class="cv-exp-head">
-            <div><h3>IT2B</h3><div class="cv-role">Consultor de Suporte Técnico</div></div>
-            <span class="cv-period">Mar 2012 – Jul 2017</span>
-          </div>
-          <ul><li>Atendimento e suporte técnico remoto e presencial, resolução de problemas e manutenção de ambiente.</li></ul>
-        </article>
-
-        <article class="cv-exp-item reveal reveal-delay-2">
-          <span class="cv-exp-node" aria-hidden="true"></span>
-          <div class="cv-exp-head">
-            <div><h3>TIVIT</h3><div class="cv-role">Analista de Suporte Técnico</div></div>
-            <span class="cv-period">Ago 2010 – Mar 2012</span>
-          </div>
-          <ul><li>Suporte a usuários, infraestrutura, redes e servidores, garantindo a disponibilidade dos serviços.</li></ul>
-        </article>
-      </div>
-
-      <!-- FORMAÇÃO + CERTIFICAÇÕES -->
-      <div class="cv-bottom-grid">
-        <article class="cv-bottom-card reveal">
-          <h2 class="cv-mini-title"><span class="cv-prefix">&gt;</span> FORMAÇÃO ACADÊMICA<span class="cv-cursor">_</span></h2>
-          <div class="cv-edu-item"><strong>Análise e Desenvolvimento de Sistemas</strong><span>FECAP – Fundação Álvares Penteado</span><b>2006 – 2010</b></div>
-          <div class="cv-edu-item"><strong>Gestão da Tecnologia da Informação</strong><span>FECAP – Fundação Álvares Penteado</span><b>2006 – 2010</b></div>
-        </article>
-        <article class="cv-bottom-card reveal reveal-delay-1">
-          <h2 class="cv-mini-title"><span class="cv-prefix">&gt;</span> CERTIFICAÇÕES<span class="cv-cursor">_</span></h2>
-          <ul class="cv-cert-list">
-            <li>ITIL Foundation v4</li>
-            <li>Microsoft 365 Fundamentals (MS-900)</li>
-            <li>Azure Fundamentals (AZ-900)</li>
-            <li>Active Directory &amp; Windows Server</li>
-            <li>LGPD – Fundamentos e Aplicação</li>
-          </ul>
-        </article>
-      </div>
-
-      <!-- TERMINAL SESSION -->
-      <div class="cv-terminal-wrap glass terminal-wrap reveal" role="log" aria-live="polite" aria-label="Terminal profissional">
-        <div class="cv-terminal-top term-top" aria-hidden="true"><i></i><i></i><i></i><span>wagner@systems-lab: ~/curriculo</span></div>
-        <div class="cv-terminal-body term-body" id="termBody"></div>
-      </div>
-    </section>
-  </main>
+<section id="contact" class="contact-section" aria-label="Canal de contato"><div class="contact-panel"><div class="contact-left"><span class="section-kicker">— CONECTE-SE</span><h2>Vamos construir algo<br><span>incrível juntos?</span></h2><p>Estou disponível para projetos desafiadores que exigem estratégia, tecnologia e criatividade.</p></div><div class="contact-actions"><a class="contact-primary" href="mailto:wagnerpersoli@hotmail.com">VAMOS CONVERSAR <span>↗</span></a><a class="contact-secondary" href="docs/curriculo-wagner-persoli-filho.pdf" download>VER CV / PDF <span>↓</span></a></div><div class="contact-socials"><span>CONECTE-SE</span><a href="https://www.linkedin.com/in/wagner-persoli-f-3004bb91" target="_blank" rel="noopener">in</a><a href="https://github.com/Wpersoli" target="_blank" rel="noopener">GH</a><a href="mailto:wagnerpersoli@hotmail.com">@</a></div></div>
+<form id="contactForm" class="sr-only" aria-hidden="true"><input name="name"><input name="email"><input name="subject"><input name="phone"><textarea name="message"></textarea><input name="company"><input id="contactStartedAt" name="startedAt"><button id="contactSubmit" type="submit">ENVIAR</button></form><span id="typedContact" class="sr-only"></span><span id="contactInlineStatus" class="sr-only"></span><div id="contactToast" class="sr-only" aria-hidden="true"><div class="contact-toast-title"></div><div class="contact-toast-sub"></div><div class="contact-toast-icon"></div></div>
+</section>
+</main>
 
   <!-- CONTACT -->
   <section id="contact" data-impact-index="04" aria-label="Canal de contato">
@@ -492,71 +269,7 @@
 
 </main>
 
-<!-- ===== FOOTER ===== -->
-<footer role="contentinfo" class="footer-carousel-wrap cyber-footer">
-  <div class="cyber-footer-grid">
-    <div class="cyber-footer-brand">
-      <img src="img/wp-concept-mark.webp" alt="" aria-hidden="true" width="255" height="215" loading="lazy" decoding="async">
-      <div><strong>WAGNER<span>.OS</span></strong><small>CODE · CREATE · EVOLVE</small></div>
-    </div>
-    <div class="cyber-footer-col">
-      <strong>NAVEGAÇÃO</strong>
-      <a href="#top">Home</a><a href="#projects">Projetos</a><a href="#stack">Stack</a><a href="#logs">Terminal</a>
-    </div>
-    <div class="cyber-footer-col">
-      <strong>CONEXÕES</strong>
-      <a href="https://github.com/Wpersoli" target="_blank" rel="noopener noreferrer">GitHub</a>
-      <a href="https://www.linkedin.com/in/wagner-persoli-f-3004bb91" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-      <a href="mailto:wagnerpersoli@hotmail.com">E-mail</a>
-    </div>
-    <div class="cyber-footer-cta">
-      <span>READY TO BUILD</span>
-      <strong>Ideias viram sistemas.</strong>
-      <a href="#contact" class="cyber-footer-button">LET'S CONNECT <b aria-hidden="true">↗</b></a>
-    </div>
-  </div>
-  <div class="footer-marquee" aria-label="Rodapé animado" aria-hidden="true">
-    <div class="footer-track">
-      <span class="footer-item">© <span class="footer-year"></span> WAGNER PERS. F.</span>
-      <span class="footer-sep">◆</span>
-      <span class="footer-item">AI SYSTEMS LAB</span>
-      <span class="footer-sep">◆</span>
-      <span class="footer-item">ALL MODULES OPERATIONAL</span>
-      <span class="footer-sep">◆</span>
-      <a href="https://github.com/Wpersoli" target="_blank" rel="noopener noreferrer" class="footer-item footer-link">GITHUB</a>
-      <span class="footer-sep">◆</span>
-      <a href="https://www.linkedin.com/in/wagner-persoli-f-3004bb91" target="_blank" rel="noopener noreferrer" class="footer-item footer-link">LINKEDIN</a>
-      <span class="footer-sep">◆</span>
-      <a href="mailto:wagnerpersoli@hotmail.com" class="footer-item footer-link">EMAIL</a>
-      <span class="footer-sep">◆</span>
-      <span class="footer-item">FULLSTACK · AI · AUTOMATION</span>
-      <span class="footer-sep">◆</span>
-      <span class="footer-item">BUILD. AUTOMATE. DOMINATE.</span>
-      <span class="footer-sep">◆</span>
-      <span class="footer-item">GUARULHOS, SP — BRASIL</span>
-      <span class="footer-sep">◆</span>
-      <!-- Duplicate for seamless loop -->
-      <span class="footer-item">© <span class="footer-year"></span> WAGNER PERS. F.</span>
-      <span class="footer-sep">◆</span>
-      <span class="footer-item">AI SYSTEMS LAB</span>
-      <span class="footer-sep">◆</span>
-      <span class="footer-item">ALL MODULES OPERATIONAL</span>
-      <span class="footer-sep">◆</span>
-      <a href="https://github.com/Wpersoli" target="_blank" rel="noopener noreferrer" class="footer-item footer-link">GITHUB</a>
-      <span class="footer-sep">◆</span>
-      <a href="https://www.linkedin.com/in/wagner-persoli-f-3004bb91" target="_blank" rel="noopener noreferrer" class="footer-item footer-link">LINKEDIN</a>
-      <span class="footer-sep">◆</span>
-      <a href="mailto:wagnerpersoli@hotmail.com" class="footer-item footer-link">EMAIL</a>
-      <span class="footer-sep">◆</span>
-      <span class="footer-item">FULLSTACK · AI · AUTOMATION</span>
-      <span class="footer-sep">◆</span>
-      <span class="footer-item">BUILD. AUTOMATE. DOMINATE.</span>
-      <span class="footer-sep">◆</span>
-      <span class="footer-item">GUARULHOS, SP — BRASIL</span>
-      <span class="footer-sep">◆</span>
-    </div>
-  </div>
-</footer>
+<footer role="contentinfo" class="redesign-footer"><div class="footer-main"><div class="footer-brand"><strong>WAGNER<span>.OS</span></strong><small>ENGINEERING · AI · AUTOMATION</small></div><div class="footer-copy">© <span class="footer-year"></span> WAGNER.OS — Todos os direitos reservados.</div><div class="footer-made">Feito com código, design e propósito.</div><a href="#top" class="footer-top">↑ VOLTAR AO TOPO</a></div></footer>
 
 <!-- ===== HUD ===== -->
 <div class="hud" role="status" aria-live="off" aria-label="Métricas do sistema">

@@ -276,7 +276,7 @@ async function run() {
   assert(scroll.overflow !== 'hidden', 'Scroll global ficou bloqueado.');
   assert(scroll.diagnostics && scroll.diagnostics.nativeWheel === true, 'Diagnóstico de scroll nativo ausente.');
 
-  await cdp.evaluate(`window.fetch = async function () { return { ok:true, status:200, json:async function(){ return { content:[{type:'text',text:'Projetos do Wagner: Device Simulator Engine, AI Systems & Automation e Premium Dashboards.'}] }; } }; };`);
+  await cdp.evaluate(`window.fetch = async function () { return { ok:true, status:200, json:async function(){ return { content:[{type:'text',text:'Projetos do Wagner: WAGNER.OS e os conceitos Automate OS, Nexus Dashboard e Data Pulse.'}] }; } }; };`);
   await cdp.evaluate("document.getElementById('fabChat').click()");
   await sleep(250);
   var chatOpen = await cdp.evaluate(`(() => { const p=document.getElementById('chatPanel'); return p.classList.contains('open') && p.getAttribute('aria-hidden')==='false' && !p.inert; })()`);

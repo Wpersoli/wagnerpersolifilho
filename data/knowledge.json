@@ -8,31 +8,23 @@
   },
   "profile": {
     "full_name": "Wagner Persoli Filho",
-    "display_name": "Wagner Persoli F.",
-    "age": {
-      "value": 36,
-      "as_of": "2026-07-17",
-      "note": "Idade informada no perfil; não recalcular sem data de nascimento."
-    },
-    "title": "IT Specialist | Full-Stack Developer | AI Developer | Digital Founder",
+    "display_name": "Wagner Persoli Filho",
+    "title": "Especialista em Infraestrutura de TI, Suporte Avançado & Automação",
     "location": {
       "city": "Guarulhos",
-      "district": "Vila Galvão",
       "state": "São Paulo",
       "country": "Brasil"
     },
-    "civil_status": "Solteiro",
-    "children": "Não possui filhos",
     "contact": {
       "phone": "+55 11 98150-4061",
-      "whatsapp": "https://api.whatsapp.com/send/?phone=5511981504061&text&type=phone_number&app_absent=0",
-      "email": "wagnerpersoli@hotmail.com",
+      "whatsapp": "https://wa.me/5511981504061",
+      "email": "[PREENCHER: e-mail do domínio próprio]",
       "linkedin": "https://linkedin.com/in/wagner-persoli-f-3004bb91",
       "github": "https://github.com/Wpersoli",
       "website": "https://wagnerpersoli.vercel.app"
     }
   },
-  "summary": "Profissional de TI com mais de 12 anos de experiência em ambientes corporativos críticos e outsourcing, com atuação em suporte técnico N1/N2/N3, infraestrutura, gestão de serviços, desenvolvimento Full-Stack, automação e inteligência artificial. A trajetória combina operação de TI, atendimento corporativo, administração de sistemas e construção de soluções digitais.",
+  "summary": "Profissional de Tecnologia da Informação com mais de 12 anos de experiência em ambientes corporativos, suporte técnico N1/N2/N3, infraestrutura, administração de sistemas Microsoft, desenvolvimento, automação e integração de Inteligência Artificial.",
   "core_skills": {
     "it_support": [
       "Suporte N1",
@@ -178,18 +170,18 @@
   ],
   "education": [
     {
+      "name": "Análise e Desenvolvimento de Sistemas",
       "institution": "Centro Universitário ENIAC",
-      "course": "Análise e Desenvolvimento de Sistemas",
-      "period": "2012 a 2015"
+      "period": "2012–2015"
     }
   ],
   "certifications_and_courses": [
-    "Gestão Estratégica de TI - ITIL (Fundamentos)",
+    "ITIL v3/v4",
     "Segurança da Informação",
-    "Lógica de Programação - Certificação ICS",
     "Fundamentos de Redes",
-    "Microsoft Certified (MCP)",
-    "Client Support Analyst - UOL"
+    "Lógica de Programação (ICS)",
+    "Microsoft Certified Professional (MCP)",
+    "Client Support Analyst (UOL)"
   ],
   "languages": {
     "portuguese": "Nativo",
@@ -198,22 +190,48 @@
   },
   "projects": [
     {
-      "name": "Device Simulator Engine (Brutal Dev Emulator)",
-      "description": "Plataforma de emulação responsiva multi-device em tempo real.",
-      "status": "Projeto principal documentado no laboratório."
+      "name": "WAGNER.OS",
+      "type": "Projeto publicado",
+      "description": "Portfólio profissional com assistente contextual e arquitetura estática/serverless.",
+      "demo": "https://wagnerpersoli.vercel.app/",
+      "repository": "https://github.com/Wpersoli/wagnerpersolifilho",
+      "stack": [
+        "HTML",
+        "CSS",
+        "JavaScript",
+        "Node.js serverless",
+        "Gemini API",
+        "Vercel"
+      ],
+      "problem": "[PREENCHER: problema que motivou a criação do portfólio]",
+      "result": "[PREENCHER: resultado mensurável ou objetivo alcançado]"
     },
     {
-      "name": "AI Systems & Automation",
-      "description": "Motor de automação com inteligência artificial integrada."
+      "name": "AUTOMATE OS",
+      "type": "Conceito",
+      "description": "Proposta conceitual para organizar e automatizar fluxos de trabalho.",
+      "problem": "[PREENCHER: problema específico a resolver]",
+      "solution": "[PREENCHER: escopo e solução proposta]",
+      "stack": "[PREENCHER: tecnologias planejadas]",
+      "result": "[PREENCHER: resultado esperado, identificado como estimativa]"
     },
     {
-      "name": "Automation Engine",
-      "description": "Sistemas de automação de processos e fluxos digitais."
+      "name": "NEXUS DASHBOARD",
+      "type": "Conceito",
+      "description": "Proposta conceitual de painel para organizar indicadores e visualizações.",
+      "problem": "[PREENCHER: problema específico a resolver]",
+      "solution": "[PREENCHER: escopo e solução proposta]",
+      "stack": "[PREENCHER: tecnologias planejadas]",
+      "result": "[PREENCHER: resultado esperado, identificado como estimativa]"
     },
     {
-      "name": "Premium Dashboards",
-      "description": "Painéis analíticos avançados.",
-      "status": "Em desenvolvimento."
+      "name": "DATA PULSE",
+      "type": "Conceito",
+      "description": "Proposta conceitual de visualização de dados para leitura de informações.",
+      "problem": "[PREENCHER: problema específico a resolver]",
+      "solution": "[PREENCHER: escopo e solução proposta]",
+      "stack": "[PREENCHER: tecnologias planejadas]",
+      "result": "[PREENCHER: resultado esperado, identificado como estimativa]"
     }
   ],
   "recruitment": {
@@ -231,22 +249,5 @@
       "note": "Faixas informadas no perfil e sujeitas a negociação conforme escopo e contrato."
     },
     "commute": "Para deslocamento por transporte público, o trajeto informado considera um ônibus intermunicipal de Guarulhos até o metrô Tucuruvi, totalizando duas conduções na ida e duas na volta. A viabilidade depende da proposta e do local da empresa."
-  },
-  "interests": [
-    "Desenvolvimento de sistemas",
-    "Inteligência artificial e automação",
-    "Futebol aos finais de semana",
-    "Viagens",
-    "Filmes",
-    "Confraternizações com amigos e familiares"
-  ],
-  "not_documented": [
-    "Data de nascimento",
-    "Endereço residencial completo",
-    "Motivo de saída do último emprego",
-    "Mês exato de encerramento na Infoplus",
-    "Referências profissionais",
-    "Documentos pessoais",
-    "Informações médicas, religiosas ou políticas"
-  ]
+  }
 }

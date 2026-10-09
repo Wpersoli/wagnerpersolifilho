@@ -157,7 +157,7 @@ async function startBootSequence() {
     return;
   }
 
-  bootMaxTimer = window.setTimeout(finishBootSequence, 3200);
+  bootMaxTimer = window.setTimeout(finishBootSequence, 1500);
   setBootProgress(2);
   await waitMs(120);
 
@@ -1672,6 +1672,24 @@ if (contactForm) {
     enabled = !enabled;
     apply(enabled);
     try { window.localStorage.setItem(key, enabled ? '1' : '0'); } catch (_) {}
+  });
+})();
+
+
+/* Abre estudos de caso nativos por teclado ou clique, sem dependência de modal adicional. */
+(function initCaseStudyLinks() {
+  var links = document.querySelectorAll('a[href^="#case-"]');
+  Array.prototype.forEach.call(links, function (link) {
+    link.addEventListener('click', function (event) {
+      var targetId = link.getAttribute('href').slice(1);
+      var target = document.getElementById(targetId);
+      if (!target || target.tagName.toLowerCase() !== 'details') return;
+      event.preventDefault();
+      target.open = true;
+      target.scrollIntoView({ behavior: window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+      var summary = target.querySelector('summary');
+      if (summary) summary.focus({ preventScroll: true });
+    });
   });
 })();
 

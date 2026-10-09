@@ -150,7 +150,11 @@ async function startBootSequence() {
   if (reduceMotion) bootEl.classList.add('boot-motion-safe');
 
   bootEl.classList.add('is-running');
-  if (seen || reduceMotion) {
+  if (reduceMotion) {
+    finishBootSequence();
+    return;
+  }
+  if (seen) {
     setBootProgress(100);
     await waitMs(180);
     finishBootSequence();
@@ -1661,13 +1665,23 @@ if (contactForm) {
     button.setAttribute('aria-pressed', String(enabled));
     button.textContent = enabled ? 'EFEITOS: LIGADOS' : 'EFEITOS: DESLIGADOS';
   }
-  var enabled = true;
+  var reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var enabled = !reduceMotion;
   try {
     var saved = window.localStorage.getItem(key);
-    if (saved === '0') enabled = false;
+    if (!reduceMotion && saved === '0') enabled = false;
+    if (!reduceMotion && saved === '1') enabled = true;
   } catch (_) {}
-  apply(enabled);
+  if (reduceMotion) {
+    button.disabled = true;
+    button.textContent = 'EFEITOS REDUZIDOS PELO SISTEMA';
+    button.setAttribute('aria-pressed', 'false');
+    document.body.classList.add('effects-disabled');
+  } else {
+    apply(enabled);
+  }
   button.addEventListener('click', function () {
+    if (reduceMotion) return;
     enabled = !document.body.classList.contains('effects-disabled');
     enabled = !enabled;
     apply(enabled);

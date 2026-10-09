@@ -210,44 +210,34 @@
       "name": "AUTOMATE OS",
       "type": "Conceito",
       "description": "Proposta conceitual para organizar e automatizar fluxos de trabalho.",
-      "problem": "[PREENCHER: problema específico a resolver]",
-      "solution": "[PREENCHER: escopo e solução proposta]",
-      "stack": "[PREENCHER: tecnologias planejadas]",
-      "result": "[PREENCHER: resultado esperado, identificado como estimativa]"
+      "status": "Conceito — não apresentar como projeto entregue."
     },
     {
       "name": "NEXUS DASHBOARD",
       "type": "Conceito",
       "description": "Proposta conceitual de painel para organizar indicadores e visualizações.",
-      "problem": "[PREENCHER: problema específico a resolver]",
-      "solution": "[PREENCHER: escopo e solução proposta]",
-      "stack": "[PREENCHER: tecnologias planejadas]",
-      "result": "[PREENCHER: resultado esperado, identificado como estimativa]"
+      "status": "Conceito — não apresentar como projeto entregue."
     },
     {
       "name": "DATA PULSE",
       "type": "Conceito",
       "description": "Proposta conceitual de visualização de dados para leitura de informações.",
-      "problem": "[PREENCHER: problema específico a resolver]",
-      "solution": "[PREENCHER: escopo e solução proposta]",
-      "stack": "[PREENCHER: tecnologias planejadas]",
-      "result": "[PREENCHER: resultado esperado, identificado como estimativa]"
+      "status": "Conceito — não apresentar como projeto entregue."
     }
   ],
   "recruitment": {
-    "availability_to_start": "1 dia, dependendo do alinhamento com a empresa.",
-    "preferred_shift": "Sem preferência fixa; sujeito ao combinado com a empresa.",
-    "work_model": "Preferência por home office, com disponibilidade para presencial.",
-    "contract_types": [
-      "CLT",
-      "PJ"
+    "focus": [
+      "Infraestrutura de TI",
+      "Suporte técnico avançado",
+      "Automação",
+      "Desenvolvimento",
+      "Integração de IA"
     ],
-    "compensation": {
-      "as_of": "2026-07-17",
-      "brl_hourly": "R$ 20 a R$ 30 por hora",
-      "usd_hourly": "US$ 15 a US$ 25 por hora",
-      "note": "Faixas informadas no perfil e sujeitas a negociação conforme escopo e contrato."
-    },
-    "commute": "Para deslocamento por transporte público, o trajeto informado considera um ônibus intermunicipal de Guarulhos até o metrô Tucuruvi, totalizando duas conduções na ida e duas na volta. A viabilidade depende da proposta e do local da empresa."
+    "contact_channels": [
+      "Formulário do portfólio",
+      "WhatsApp",
+      "LinkedIn"
+    ],
+    "note": "Não divulgar pretensão salarial, endereço de deslocamento ou disponibilidade específica sem confirmação expressa."
   }
 }

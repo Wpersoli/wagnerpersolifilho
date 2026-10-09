@@ -388,9 +388,9 @@ if (termSection && 'IntersectionObserver' in window) {
    ───────────────────────────────────────────── */
 var contactMsgs = [
   'abrir_canal --contato',
-  'echo "vamos construir algo brutal"',
+  'echo "vamos construir soluções úteis"',
   'connect --email --whatsapp --linkedin',
-  'deploy --project=next_breakthrough',
+  'connect --whatsapp --linkedin',
 ];
 var cmIdx = 0;
 function typeContact() {

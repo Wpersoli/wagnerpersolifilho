@@ -30,13 +30,13 @@ var RATE_LIMIT_MAX_REQ = positiveInt(process.env.CHAT_RATE_LIMIT_MAX, 8, 2, 30);
 var FALLBACK_RESPONSES = {
   greeting: 'Olá! Posso responder sobre a experiência, projetos, stack, disponibilidade e contato do Wagner. Para perguntas gerais, a IA pode tentar novamente em instantes.',
   fullName: 'O nome completo é Wagner Persoli Filho.',
-  age: 'A idade informada no perfil, atualizado em julho de 2026, é 36 anos.',
-  civilStatus: 'Segundo a base pública do portfólio, Wagner é solteiro e não possui filhos.',
-  location: 'Wagner mora em Guarulhos, na região da Vila Galvão, em São Paulo, Brasil.',
-  salary: 'A faixa informada no perfil é de R$ 20 a R$ 30 por hora. Para propostas em dólar, a faixa informada é de US$ 15 a US$ 25 por hora.',
-  workModel: 'Há preferência por home office, mas o modelo presencial também é aceito. Wagner aceita contratação CLT ou PJ, conforme a proposta.',
-  availability: 'A disponibilidade de início informada é de 1 dia, dependendo do alinhamento com a empresa. Não há preferência fixa de turno.',
-  hobbies: 'Entre os interesses informados estão desenvolvimento de sistemas e IA, futebol aos finais de semana, viagens, filmes e convivência com amigos e familiares.',
+  age: 'A idade não é divulgada no portfólio profissional.',
+  civilStatus: 'O portfólio não divulga estado civil ou informações familiares.',
+  location: 'Wagner atua a partir de Guarulhos, São Paulo, Brasil.',
+  salary: 'A pretensão salarial não está publicada. Para discutir uma oportunidade, entre em contato pelo formulário ou LinkedIn.',
+  workModel: 'O modelo de trabalho e o tipo de contratação devem ser alinhados diretamente conforme a oportunidade.',
+  availability: 'A disponibilidade atual deve ser confirmada diretamente durante o processo de seleção.',
+  hobbies: 'O portfólio prioriza informações profissionais; interesses pessoais não estão publicados.',
   leavingReason: 'O motivo de saída do último emprego não está documentado na base pública do portfólio. Wagner pode esclarecer esse ponto diretamente em uma entrevista.',
   hiring: 'Wagner reúne experiência em suporte e infraestrutura corporativa com desenvolvimento Full-Stack, automação e IA. O diferencial documentado é a capacidade de diagnosticar incidentes, organizar a operação e também construir soluções digitais de ponta a ponta.',
   interview: 'Wagner está disponível para processos seletivos. Contato: WhatsApp +55 11 98150-4061, e-mail [PREENCHER: e-mail do domínio próprio] e LinkedIn linkedin.com/in/wagner-persoli-f-3004bb91.',
@@ -245,19 +245,9 @@ function selectKnowledge(question) {
 
   if (includesAny(question, /contato|whatsapp|telefone|celular|e-?mail|linkedin|github/)) selected.profile.contact = profile.contact;
   if (includesAny(question, /onde mora|localiza|bairro|vila galvao|vila galvão/)) selected.profile.location.district = location.district;
-  if (includesAny(question, /idade|quantos anos/)) selected.profile.age = profile.age;
-  if (includesAny(question, /estado civil|solteiro|casado|filhos?/)) {
-    selected.profile.civil_status = profile.civil_status;
-    selected.profile.children = profile.children;
+  if (includesAny(question, /vaga|oportunidade|recrut|contrat|modelo de trabalho|remoto|presencial|hibrido|híbrido|disponibilidade|salario|salário|remunera|pretens|valor por hora|clt|pj/)) {
+    selected.recruitment = source.recruitment ? { focus: source.recruitment.focus, contact_channels: source.recruitment.contact_channels } : undefined;
   }
-  if (includesAny(question, /salario|salário|remunera|pretens|valor por hora|contrato|clt|pj|home office|remoto|presencial|hibrido|híbrido|disponibilidade|turno|jornada/)) {
-    selected.recruitment = source.recruitment;
-    if (selected.recruitment && !includesAny(question, /trajeto|deslocamento|conducao|condução|metro|metrô|tucuruvi/)) {
-      selected.recruitment = Object.assign({}, selected.recruitment);
-      delete selected.recruitment.commute;
-    }
-  }
-  if (includesAny(question, /hobb|lazer|interesse|futebol|tempo livre/)) selected.interests = source.interests;
 
   return JSON.stringify(selected, null, 2).slice(0, MAX_KNOWLEDGE_CHARS);
 }

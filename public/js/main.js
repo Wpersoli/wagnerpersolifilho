@@ -652,7 +652,7 @@ async function sendUserMsg(text) {
     } else if (err.message && err.message.indexOf('Failed to fetch') !== -1) {
       errMsg = 'Não consegui conectar ao servidor agora. Verifique sua conexão e tente novamente.\n\nEnquanto isso, fale direto com o Wagner: **WhatsApp +55 11 98150-4061** 📱';
     } else {
-      errMsg = 'Não encontrei uma resposta específica para isso no momento.\n\nPosso ajudar com informações sobre:\n- **Experiência profissional** (12+ anos em TI)\n- **Projetos** (Device Simulator, AI Engine)\n- **Stack técnico** (React, Node, Python, IA)\n- **Contato** (WhatsApp, Email, LinkedIn)';
+      errMsg = 'Não encontrei uma resposta específica para isso no momento.\n\nPosso ajudar com informações sobre:\n- **Experiência profissional** (12+ anos em TI)\n- **Projetos** (WAGNER.OS e conceitos claramente identificados no portfólio)\n- **Stack técnico** (infraestrutura Microsoft, JavaScript, Python, APIs e IA)\n- **Contato** (WhatsApp, Email, LinkedIn)';
     }
     // Remove the failed user message from history so user can retry
     chatHistory.pop();
@@ -916,70 +916,18 @@ if (window.matchMedia('(hover: hover)').matches) {
 
 /* ── Tour stops ── */
 var TOUR = [
-  {
-    sel: 'header',
-    mobileSel: 'header',
-    icon: '🖥️',
-    title: 'Header — Cabeçalho',
-    desc: 'Além de organizar a identidade visual, o header melhora a experiência do usuário (UX). Exibido em todas as páginas, facilita o acesso rápido às seções principais, gera praticidade otimizando o tempo e torna a navegação mais confortável.'
-  },
-  {
-    sel: '.hero',
-    mobileSel: '.hero-fidelity-stage',
-    icon: '⚡',
-    title: 'Banner Principal',
-    desc: 'São a primeira impressão do seu site. Apresentam sua marca, destacam as informações mais importantes, direcionam o visitante para as principais ações e tornam a navegação mais clara, profissional e atrativa.'
-  },
-  {
-    sel: '#featured',
-    mobileSel: '#featured .feature-panel',
-    icon: '🚀',
-    title: 'Projeto em Destaque',
-    desc: 'Atração inicial do site, onde o usuário decide demonstrar interesse interagindo com o conteúdo em questão — ou não. É o cartão de visitas técnico do portfólio.'
-  },
-  {
-    sel: '#projects',
-    mobileSel: '#projects .proj-grid',
-    icon: '⚙️',
-    title: 'Soluções em Destaque',
-    desc: 'Vitrine de soluções apresentadas no portfólio. Cada card descreve uma proposta técnica em IA, automação, emulação responsiva ou visualização de dados, com escopo e status identificados na própria interface.'
-  },
-  {
-    sel: '#stack',
-    mobileSel: '#stack .stack-groups',
-    icon: '🧰',
-    title: 'Stack Tecnológico',
-    desc: 'Conjunto de tecnologias apresentadas no perfil: React, Node.js, Python, Docker, LLMs e outras ferramentas relacionadas aos projetos e à experiência profissional documentada.'
-  },
-  {
-    sel: '#logs',
-    mobileSel: '#logs .terminal-wrap',
-    icon: '📋',
-    title: 'Session Logs — Trajetória',
-    desc: 'Histórico profissional em formato de terminal. Cada linha registra uma etapa real da carreira — de suporte técnico a especialista fullstack e consultor de IA.'
-  },
-  {
-    sel: '#contact',
-    mobileSel: '#contact .contact-panel',
-    icon: '📡',
-    title: 'Open Channel — Contato',
-    desc: 'Canal direto para oportunidades, projetos e parcerias por WhatsApp, e-mail, LinkedIn ou GitHub. O retorno depende da disponibilidade informada no momento do contato.'
-  },
-  {
-    sel: '#chatPanel',
-    mobileSel: '#chatPanel',
-    icon: '🤖',
-    title: 'Assistente AI',
-    desc: 'Demonstração local do assistente, sem consumo de API durante o tour. Fora da apresentação, o chat integrado ao Gemini continua disponível; quando o provedor estiver indisponível, respostas locais essenciais preservam a experiência.',
-    isChat: true
-  },
-  {
-    sel: 'footer',
-    mobileSel: 'footer',
-    icon: '✅',
-    title: 'Rodapé — Fim do Tour',
-    desc: 'Tour concluído. Os principais módulos do portfólio foram apresentados, com foco em performance, segurança, acessibilidade, clareza e qualidade de entrega.'
-  }
+  { sel: 'header', mobileSel: 'header', icon: '⌂', title: 'Navegação', desc: 'Este cabeçalho organiza o acesso às seções do meu portfólio, ao currículo e ao contato.' },
+  { sel: '.hero', mobileSel: '.hero-fidelity-stage', icon: '⚡', title: 'Apresentação profissional', desc: 'Sou Wagner Persoli Filho. Tenho mais de 12 anos de experiência em TI corporativa e atuo com infraestrutura, suporte avançado, automação e integração de IA.' },
+  { sel: '#about', mobileSel: '#about', icon: '01', title: 'Perfil profissional', desc: 'Apresento minha trajetória e a combinação entre operações de TI, infraestrutura corporativa, desenvolvimento e automação.' },
+  { sel: '#featured', mobileSel: '#featured', icon: '02', title: 'Competências', desc: 'As competências estão agrupadas em infraestrutura, operações e suporte, desenvolvimento, automação e IA.' },
+  { sel: '#experience', mobileSel: '#experience', icon: '03', title: 'Experiência profissional', desc: 'Esta seleção resume experiências na Infoplus, no suporte Apple por parceiro autorizado e na TIVIT. Resultados quantitativos só serão publicados quando forem confirmados.' },
+  { sel: '#stack', mobileSel: '#stack', icon: '04', title: 'Stack técnico', desc: 'As tecnologias estão organizadas por domínio, sem percentuais de proficiência inventados.' },
+  { sel: '#projects', mobileSel: '#projects', icon: '05', title: 'Projetos e conceitos', desc: 'O portfólio publicado é apresentado como projeto real. As demais propostas estão marcadas explicitamente como conceitos e contêm campos a completar.' },
+  { sel: '#logs', mobileSel: '#logs', icon: '06', title: 'IA aplicada', desc: 'O assistente Wagner AI responde a perguntas sobre as informações profissionais documentadas neste portfólio.' , isChat: true },
+  { sel: '#recommendation', mobileSel: '#recommendation', icon: '07', title: 'Referências profissionais', desc: 'O espaço de recomendação está preparado e será preenchido somente com depoimento autorizado.' },
+  { sel: '#education', mobileSel: '#education', icon: '08', title: 'Formação', desc: 'Esta seção resume a formação acadêmica e a formação complementar informadas no currículo.' },
+  { sel: '#contact', mobileSel: '#contact', icon: '✉', title: 'Contato', desc: 'Use o formulário, WhatsApp ou LinkedIn para falar comigo. O e-mail de domínio próprio ainda precisa ser informado.' },
+  { sel: 'footer', mobileSel: 'footer', icon: '✓', title: 'Fim da apresentação', desc: 'Obrigado por conhecer meu portfólio. Consulte o currículo para a trajetória completa e os detalhes adicionais.' }
 ];
 
 var AUTO_INTERVAL = 5000; // ms per step in auto mode
@@ -1702,4 +1650,29 @@ if (contactForm) {
     hero.style.setProperty('--hero-tx', '0px');
     hero.style.setProperty('--hero-ty', '0px');
   }, { passive: true });
+
+/* Efeitos visuais opcionais: respeita a preferência salva e permite desligar canvas/energia. */
+(function initVisualEffectsToggle() {
+  var button = document.getElementById('effectsToggle');
+  if (!button) return;
+  var key = 'wagneros-visual-effects';
+  function apply(enabled) {
+    document.body.classList.toggle('effects-disabled', !enabled);
+    button.setAttribute('aria-pressed', String(enabled));
+    button.textContent = enabled ? 'EFEITOS: LIGADOS' : 'EFEITOS: DESLIGADOS';
+  }
+  var enabled = true;
+  try {
+    var saved = window.localStorage.getItem(key);
+    if (saved === '0') enabled = false;
+  } catch (_) {}
+  apply(enabled);
+  button.addEventListener('click', function () {
+    enabled = !document.body.classList.contains('effects-disabled');
+    enabled = !enabled;
+    apply(enabled);
+    try { window.localStorage.setItem(key, enabled ? '1' : '0'); } catch (_) {}
+  });
+})();
+
 })();

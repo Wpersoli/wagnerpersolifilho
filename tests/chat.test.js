@@ -68,8 +68,8 @@ test('seleção de conhecimento minimiza dados pessoais conforme a pergunta', fu
   assert.doesNotMatch(contact, /civil_status|compensation|commute/i);
 
   var salary = internal.selectKnowledge('Qual é a pretensão salarial?');
-  assert.match(salary, /R\$ 20 a R\$ 30/);
-  assert.doesNotMatch(salary, /Tucuruvi|commute/i);
+  assert.doesNotMatch(salary, /R\$ 20|US\$ 15|Tucuruvi|commute|compensation/i);
+  assert.match(salary, /Infraestrutura de TI|Suporte técnico avançado|contact_channels/);
 });
 
 test('prompt inclui contexto temporal, modos e proteção contra invenção', function () {

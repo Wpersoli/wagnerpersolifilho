@@ -150,14 +150,18 @@ async function startBootSequence() {
   if (reduceMotion) bootEl.classList.add('boot-motion-safe');
 
   bootEl.classList.add('is-running');
-  if (seen || reduceMotion) {
+  if (reduceMotion) {
+    finishBootSequence();
+    return;
+  }
+  if (seen) {
     setBootProgress(100);
     await waitMs(180);
     finishBootSequence();
     return;
   }
 
-  bootMaxTimer = window.setTimeout(finishBootSequence, 3200);
+  bootMaxTimer = window.setTimeout(finishBootSequence, 1500);
   setBootProgress(2);
   await waitMs(120);
 
@@ -384,9 +388,9 @@ if (termSection && 'IntersectionObserver' in window) {
    ───────────────────────────────────────────── */
 var contactMsgs = [
   'abrir_canal --contato',
-  'echo "vamos construir algo brutal"',
+  'echo "vamos construir soluções úteis"',
   'connect --email --whatsapp --linkedin',
-  'deploy --project=next_breakthrough',
+  'connect --whatsapp --linkedin',
 ];
 var cmIdx = 0;
 function typeContact() {
@@ -652,7 +656,7 @@ async function sendUserMsg(text) {
     } else if (err.message && err.message.indexOf('Failed to fetch') !== -1) {
       errMsg = 'Não consegui conectar ao servidor agora. Verifique sua conexão e tente novamente.\n\nEnquanto isso, fale direto com o Wagner: **WhatsApp +55 11 98150-4061** 📱';
     } else {
-      errMsg = 'Não encontrei uma resposta específica para isso no momento.\n\nPosso ajudar com informações sobre:\n- **Experiência profissional** (12+ anos em TI)\n- **Projetos** (Device Simulator, AI Engine)\n- **Stack técnico** (React, Node, Python, IA)\n- **Contato** (WhatsApp, Email, LinkedIn)';
+      errMsg = 'Não encontrei uma resposta específica para isso no momento.\n\nPosso ajudar com informações sobre:\n- **Experiência profissional** (12+ anos em TI)\n- **Projetos** (WAGNER.OS e conceitos claramente identificados no portfólio)\n- **Stack técnico** (infraestrutura Microsoft, JavaScript, Python, APIs e IA)\n- **Contato** (WhatsApp, Email, LinkedIn)';
     }
     // Remove the failed user message from history so user can retry
     chatHistory.pop();
@@ -713,7 +717,6 @@ var canvas = document.getElementById('bgCanvas');
 if (canvas && canvas.getContext) {
   var ctx = canvas.getContext('2d', { alpha: true, desynchronized: true });
   var W = 1, H = 1, dpr = 1, particles = [];
-  var matrixColumns = [], matrixFont = 13;
   var bgRaf = 0;
   var bgLastFrame = 0;
   var bgPageVisible = !document.hidden;
@@ -739,24 +742,6 @@ if (canvas && canvas.getContext) {
     }
   }
 
-  /* MATRIX_RAIN_CONSOLIDATED */
-  function buildMatrixRain() {
-    var columnGap = W < 600 ? 19 : 17;
-    var columnCount = Math.max(20, Math.min(132, Math.ceil(W / columnGap)));
-    matrixFont = W < 600 ? 11 : 12;
-    matrixColumns = [];
-    for (var mi = 0; mi < columnCount; mi += 1) {
-      matrixColumns.push({
-        x: mi * (W / columnCount),
-        y: Math.random() * -H,
-        speed: 0.78 + Math.random() * 1.55,
-        length: 10 + Math.floor(Math.random() * 24),
-        phase: Math.random() * 0.8 + 0.35,
-        seed: Math.floor(Math.random() * 9999)
-      });
-    }
-  }
-
   function resizeBackgroundCanvas() {
     W = Math.max(1, window.innerWidth);
     H = Math.max(1, window.innerHeight);
@@ -768,7 +753,6 @@ if (canvas && canvas.getContext) {
     canvas.style.height = H + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     buildBackgroundParticles();
-    buildMatrixRain();
   }
 
   var resizeTimer;
@@ -807,43 +791,6 @@ if (canvas && canvas.getContext) {
     }
     bgLastFrame = now;
     ctx.clearRect(0, 0, W, H);
-
-    /* MATRIX_POST_HERO_INTENSITY */
-    // Keep the hero clean. The matrix gains presence only once the visitor
-    // reaches the content below it, without adding scroll listeners or DOM nodes.
-    var matrixStart = Math.min(420, H * 0.42);
-    var matrixVisibility = Math.max(0, Math.min(1, (window.scrollY - matrixStart) / Math.max(220, H * 0.34)));
-
-    // Matrix rain: canvas-only, capped at 36fps and paused while scrolling,
-    // in hidden tabs and whenever the visitor requests reduced motion.
-    /* MATRIX_ARTISTIC_STREAMS_V2 */
-    var matrixGlyphs = ['0', '1', '2', '3', '5', '7', 'A', 'E', 'K', 'M', 'N', 'R', 'X', 'Z', '<', '>', '/', '_', '{', '}'];
-    var matrixStrength = matrixVisibility * 0.96;
-    ctx.font = matrixFont + 'px JetBrains Mono, monospace';
-    ctx.textAlign = 'center';
-    for (var mr = 0; mr < matrixColumns.length; mr += 1) {
-      var stream = matrixColumns[mr];
-      stream.y += stream.speed;
-      if (stream.y - stream.length * matrixFont > H) {
-        stream.y = -Math.random() * H * 0.35;
-        stream.speed = 0.78 + Math.random() * 1.55;
-        stream.length = 10 + Math.floor(Math.random() * 24);
-      }
-      for (var mg = 0; mg < stream.length; mg += 1) {
-        var glyphIndex = Math.abs(stream.seed + mg * 17 + Math.floor(now / (150 + stream.phase * 160))) % matrixGlyphs.length;
-        var glyph = matrixGlyphs[glyphIndex];
-        var fade = 1 - mg / stream.length;
-        var alpha = fade * fade * (0.34 + stream.phase * 0.18);
-        if (mg === 0) alpha = 0.98;
-        else if (mg < 3) alpha *= 1.32;
-        ctx.fillStyle = mg === 0
-          ? 'rgba(224,255,204,' + (alpha * matrixStrength).toFixed(3) + ')'
-          : (mg < 3
-            ? 'rgba(76,255,132,' + (alpha * matrixStrength).toFixed(3) + ')'
-            : 'rgba(0,196,72,' + (alpha * matrixStrength).toFixed(3) + ')');
-        ctx.fillText(glyph, stream.x, stream.y - mg * matrixFont);
-      }
-    }
 
     var connectionLimit = 112;
     var connectionLimitSq = connectionLimit * connectionLimit;
@@ -973,70 +920,18 @@ if (window.matchMedia('(hover: hover)').matches) {
 
 /* ── Tour stops ── */
 var TOUR = [
-  {
-    sel: 'header',
-    mobileSel: 'header',
-    icon: '🖥️',
-    title: 'Header — Cabeçalho',
-    desc: 'Além de organizar a identidade visual, o header melhora a experiência do usuário (UX). Exibido em todas as páginas, facilita o acesso rápido às seções principais, gera praticidade otimizando o tempo e torna a navegação mais confortável.'
-  },
-  {
-    sel: '.hero',
-    mobileSel: '.hero-fidelity-stage',
-    icon: '⚡',
-    title: 'Banner Principal',
-    desc: 'São a primeira impressão do seu site. Apresentam sua marca, destacam as informações mais importantes, direcionam o visitante para as principais ações e tornam a navegação mais clara, profissional e atrativa.'
-  },
-  {
-    sel: '#featured',
-    mobileSel: '#featured .feature-panel',
-    icon: '🚀',
-    title: 'Projeto em Destaque',
-    desc: 'Atração inicial do site, onde o usuário decide demonstrar interesse interagindo com o conteúdo em questão — ou não. É o cartão de visitas técnico do portfólio.'
-  },
-  {
-    sel: '#projects',
-    mobileSel: '#projects .proj-grid',
-    icon: '⚙️',
-    title: 'Soluções em Destaque',
-    desc: 'Vitrine de soluções apresentadas no portfólio. Cada card descreve uma proposta técnica em IA, automação, emulação responsiva ou visualização de dados, com escopo e status identificados na própria interface.'
-  },
-  {
-    sel: '#stack',
-    mobileSel: '#stack .stack-groups',
-    icon: '🧰',
-    title: 'Stack Tecnológico',
-    desc: 'Conjunto de tecnologias apresentadas no perfil: React, Node.js, Python, Docker, LLMs e outras ferramentas relacionadas aos projetos e à experiência profissional documentada.'
-  },
-  {
-    sel: '#logs',
-    mobileSel: '#logs .terminal-wrap',
-    icon: '📋',
-    title: 'Session Logs — Trajetória',
-    desc: 'Histórico profissional em formato de terminal. Cada linha registra uma etapa real da carreira — de suporte técnico a especialista fullstack e consultor de IA.'
-  },
-  {
-    sel: '#contact',
-    mobileSel: '#contact .contact-panel',
-    icon: '📡',
-    title: 'Open Channel — Contato',
-    desc: 'Canal direto para oportunidades, projetos e parcerias por WhatsApp, e-mail, LinkedIn ou GitHub. O retorno depende da disponibilidade informada no momento do contato.'
-  },
-  {
-    sel: '#chatPanel',
-    mobileSel: '#chatPanel',
-    icon: '🤖',
-    title: 'Assistente AI',
-    desc: 'Demonstração local do assistente, sem consumo de API durante o tour. Fora da apresentação, o chat integrado ao Gemini continua disponível; quando o provedor estiver indisponível, respostas locais essenciais preservam a experiência.',
-    isChat: true
-  },
-  {
-    sel: 'footer',
-    mobileSel: 'footer',
-    icon: '✅',
-    title: 'Rodapé — Fim do Tour',
-    desc: 'Tour concluído. Os principais módulos do portfólio foram apresentados, com foco em performance, segurança, acessibilidade, clareza e qualidade de entrega.'
-  }
+  { sel: 'header', mobileSel: 'header', icon: '⌂', title: 'Navegação', desc: 'Este cabeçalho organiza o acesso às seções do meu portfólio, ao currículo e ao contato.' },
+  { sel: '.hero', mobileSel: '.hero-fidelity-stage', icon: '⚡', title: 'Apresentação profissional', desc: 'Sou Wagner Persoli Filho. Tenho mais de 12 anos de experiência em TI corporativa e atuo com infraestrutura, suporte avançado, automação e integração de IA.' },
+  { sel: '#about', mobileSel: '#about', icon: '01', title: 'Perfil profissional', desc: 'Apresento minha trajetória e a combinação entre operações de TI, infraestrutura corporativa, desenvolvimento e automação.' },
+  { sel: '#featured', mobileSel: '#featured', icon: '02', title: 'Competências', desc: 'As competências estão agrupadas em infraestrutura, operações e suporte, desenvolvimento, automação e IA.' },
+  { sel: '#experience', mobileSel: '#experience', icon: '03', title: 'Experiência profissional', desc: 'Esta seleção resume experiências na Infoplus, no suporte Apple por parceiro autorizado e na TIVIT. Resultados quantitativos só serão publicados quando forem confirmados.' },
+  { sel: '#stack', mobileSel: '#stack', icon: '04', title: 'Stack técnico', desc: 'As tecnologias estão organizadas por domínio, sem percentuais de proficiência inventados.' },
+  { sel: '#projects', mobileSel: '#projects', icon: '05', title: 'Projetos e conceitos', desc: 'O portfólio publicado é apresentado como projeto real. As demais propostas estão marcadas explicitamente como conceitos e contêm campos a completar.' },
+  { sel: '#logs', mobileSel: '#logs', icon: '06', title: 'IA aplicada', desc: 'O assistente Wagner AI responde a perguntas sobre as informações profissionais documentadas neste portfólio.' , isChat: true },
+  { sel: '#recommendation', mobileSel: '#recommendation', icon: '07', title: 'Referências profissionais', desc: 'O espaço de recomendação está preparado e será preenchido somente com depoimento autorizado.' },
+  { sel: '#education', mobileSel: '#education', icon: '08', title: 'Formação', desc: 'Esta seção resume a formação acadêmica e a formação complementar informadas no currículo.' },
+  { sel: '#contact', mobileSel: '#contact', icon: '✉', title: 'Contato', desc: 'Use o formulário, WhatsApp ou LinkedIn para falar comigo. O e-mail de domínio próprio ainda precisa ser informado.' },
+  { sel: 'footer', mobileSel: 'footer', icon: '✓', title: 'Fim da apresentação', desc: 'Obrigado por conhecer meu portfólio. Consulte o currículo para a trajetória completa e os detalhes adicionais.' }
 ];
 
 var AUTO_INTERVAL = 5000; // ms per step in auto mode
@@ -1110,6 +1005,11 @@ var presentationMotionToken = 0;
 function raf(fn){ requestAnimationFrame(fn); }
 
 function smoothScrollTo(y, cb) {
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    window.scrollTo(0, y);
+    if (cb) cb();
+    return;
+  }
   var token = ++presentationMotionToken;
   var start = window.scrollY, dist = y - start;
   var dur = Math.min(700 + Math.abs(dist)*0.2, 1100), t0 = null;
@@ -1759,4 +1659,57 @@ if (contactForm) {
     hero.style.setProperty('--hero-tx', '0px');
     hero.style.setProperty('--hero-ty', '0px');
   }, { passive: true });
+
+/* Efeitos visuais opcionais: respeita a preferência salva e permite desligar canvas/energia. */
+(function initVisualEffectsToggle() {
+  var button = document.getElementById('effectsToggle');
+  if (!button) return;
+  var key = 'wagneros-visual-effects';
+  function apply(enabled) {
+    document.body.classList.toggle('effects-disabled', !enabled);
+    button.setAttribute('aria-pressed', String(enabled));
+    button.textContent = enabled ? 'EFEITOS: LIGADOS' : 'EFEITOS: DESLIGADOS';
+  }
+  var reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var enabled = !reduceMotion;
+  try {
+    var saved = window.localStorage.getItem(key);
+    if (!reduceMotion && saved === '0') enabled = false;
+    if (!reduceMotion && saved === '1') enabled = true;
+  } catch (_) {}
+  if (reduceMotion) {
+    button.disabled = true;
+    button.textContent = 'EFEITOS REDUZIDOS PELO SISTEMA';
+    button.setAttribute('aria-pressed', 'false');
+    document.body.classList.add('effects-disabled');
+  } else {
+    apply(enabled);
+  }
+  button.addEventListener('click', function () {
+    if (reduceMotion) return;
+    enabled = !document.body.classList.contains('effects-disabled');
+    enabled = !enabled;
+    apply(enabled);
+    try { window.localStorage.setItem(key, enabled ? '1' : '0'); } catch (_) {}
+  });
+})();
+
+
+/* Abre estudos de caso nativos por teclado ou clique, sem dependência de modal adicional. */
+(function initCaseStudyLinks() {
+  var links = document.querySelectorAll('a[href^="#case-"]');
+  Array.prototype.forEach.call(links, function (link) {
+    link.addEventListener('click', function (event) {
+      var targetId = link.getAttribute('href').slice(1);
+      var target = document.getElementById(targetId);
+      if (!target || target.tagName.toLowerCase() !== 'details') return;
+      event.preventDefault();
+      target.open = true;
+      target.scrollIntoView({ behavior: window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+      var summary = target.querySelector('summary');
+      if (summary) summary.focus({ preventScroll: true });
+    });
+  });
+})();
+
 })();

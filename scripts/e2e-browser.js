@@ -188,7 +188,7 @@ function buildTestHtml() {
 }
 
 function loadRuntimeScripts(cdp) {
-  var files = ['performance-safe.js', 'chat-client.js', 'feature-loader.js', 'main.js', 'hero-effects.js', 'hero-fidelity.js', 'hero-motion.js', 'impact-experience.js'];
+  var files = ['performance-safe.js', 'chat-client.js', 'feature-loader.js', 'main.js', 'matrix-rain.js', 'hero-effects.js', 'hero-fidelity.js', 'hero-motion.js', 'impact-experience.js'];
   return files.reduce(function (promise, name) {
     return promise.then(function () {
       var code = fs.readFileSync(path.join(root, 'public', 'js', name), 'utf8');
@@ -257,7 +257,18 @@ async function run() {
   var cls = await cdp.evaluate('Number(window.__wagnerCLS || 0)');
   assert(cls <= 0.02, 'CLS acima do orçamento: ' + cls);
   await captureScreenshot(cdp, 'desktop-hero.png');
-  if (screenshotDir) { await cdp.evaluate("document.getElementById('projects').scrollIntoView();"); await sleep(450); await captureScreenshot(cdp, 'desktop-projects.png'); }
+  if (screenshotDir) {
+    await cdp.evaluate("window.scrollTo(0, Math.max(720, document.querySelector('.hero')?.offsetHeight || 0));");
+    await sleep(650);
+    var matrixBefore = await cdp.evaluate('window.WagnerMatrixRain && window.WagnerMatrixRain.getState()');
+    await captureScreenshot(cdp, 'desktop-matrix-a.png');
+    await sleep(650);
+    var matrixAfter = await cdp.evaluate('window.WagnerMatrixRain && window.WagnerMatrixRain.getState()');
+    await captureScreenshot(cdp, 'desktop-matrix-b.png');
+    assert(matrixBefore && matrixAfter && matrixAfter.active, 'Canvas Matrix não ficou ativo após o Hero.');
+    assert(matrixAfter.frames > matrixBefore.frames + 5, 'Canvas Matrix não apresentou movimento contínuo entre os quadros.');
+    assert(matrixAfter.columns >= 60, 'Densidade Matrix insuficiente no desktop.');
+  }
 
   var scroll = await dispatchNativeWheelUntilScrolled(cdp);
   assert(scroll.maxScroll > 120, 'A página não possui altura rolável suficiente para o teste.');
@@ -265,7 +276,7 @@ async function run() {
   assert(scroll.overflow !== 'hidden', 'Scroll global ficou bloqueado.');
   assert(scroll.diagnostics && scroll.diagnostics.nativeWheel === true, 'Diagnóstico de scroll nativo ausente.');
 
-  await cdp.evaluate(`window.fetch = async function () { return { ok:true, status:200, json:async function(){ return { content:[{type:'text',text:'Projetos do Wagner: Device Simulator Engine, AI Systems & Automation e Premium Dashboards.'}] }; } }; };`);
+  await cdp.evaluate(`window.fetch = async function () { return { ok:true, status:200, json:async function(){ return { content:[{type:'text',text:'Projetos do Wagner: WAGNER.OS e os conceitos Automate OS, Nexus Dashboard e Data Pulse.'}] }; } }; };`);
   await cdp.evaluate("document.getElementById('fabChat').click()");
   await sleep(250);
   var chatOpen = await cdp.evaluate(`(() => { const p=document.getElementById('chatPanel'); return p.classList.contains('open') && p.getAttribute('aria-hidden')==='false' && !p.inert; })()`);

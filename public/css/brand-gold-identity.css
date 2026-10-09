@@ -1,0 +1,88 @@
+/* WP GOLD IDENTITY — visual-only layer; functionality and motion handlers remain untouched. */
+:root{
+  --wp-gold:#f2c35b;
+  --wp-gold-light:#fff0b0;
+  --wp-gold-mid:#c88b27;
+  --wp-gold-deep:#6f430f;
+  --wp-black:#050608;
+  --r-bg:#050608;
+  --r-text:#f8f4e9;
+  --r-muted:#c2b9a6;
+  --r-cyan:var(--wp-gold);
+  --r-blue:#e4ad43;
+  --r-violet:#9b671d;
+  --r-line:rgba(242,195,91,.26);
+  --accent-teal-bright:var(--wp-gold);
+  --accent-wine-bright:#c88b27;
+  --accent-indigo-bright:#9b671d;
+  --accent-gold:var(--wp-gold);
+  --success:#e8bd5c;
+  --accent-green:#e8bd5c;
+  --accent-purple:#9b671d;
+  --accent-blood:#c88b27;
+  --neon-green-accent:#e8bd5c;
+  --neon-green-dim:#b7822a;
+  --text-primary:#f8f4e9;
+  --text-muted:#c2b9a6;
+  --text-dim:#75664c;
+}
+html,body{background-color:var(--wp-black)!important;color:var(--wp-gold-light)}
+body{
+ background-image:
+ radial-gradient(ellipse 72% 45% at 50% -5%,rgba(200,139,39,.14),transparent 64%),
+ radial-gradient(ellipse 40% 48% at 90% 75%,rgba(242,195,91,.07),transparent 65%)!important;
+}
+::selection{background:rgba(242,195,91,.55);color:#090806}
+:focus-visible{outline-color:var(--wp-gold-light)!important}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--wp-gold-light),var(--wp-gold-mid),var(--wp-gold-deep))!important;box-shadow:0 0 8px rgba(242,195,91,.35)!important}
+.vignette{background:radial-gradient(ellipse 65% 45% at 50% -10%,rgba(200,139,39,.13),transparent 64%),radial-gradient(ellipse 50% 40% at 100% 10%,rgba(242,195,91,.06),transparent 65%),radial-gradient(ellipse 60% 60% at 0% 100%,rgba(111,67,15,.1),transparent 65%)!important}
+.neon-lines{opacity:.24!important}
+.neon-lines i{color:var(--wp-gold)!important}
+.redesign-brand .brand-mark{width:38px!important;height:38px!important;background:url("../img/wp-monogram.svg") center/contain no-repeat!important;filter:drop-shadow(0 0 5px rgba(242,195,91,.24))}
+.redesign-brand .brand-mark i{display:none!important}
+.brand-word span,.lockup-main span{color:var(--wp-gold)!important}
+.redesign-nav a:hover,.redesign-nav a:focus-visible{color:var(--wp-gold-light)!important}
+.pmode-btn,.header-talk,.hero-cv,.hero-clean-btn,.section-pill,.project-link,.contact-link,.mobile-nav-link{
+ border-color:rgba(242,195,91,.42)!important;
+}
+.pmode-btn,.header-talk,.hero-cv,.hero-clean-btn,.project-link,.contact-link{box-shadow:inset 0 0 0 1px rgba(242,195,91,.035)}
+.pmode-btn[aria-pressed="true"],.pmode-btn[data-active="true"],.mobile-pmode-btn[aria-pressed="true"]{background:rgba(200,139,39,.16)!important;border-color:var(--wp-gold)!important;color:var(--wp-gold-light)!important}
+.hero-copy h1 span,.section-intro-row h2 span,.info-heading h2 span,.notes-copy h2 span,.professional-heading h2 span{
+ background:linear-gradient(100deg,var(--wp-gold-light),var(--wp-gold),var(--wp-gold-mid))!important;
+ -webkit-background-clip:text!important;background-clip:text!important;color:transparent!important;
+}
+.hero-badge,.section-kicker,.hero-explore b,.hero-cv span,.section-intro-copy strong{color:var(--wp-gold)!important}
+.hero-badge{border-color:rgba(242,195,91,.42)!important;background:rgba(200,139,39,.08)!important}
+.hero-grid-lines{background-image:linear-gradient(rgba(242,195,91,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(242,195,91,.035) 1px,transparent 1px)!important}
+.hero-wave,.hero-orbit,.hero-orbit-b{filter:hue-rotate(125deg) saturate(.82)!important}
+.wave,.hero-orbit,.hero-orbit-b{border-color:rgba(242,195,91,.26)!important;box-shadow:0 0 25px rgba(200,139,39,.07)!important}
+.wave-2,.hero-orbit-b{border-color:rgba(200,139,39,.36)!important}
+.wave-core{background:var(--wp-gold-light)!important;box-shadow:0 0 16px var(--wp-gold),0 0 60px 25px rgba(200,139,39,.24)!important}
+.hero-brand-lockup{color:var(--wp-gold-light)!important}
+.lockup-sub{color:#a38b60!important}
+.professional-heading .section-kicker,.section-kicker{color:var(--wp-gold)!important}
+.professional-heading h2 span,.professional-profile-copy strong,.professional-profile-copy a{color:var(--wp-gold)!important}
+.professional-profile-grid,.professional-profile-copy,.professional-section{--r-line:rgba(242,195,91,.2)}
+/* Replace the previous center hero artwork with the approved gold WP monogram.
+   Existing lightning canvas, energy toggles, and motion scripts remain active. */
+#heroFidelityStage{background:#050608!important;box-shadow:0 0 0 1px rgba(242,195,91,.13),0 26px 84px rgba(0,0,0,.58),0 0 90px rgba(200,139,39,.08)!important}
+#heroFidelityStage .hero-fidelity-image{opacity:0!important;visibility:hidden!important}
+#heroFidelityStage::before{
+ content:""!important;display:block!important;position:absolute!important;z-index:2!important;
+ left:50%!important;top:50%!important;width:min(66vw,920px)!important;height:88%!important;
+ transform:translate(-50%,-50%)!important;background:url("../img/wp-monogram.svg") center/contain no-repeat!important;
+ filter:drop-shadow(0 16px 22px rgba(0,0,0,.82)) drop-shadow(0 0 20px rgba(200,139,39,.18))!important;
+ pointer-events:none!important;
+}
+#heroFidelityStage .hero-lightning-canvas{filter:hue-rotate(135deg) saturate(.8) drop-shadow(0 0 8px rgba(242,195,91,.7))!important;opacity:.72!important}
+#heroFidelityStage[data-energy="overdrive"] .hero-lightning-canvas{filter:hue-rotate(135deg) saturate(.9) drop-shadow(0 0 10px rgba(255,226,145,.82))!important;opacity:.92!important}
+#heroFidelityStage .hero-atmosphere{filter:hue-rotate(125deg) saturate(.72)!important}
+#heroFidelityStage .hero-fidelity-glow--left{background:radial-gradient(circle,rgba(200,139,39,.42),transparent 66%)!important}
+#heroFidelityStage .hero-fidelity-glow--right{background:radial-gradient(circle,rgba(255,240,176,.25),transparent 69%)!important}
+#heroFidelityStage .hero-fidelity-particles{filter:hue-rotate(125deg) saturate(.7)!important;opacity:.12!important}
+#heroFidelityStage .hero-scanline{filter:hue-rotate(125deg) saturate(.65)!important}
+@media(max-width:760px){
+ .redesign-brand .brand-mark{width:32px!important;height:32px!important}
+ #heroFidelityStage::before{width:min(88vw,620px)!important;height:76%!important}
+}
+@media(prefers-reduced-motion:reduce){#heroFidelityStage .hero-lightning-canvas{opacity:.28!important}}

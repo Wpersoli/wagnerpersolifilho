@@ -23,7 +23,7 @@
     </linearGradient>
     <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
       <feGaussianBlur stdDeviation="8" result="b1"/>
-      <feColorMatrix in="b1" type="matrix" values="0 0 0 0 0.05 0 0 0 0 0.65 0 0 0 0 1 0 0 0 1 0" result="blue"/>
+      <feColorMatrix in="b1" type="matrix" values="0 0 0 0 0.78 0 0 0 0 0.48 0 0 0 0 0.08 0 0 0 1 0" result="blue"/>
       <feMerge><feMergeNode in="blue"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
     <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">

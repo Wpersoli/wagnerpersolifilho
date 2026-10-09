@@ -60,7 +60,7 @@ test('seleção de conhecimento minimiza dados pessoais conforme a pergunta', fu
   assert.doesNotMatch(general, /98150|estado civil|compensation|Vila Galvão/i);
 
   var projects = internal.selectKnowledge('Quais são os projetos do Wagner?');
-  assert.match(projects, /Device Simulator Engine/);
+  assert.match(projects, /WAGNER\.OS/);
   assert.doesNotMatch(projects, /98150|civil_status|compensation|commute/i);
 
   var contact = internal.selectKnowledge('Qual é o WhatsApp do Wagner?');

@@ -9,8 +9,9 @@ test('camada visual impactante permanece isolada dos contratos críticos', funct
   var html = fs.readFileSync(path.join(root, 'public', 'index.html'), 'utf8');
   var css = fs.readFileSync(path.join(root, 'src', 'styles', 'impact-experience.css'), 'utf8');
   var js = fs.readFileSync(path.join(root, 'public', 'js', 'impact-experience.js'), 'utf8');
-  assert.match(html, /impact-kinetic-wordmark/);
-  assert.match(html, /impact-skill-marquee/);
+  assert.match(html, /class="professional-section profile-section"/);
+  assert.match(html, /class="professional-project-grid"/);
+  assert.match(html, /id="effectsToggle"/);
   assert.match(html, /impact-experience\.js/);
   assert.match(css, /body\.pmode-active/);
   assert.match(css, /prefers-reduced-motion/);
@@ -59,7 +60,9 @@ test('refinamento v3.3.0 mantém visual uniforme e prioridade dos controles crí
   assert.match(css, /body\.impact-chat-open \.impact-particle-layer/);
   assert.match(css, /body\.pmode-active \.impact-particle-layer/);
   assert.match(css, /pointer-events/);
-  assert.match(html, /BUILD <b>v3\.3\.0<\/b>/);
+  assert.equal((html.match(/class="proj-card/g) || []).length, 4);
+  assert.match(html, /id="projectsTitle"/);
+  assert.doesNotMatch(html, /UPTIME|RENDER|ASSETS/);
 });
 
 test('chuva Matrix usa canvas visível e mantém o conteúdo acima da animação', function () {

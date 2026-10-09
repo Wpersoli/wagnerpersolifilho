@@ -1005,6 +1005,11 @@ var presentationMotionToken = 0;
 function raf(fn){ requestAnimationFrame(fn); }
 
 function smoothScrollTo(y, cb) {
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    window.scrollTo(0, y);
+    if (cb) cb();
+    return;
+  }
   var token = ++presentationMotionToken;
   var start = window.scrollY, dist = y - start;
   var dur = Math.min(700 + Math.abs(dist)*0.2, 1100), t0 = null;

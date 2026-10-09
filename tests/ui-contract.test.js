@@ -56,7 +56,7 @@ test('hero usa WebP válido e dimensões intrínsecas corretas', () => {
   const intrinsicHeight = image.readUInt16LE(vp8Offset + 5) & 0x3fff;
   assert.equal(intrinsicWidth, 4086);
   assert.equal(intrinsicHeight, 1913);
-  assert.match(html, /src=["']img\/hero-fidelity-master\.webp["'][\s\S]*?width=["']4086["'][\s\S]*?height=["']1913["']/);
+  assert.match(appCss, /url\(["']?\.\.\/img\/hero-fidelity-master\.webp["']?\)/);
   const fallback = fs.readFileSync(path.join(root, 'public/img/hero-fidelity-master-fallback.jpg'));
   assert.equal(fallback.subarray(0, 2).toString('hex'), 'ffd8');
   assert.equal(fs.existsSync(path.join(root, 'public/img/hero-fidelity-master.webp.webp')), false);

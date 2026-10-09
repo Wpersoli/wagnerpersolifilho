@@ -192,7 +192,7 @@
     {
       "name": "WAGNER.OS",
       "type": "Projeto publicado",
-      "description": "Portfólio profissional com assistente contextual e arquitetura estática/serverless.",
+      "description": "Portfólio profissional publicado com assistente contextual e integração serverless de IA.",
       "demo": "https://wagnerpersoli.vercel.app/",
       "repository": "https://github.com/Wpersoli/wagnerpersolifilho",
       "stack": [
@@ -202,9 +202,7 @@
         "Node.js serverless",
         "Gemini API",
         "Vercel"
-      ],
-      "problem": "[PREENCHER: problema que motivou a criação do portfólio]",
-      "result": "[PREENCHER: resultado mensurável ou objetivo alcançado]"
+      ]
     },
     {
       "name": "AUTOMATE OS",
@@ -237,7 +235,6 @@
       "Formulário do portfólio",
       "WhatsApp",
       "LinkedIn"
-    ],
-    "note": "Não divulgar pretensão salarial, endereço de deslocamento ou disponibilidade específica sem confirmação expressa."
+    ]
   }
 }

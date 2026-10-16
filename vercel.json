@@ -1,15 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "functions": {
-    "api/chat.js": {
-      "maxDuration": 30,
-      "includeFiles": "data/**"
-    },
-    "api/contact.js": {
-      "maxDuration": 15
-    }
-  },
   "headers": [
     {
       "source": "/(.*)",
@@ -114,14 +105,6 @@
     }
   ],
   "rewrites": [
-    {
-      "source": "/api/chat",
-      "destination": "/api/chat.js"
-    },
-    {
-      "source": "/api/contact",
-      "destination": "/api/contact.js"
-    },
     {
       "source": "/(.*)",
       "destination": "/public/$1"

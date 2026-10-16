@@ -8,7 +8,7 @@
     "node": "22.x"
   },
   "scripts": {
-    "build": "node scripts/build-css.js && node scripts/build-security-config.js",
+    "build": "node -e \"console.log('Static site: no build step required')\"",
     "dev": "npm run build && node scripts/dev-server.js",
     "dev:vercel": "npm run build && vercel dev --listen 3000",
     "check": "node scripts/check-syntax.js",

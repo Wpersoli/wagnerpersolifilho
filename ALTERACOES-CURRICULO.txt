@@ -1,0 +1,7 @@
+WAGNER.OS v2.9.7 - inclusão do currículo
+
+- PDF oficial em public/docs/curriculo-wagner-persoli-filho.pdf
+- Página responsiva para visualização online em public/curriculo.html
+- Download direto preservado nos botões do hero
+- Acesso à visualização online adicionado aos menus desktop/mobile e ao bloco semântico do hero
+- Chat, WhatsApp, apresentação, APIs, efeitos e otimizações de desempenho não foram alterados

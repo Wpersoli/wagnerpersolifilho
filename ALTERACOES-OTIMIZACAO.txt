@@ -1,0 +1,10 @@
+ADDED: OTIMIZACAO-DESEMPENHO.md
+MODIFIED: package.json
+ADDED: public/css/performance-safe.css
+MODIFIED: public/index.html
+MODIFIED: public/js/hero-effects.js
+MODIFIED: public/js/hero-fidelity.js
+MODIFIED: public/js/hero-motion.js
+MODIFIED: public/js/main.js
+ADDED: public/js/performance-safe.js
+MODIFIED: tests/ui-contract.test.js

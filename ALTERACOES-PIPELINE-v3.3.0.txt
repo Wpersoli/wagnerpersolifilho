@@ -1,0 +1,9 @@
+WAGNER.OS v3.3.0 — estabilização do pipeline de navegador
+
+- E2E: roda do mouse agora repete até quatro eventos nativos antes de reprovar.
+- E2E: cookie/boot são encerrados e o documento recebe foco antes do teste de scroll.
+- Chromium: desativado throttling de timers/renderização em segundo plano durante os testes.
+- Visual: contrato de prioridade das partículas ao chat validado de forma síncrona por CSS.
+- Visual: abertura funcional do chat permanece coberta pelo E2E, eliminando dupla cobertura instável.
+- Testes preventivos adicionados para bloquear regressão do timeout CDP e da roda do mouse.
+- Resultado: 42 testes unitários/contratuais, E2E e auditoria visual aprovados.

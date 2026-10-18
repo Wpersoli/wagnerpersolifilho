@@ -1,4 +1,13 @@
-# WAGNER.OS v3.1.0
+# WAGNER.OS v3.3.0
+## Release v3.3.0
+
+- Topo alinhado à referência 1916×906, com monograma prismático fornecido integrado ao banner.
+- Header full-width e botões/boxes uniformizados em glass ciano-violeta.
+- Partículas Canvas sobre o conteúdo sem capturar cliques e com prioridade cedida ao chat e à apresentação.
+- Espaços vazios corrigidos mantendo SVGs decorativos fora do fluxo.
+- Conteúdo, ordem, IDs, chat, modo apresentação, scroll, currículo, WhatsApp, Brevo e APIs preservados.
+- Gate visual em 1916×906 e E2E em desktop, tablet e mobile.
+
 
 Portfólio estático/serverless com chat Gemini, contato Brevo com compatibilidade opcional para Resend, modo apresentação, currículo online, acessibilidade e perfil conservador de performance.
 
@@ -23,10 +32,26 @@ Abra `http://127.0.0.1:3000`. O comando usa o servidor local do projeto e não c
 ```powershell
 npm run validate
 npm run test:e2e
+npm run test:visual
+npm run quality
 npm run package:release
 ```
 
-`validate` recompila CSS e headers, verifica sintaxe, executa testes e bloqueia secrets ou assets inválidos. `test:e2e` valida em navegador o scroll do mouse, chat, apresentação, WhatsApp, currículo, topo e menu mobile.
+`validate` recompila CSS e headers, verifica sintaxe, executa testes e bloqueia secrets ou assets inválidos. `test:e2e` valida em navegador o scroll do mouse, chat, apresentação, WhatsApp, currículo, topo e menu mobile. `test:visual` audita a referência 1919×1001 sem depender de timers assíncronos do chat após o scroll. `quality` executa o gate completo com isolamento entre os navegadores E2E e visual.
+
+## Experiência visual v3.2
+
+A camada visual mantém o conteúdo e a estrutura existentes e adiciona, sem dependências externas:
+
+- partículas Canvas sobre a camada principal, com `pointer-events: none`;
+- reação sutil ao cursor e trilha luminosa;
+- scroll reveal com máscara, blur e stagger;
+- parallax leve nas imagens e 3D tilt preservado nos cards;
+- marquee duplo de skills;
+- loading cinematográfico refinado;
+- dark mode premium, noise e glassmorphism alinhados à referência visual.
+
+As partículas reduzem carga durante scroll, desaparecem com chat/apresentação e são removidas em `prefers-reduced-motion`, impressão e ambientes sem Canvas.
 
 ## Produção
 

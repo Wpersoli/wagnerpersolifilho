@@ -4,7 +4,12 @@ node_modules/
 !.env.example
 .vercel/
 *.log
-*.zip
+npm-debug.log*
+*.tmp
+*.bak
 artifacts/
+coverage/
+playwright-report/
+test-results/
 .DS_Store
 Thumbs.db

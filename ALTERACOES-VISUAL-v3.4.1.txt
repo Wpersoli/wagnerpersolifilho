@@ -1,0 +1,30 @@
+WAGNER.OS v3.4.1 — imagens reais dos projetos, zoom e carrossel
+
+SEÇÃO 03 / PROJETOS EM DESTAQUE
+- Novas imagens de apresentação (Tamoio Pet Shop e SÓGM Grandes Mecânicos) salvas localmente
+  em public/img/projeto-*-836.webp e projeto-*-1672.webp (srcset responsivo, lazy-load).
+  Deixam de depender de URLs externas (GitHub/CloudFront); a CSP permanece como estava.
+- Imagem completa: quadro 16:9 sem corte (object-fit: contain) abaixo de uma barra com
+  etiqueta e seta, então nada cobre a arte. Fundo desfocado preenche qualquer proporção
+  caso as imagens sejam trocadas no futuro.
+- Zoom elegante ao passar o mouse: aproxima 1,65x e acompanha o cursor com suavização;
+  volta ao normal ao sair. Em telas de toque, zoom lento automático (efeito Ken Burns) no
+  card central. Ícone de lupa indica a interação; brilho deslizante no hover.
+- Carrossel horizontal em loop infinito: pausa ao passar o mouse, ao focar com o teclado e
+  AO CLICAR/TOCAR (fica pausado até apertar o botão ▶). Botões ← ❚❚/▶ →, indicadores,
+  setas do teclado e arrastar (mouse/toque). Card central em destaque.
+- Corrigido: cards clonados do loop eram marcados como inert e não recebiam mouse/clique;
+  agora os originais ficam no conjunto central e os clones são totalmente clicáveis.
+- prefers-reduced-motion: sem rotação automática nem zoom animado.
+
+ARQUIVOS ALTERADOS (desde a v3.4.0)
+- public/index.html, public/css/portfolio-general.css, public/js/portfolio-general.js
+- public/img/projeto-tamoio-{836,1672}.webp, public/img/projeto-sogm-{836,1672}.webp (novos)
+- tests/impact-experience.test.js (contrato atualizado para as imagens locais)
+
+VERIFICAÇÃO
+- npm test 44/44; lint e syntax aprovados; E2E em Chromium (10 larguras, 320–2560px) aprovado.
+- Emulação em 320, 390, 1024, 1440 e 1920px: imagem preenche o quadro sem corte, zoom segue
+  o cursor, pausa por hover e por clique, retoma ao sair do mouse, sem overflow nem erros.
+- Observação preexistente: verify-assets continua apontando duplicatas (foto de perfil e
+  logo.png), mantidas conforme solicitado.

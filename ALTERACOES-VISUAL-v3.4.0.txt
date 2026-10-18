@@ -1,0 +1,44 @@
+WAGNER.OS v3.4.0 — ajustes visuais (aditivos, sem remoções)
+
+PRESERVADO (conforme solicitado)
+- Foto de perfil (wagner-profile.webp) e moldura animada.
+- logo.png (img/logo.png e logo.png) e a identidade dourada.
+- Todas as animações anteriores (profileFloat, cardFloat, statusPulse, reveal, barra de progresso).
+- Conteúdo, IDs, chat Gemini, formulário/Brevo, WhatsApp, currículo, CSP e APIs.
+
+SEÇÃO PROJETOS
+- Imagens não são mais cortadas: exibidas inteiras (object-fit: contain), centralizadas,
+  reduzidas (moldura 4:3 com respiro) e com fundo desfocado da própria imagem para
+  preencher a moldura sem barras vazias. Funciona com retrato, quadrado ou panorâmico.
+- Carrossel em loop infinito (sem emendas): rotação automática suave, pausa ao passar o mouse,
+  ao focar por teclado, fora da tela e em aba oculta; botões anterior/próximo/pausar,
+  indicadores, setas do teclado e arrastar/deslizar (mouse e toque).
+- Card central em destaque, vizinhos reduzidos e esmaecidos, bordas com máscara.
+- Respeita prefers-reduced-motion (sem rotação automática; navegação manual preservada).
+- Sem JavaScript, a grade original de 2 colunas continua funcionando.
+
+ANIMAÇÕES E MICROINTERAÇÕES
+- Botões: brilho deslizante, ripple ao clicar, setas que se movem, pressionar com escala.
+- Links: sublinhado animado (navegação, rodapé, "Visitar projeto", "Ver currículo").
+- Fontes/títulos: gradiente animado nos destaques, entrada com desfoque nos títulos de seção,
+  efeito de digitação no hero, contador "12+ anos", sublinhado dos rótulos de seção.
+- Cards: spotlight que segue o cursor, ícones que reagem, tags de competências em cascata.
+- Widgets: anel pulsante no WhatsApp e no chat, ícone do chat girando, balões do chat com entrada.
+- Corrigido: o elevar-ao-passar-o-mouse dos cards .reveal era anulado pelo estado revelado.
+
+RESPONSIVO
+- Fontes mínimas ampliadas no mobile (10–12px), alvos de toque maiores, etiqueta do hero
+  não é mais encoberta pela moldura, FABs com margens menores em telas pequenas.
+
+ARQUIVOS ALTERADOS
+- public/index.html (imagens dos projetos: camada de fundo + imagem inteira)
+- public/css/portfolio-general.css (bloco v3.4.0 ao final)
+- public/js/portfolio-general.js (módulo v3.4.0 ao final)
+- scripts/e2e-general.js (conta apenas cards originais, ignorando clones do carrossel)
+
+VERIFICAÇÃO
+- npm test: 44/44 aprovados. lint e check de sintaxe aprovados. E2E real em Chromium
+  (10 larguras de 320 a 2560px): aprovado, sem overflow horizontal.
+- Observação preexistente (não alterada): verify-assets aponta duplicatas
+  (publicimgwagner-profile.webp, logo.png da raiz) e wp-monogram.svg sem referência.
+  Mantidos para não remover foto de perfil e logo.

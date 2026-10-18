@@ -7,9 +7,13 @@ var output = path.join(root, 'CHECKSUMS.sha256');
 var ignored = new Set(['.git', '.vercel', 'node_modules', 'artifacts']);
 var files = [];
 
+function isSensitiveEnv(name) {
+  return /^\.env(?:\.|$)/.test(name) && name !== '.env.example';
+}
+
 function walk(dir) {
   fs.readdirSync(dir, { withFileTypes: true }).forEach(function (entry) {
-    if (ignored.has(entry.name)) return;
+    if (ignored.has(entry.name) || isSensitiveEnv(entry.name)) return;
     var file = path.join(dir, entry.name);
     if (entry.isDirectory()) return walk(file);
     if (file === output || /\.zip$/i.test(entry.name)) return;

@@ -69,18 +69,16 @@
     if (!rect.width || !rect.height) return;
     var px = (clientX - rect.left) / rect.width;
     var py = (clientY - rect.top) / rect.height;
-    var dx = (px - 0.5) * 2;
-    var dy = (py - 0.5) * 2;
     hero.style.setProperty('--hero-pointer-x', (px * 100).toFixed(2) + '%');
     hero.style.setProperty('--hero-pointer-y', (py * 100).toFixed(2) + '%');
-    hero.style.setProperty('--hero-rx', (-dy * 2.8).toFixed(2) + 'deg');
-    hero.style.setProperty('--hero-ry', (dx * 3.6).toFixed(2) + 'deg');
-    hero.style.setProperty('--hero-tx', (dx * 4.5).toFixed(2) + 'px');
-    hero.style.setProperty('--hero-ty', (dy * 3.5).toFixed(2) + 'px');
-    hero.style.setProperty('--hero-logo-shift-x', (dx * 9).toFixed(2) + 'px');
-    hero.style.setProperty('--hero-logo-shift-y', (dy * 7).toFixed(2) + 'px');
-    hero.style.setProperty('--hero-copy-shift-x', (dx * -6).toFixed(2) + 'px');
-    hero.style.setProperty('--hero-copy-shift-y', (dy * -4).toFixed(2) + 'px');
+    hero.style.setProperty('--hero-rx', '0deg');
+    hero.style.setProperty('--hero-ry', '0deg');
+    hero.style.setProperty('--hero-tx', '0px');
+    hero.style.setProperty('--hero-ty', '0px');
+    hero.style.setProperty('--hero-logo-shift-x', '0px');
+    hero.style.setProperty('--hero-logo-shift-y', '0px');
+    hero.style.setProperty('--hero-copy-shift-x', '0px');
+    hero.style.setProperty('--hero-copy-shift-y', '0px');
   }
 
   var motionFrame = 0;

@@ -1,0 +1,170 @@
+/* =====================================================================
+   WAGNER.OS — reference-approved hero hardening.
+   Final authority for the approved 1919x1001 composition and 320–2560px.
+   ===================================================================== */
+:root {
+  --hero-source-ratio: 4086 / 1913;
+  --hero-header-block: clamp(68px, 4.55vw, 88px);
+  --hero-inline-gutter: clamp(14px, 1.45vw, 28px);
+  --hero-control-gap: clamp(10px, .84vw, 16px);
+}
+
+html,
+body {
+  inline-size: 100%;
+  max-inline-size: 100%;
+  overflow-x: clip;
+}
+
+body > header {
+  min-block-size: var(--hero-header-block) !important;
+  padding-inline: var(--hero-inline-gutter) !important;
+}
+
+body > header .brand-copy strong {
+  font-size: clamp(14px, 1.05vw, 20px) !important;
+  line-height: 1 !important;
+}
+
+body > header .brand-copy small {
+  font-size: clamp(6px, .42vw, 8px) !important;
+  letter-spacing: clamp(.14em, .22vw, .24em) !important;
+}
+
+body > header .mainnav {
+  gap: clamp(16px, 2.1vw, 42px) !important;
+}
+
+body > header .mainnav a,
+body > header .terminal-access,
+body > header .pmode-btn {
+  font-size: clamp(7px, .52vw, 10px) !important;
+}
+
+.fidelity-hero.cyber-hero,
+.fidelity-hero .hero-fidelity-shell,
+.fidelity-hero .hero-fidelity-stage.hero-brand-stage {
+  min-inline-size: 0 !important;
+  max-inline-size: none !important;
+}
+
+/* JPEG fallback remains behind the WebP and is visible only if decoding fails. */
+.fidelity-hero .hero-fidelity-stage.hero-brand-stage {
+  background-color: #010711 !important;
+  background-image: url("../img/hero-fidelity-master-fallback.jpg") !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  background-size: contain !important;
+}
+
+.fidelity-hero .hero-fidelity-image {
+  inline-size: 100% !important;
+  block-size: 100% !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+  transform: none !important;
+  aspect-ratio: var(--hero-source-ratio);
+}
+
+.fidelity-hero .hero-clean-actions {
+  gap: var(--hero-control-gap) !important;
+}
+
+.fidelity-hero .hero-clean-btn {
+  min-inline-size: clamp(156px, 11.6vw, 200px) !important;
+  min-block-size: clamp(38px, 2.65vw, 48px) !important;
+  padding-block: clamp(9px, .68vw, 12px) !important;
+  padding-inline: clamp(14px, 1vw, 20px) !important;
+  font-size: clamp(9px, .66vw, 12px) !important;
+}
+
+/* Dedicated safe area between professional links and the floating chat stack. */
+.fidelity-hero .hero-clean-socials {
+  inset-inline-end: clamp(150px, 10.8vw, 210px) !important;
+  gap: clamp(8px, .58vw, 11px) !important;
+}
+
+.fidelity-hero .hero-clean-socials a {
+  inline-size: clamp(38px, 2.45vw, 44px) !important;
+  block-size: clamp(38px, 2.45vw, 44px) !important;
+}
+
+.fab-stack {
+  inset-inline-end: max(16px, env(safe-area-inset-right, 0px)) !important;
+}
+
+@media (min-width: 761px) {
+  .fidelity-hero.cyber-hero {
+    min-block-size: 100svh !important;
+    block-size: 100svh !important;
+  }
+}
+
+@media (min-width: 2200px) {
+  body > header .mainnav {
+    gap: clamp(32px, 2.15vw, 54px) !important;
+  }
+
+  .fidelity-hero .hero-clean-socials {
+    inset-inline-end: clamp(190px, 9vw, 250px) !important;
+  }
+}
+
+@media (max-width: 1180px) {
+  body > header .mainnav {
+    gap: clamp(10px, 1.2vw, 18px) !important;
+  }
+
+  .fidelity-hero .hero-clean-socials {
+    inset-inline-end: 132px !important;
+  }
+}
+
+@media (max-width: 900px) {
+  body > header .mainnav,
+  body > header .terminal-access,
+  body > header .pmode-btn {
+    display: none !important;
+  }
+
+  body > header .burger {
+    display: grid !important;
+  }
+}
+
+@media (max-width: 760px) {
+  :root {
+    --hero-header-block: calc(62px + env(safe-area-inset-top, 0px));
+  }
+
+  .fidelity-hero .hero-fidelity-stage.hero-brand-stage {
+    background-size: contain !important;
+    aspect-ratio: 16 / 9 !important;
+  }
+
+  .fidelity-hero .hero-clean-actions,
+  .fidelity-hero .hero-clean-socials {
+    display: none !important;
+  }
+}
+
+@media (max-width: 359px) {
+  body > header {
+    padding-inline: 10px !important;
+  }
+
+  body > header .brand-copy strong {
+    font-size: 12px !important;
+  }
+
+  body > header .brand-copy small {
+    font-size: 5.5px !important;
+  }
+}
+
+@supports not (overflow: clip) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+}

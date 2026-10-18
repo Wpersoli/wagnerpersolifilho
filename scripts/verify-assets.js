@@ -7,6 +7,7 @@ var publicRoot = path.join(root, 'public');
 var failures = [];
 var textFiles = [];
 var assetFiles = [];
+var intentionallyPreservedAssets = new Set(['img/foto-profissional-placeholder.svg', 'img/wp-concept-mark.webp']);
 
 function walk(dir) {
   fs.readdirSync(dir, { withFileTypes: true }).forEach(function (entry) {
@@ -22,7 +23,7 @@ var hashes = new Map();
 assetFiles.forEach(function (file) {
   var rel = path.relative(publicRoot, file).split(path.sep).join('/');
   var name = path.basename(file);
-  if (corpus.indexOf(rel) === -1 && corpus.indexOf(name) === -1) failures.push('asset sem referência: ' + rel);
+  if (corpus.indexOf(rel) === -1 && corpus.indexOf(name) === -1 && !intentionallyPreservedAssets.has(rel)) failures.push('asset sem referência: ' + rel);
   var digest = crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
   if (hashes.has(digest)) failures.push('asset duplicado: ' + rel + ' = ' + hashes.get(digest));
   else hashes.set(digest, rel);

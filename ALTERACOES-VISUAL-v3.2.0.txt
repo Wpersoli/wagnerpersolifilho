@@ -1,0 +1,33 @@
+WAGNER.OS v3.2.0 — CAMADA VISUAL SOBRE O CONTEÚDO
+
+ALTERADO
+- public/js/impact-experience.js
+- src/styles/impact-experience.css
+- public/css/app.css (gerado pelo build)
+- scripts/visual-emulation.js
+- tests/impact-experience.test.js
+- metadados de versão e documentação
+
+PRESERVADO
+- Conteúdo e ordem das seções
+- IDs e contratos do chat
+- Modo apresentação
+- Background animado CSS existente
+- Hero, menu, WhatsApp, currículo, contato/Brevo e scroll nativo
+
+EFEITOS
+- Partículas Canvas na camada principal, sobre o conteúdo e sem captura de eventos
+- Cursor orbital e trilha luminosa
+- Scroll reveal com stagger
+- Parallax leve nas imagens
+- 3D tilt e glare refinados
+- Marquee duplo
+- Loading cinematográfico
+- Dark mode premium, noise e glassmorphism
+
+GUARDRAILS
+- Canvas abaixo de header/chat/apresentação
+- Pausa/redução durante scroll e aba oculta
+- Ocultação com chat e apresentação
+- Desativação com prefers-reduced-motion e impressão
+- Sem GSAP, Three.js ou novas dependências

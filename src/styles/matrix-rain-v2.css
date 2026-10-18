@@ -1,0 +1,30 @@
+/* =====================================================================
+   WAGNER.OS — MATRIX REFERENCE INTEGRATION
+   Dedicated canvas based on efeito-matrix-master. Appended last so the
+   animation cannot be hidden by legacy theme layers.
+   ===================================================================== */
+#matrixCanvas {
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  opacity: .82;
+  mix-blend-mode: screen;
+  contain: strict;
+}
+
+.cv-terminal-content::before,
+.cv-terminal-content::after {
+  display: none !important;
+}
+
+@media (max-width: 760px) {
+  #matrixCanvas { opacity: .68; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #matrixCanvas { display: block !important; opacity: .56; }
+}

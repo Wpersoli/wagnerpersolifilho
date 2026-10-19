@@ -2,3 +2,6 @@
 .reveal,.reveal:not(.is-revealed){opacity:1!important;visibility:visible!important;transform:none!important;filter:none!important;animation:none!important}
 .section-heading.reveal:not(.is-revealed) h2,.contact-copy.reveal:not(.is-revealed) h2{filter:none!important;letter-spacing:inherit!important}
 .projects-grid{transform:none!important}
+
+/* Sem JavaScript, não bloquear o conteúdo com a tela de entrada. */
+.site-preloader{display:none!important}

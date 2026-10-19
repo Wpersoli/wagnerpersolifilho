@@ -4,6 +4,22 @@
   var $$=function(s,root){return Array.prototype.slice.call((root||document).querySelectorAll(s));};
   var menu=$('#menu-toggle'),nav=$('#site-nav'),progress=$('#scroll-progress'),topButton=$('#back-to-top');
   var reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var preloader=$('#site-preloader');
+  if(preloader){
+    var preloaderDone=false;
+    var preloaderMaxDelay=reduced?450:2650;
+    var preloaderTimer=window.setTimeout(finishPreloader,preloaderMaxDelay);
+    function finishPreloader(){
+      if(preloaderDone)return;
+      preloaderDone=true;
+      window.clearTimeout(preloaderTimer);
+      preloader.setAttribute('aria-hidden','true');
+      preloader.classList.add('is-done');
+      window.setTimeout(function(){if(preloader.parentNode)preloader.parentNode.removeChild(preloader);},260);
+    }
+    if(document.readyState==='complete')finishPreloader();
+    else window.addEventListener('load',finishPreloader,{once:true});
+  }
   if(menu&&nav){menu.addEventListener('click',function(){var open=nav.classList.toggle('is-open');menu.setAttribute('aria-expanded',String(open));menu.setAttribute('aria-label',open?'Fechar menu':'Abrir menu');});$$('.site-nav a').forEach(function(a){a.addEventListener('click',function(){nav.classList.remove('is-open');menu.setAttribute('aria-expanded','false');menu.setAttribute('aria-label','Abrir menu');});});document.addEventListener('keydown',function(e){if(e.key==='Escape'){nav.classList.remove('is-open');menu.setAttribute('aria-expanded','false');}});}
   function onScroll(){var max=document.documentElement.scrollHeight-window.innerHeight;var n=max>0?window.scrollY/max*100:0;if(progress)progress.style.width=Math.max(0,Math.min(100,n))+'%';if(topButton)topButton.classList.toggle('is-visible',window.scrollY>480);}
   window.addEventListener('scroll',onScroll,{passive:true});onScroll();if(topButton)topButton.addEventListener('click',function(event){event.preventDefault();var target=document.getElementById('topo');var startY=window.scrollY;try{if(target&&typeof target.scrollIntoView==='function'){target.scrollIntoView({behavior:reduced?'auto':'smooth',block:'start'});}else{window.scrollTo({top:0,left:0,behavior:reduced?'auto':'smooth'});}}catch(_){window.scrollTo(0,0);}window.setTimeout(function(){if(startY>0&&Math.abs(window.scrollY-startY)<1){window.scrollTo(0,0);}},reduced?0:180);});

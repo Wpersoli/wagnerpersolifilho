@@ -9,6 +9,14 @@ var chrome;
 var errors = [];
 var sleep = function (ms) { return new Promise(function (resolve) { setTimeout(resolve, ms); }); };
 function assert(condition, message) { if (!condition) throw new Error(message); }
+async function waitForExpression(cdp, expression, timeout, message) {
+  var deadline = Date.now() + timeout;
+  while (Date.now() < deadline) {
+    if (await cdp.evaluate(expression)) return;
+    await sleep(50);
+  }
+  throw new Error(message + ' (timeout ' + timeout + 'ms)');
+}
 function findChrome() {
   var candidates = [process.env.CHROME_BIN, process.env.PROGRAMFILES && path.join(process.env.PROGRAMFILES, 'Google', 'Chrome', 'Application', 'chrome.exe'), process.env['PROGRAMFILES(X86)'] && path.join(process.env['PROGRAMFILES(X86)'], 'Microsoft', 'Edge', 'Application', 'msedge.exe')].filter(Boolean);
   for (var i = 0; i < candidates.length; i++) if (fs.existsSync(candidates[i])) return candidates[i];
@@ -93,13 +101,11 @@ async function run() {
   assert(await cdp.evaluate("!document.getElementById('site-nav').classList.contains('is-open')"),'Menu mobile não fechou após navegação.');
   await cdp.evaluate("document.getElementById('chat-toggle').click()");
   await cdp.evaluate("document.getElementById('chat-input').value='Teste de chat';document.getElementById('chat-form').dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}))");
-  await sleep(150);
-  assert(await cdp.evaluate("document.getElementById('chat-messages').textContent.includes('CHAT_TEST_OK')"),'Chat não retornou a resposta simulada.');
+  await waitForExpression(cdp, "document.getElementById('chat-messages').textContent.includes('CHAT_TEST_OK')", 3000, 'Chat não retornou a resposta simulada.');
   await cdp.evaluate("document.getElementById('chat-close').click()");
   assert(await cdp.evaluate("document.getElementById('chat-panel').getAttribute('aria-hidden')==='true'"),'Chat não fechou.');
   await cdp.evaluate("var f=document.getElementById('contact-form');f.elements.name.value='Teste';f.elements.email.value='teste@example.com';f.elements.subject.value='Teste automatizado';f.elements.message.value='Mensagem de teste';f.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}))");
-  await sleep(180);
-  assert(await cdp.evaluate("document.getElementById('form-status').textContent.includes('CONTACT_TEST_OK')"),'Formulário não exibiu confirmação simulada.');
+  await waitForExpression(cdp, "document.getElementById('form-status').textContent.includes('CONTACT_TEST_OK')", 3000, 'Formulário não exibiu confirmação simulada.');
   if(process.env.PORTFOLIO_SCREENSHOTS==='1'){await cdp.send('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});await cdp.evaluate('window.scrollTo(0,0)');await sleep(180);await screenshot(cdp,'portfolio-mobile.png');}
   assert(errors.length===0,'Erros JavaScript no navegador: '+errors.join(' | '));
   cdp.close();

@@ -131,8 +131,10 @@ test('vinheta WebM da marca carrega com saída segura antes de 3 segundos', func
   assert.ok(css.includes('site-preloader-failsafe 2.9s linear forwards'));
   assert.ok(css.includes('@keyframes site-preloader-video-glow'));
   assert.ok(css.includes('aspect-ratio:480/156'));
-  assert.ok(js.includes('preloaderMinDelay=reduced?180:2300'));
-  assert.ok(js.includes('preloaderMaxDelay=reduced?450:2630'));
+  assert.ok(js.includes('preloaderMinDelay=2300,preloaderMaxDelay=2630'));
+  assert.ok(js.includes('preloaderMinDelay=2300,preloaderMaxDelay=2630'));
   assert.ok(js.includes("preloaderVideo.addEventListener('ended'"));
+  assert.ok(js.includes('finishAfter(preloaderMinDelay);'));
+  assert.ok(!css.includes('.site-preloader{animation-duration:.55s}'), 'preferência por movimento reduzido não pode quebrar o tempo mínimo');
   assert.ok(noJs.includes('.site-preloader{display:none!important}'));
 });

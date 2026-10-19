@@ -6,7 +6,7 @@
   var reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var preloader=$('#site-preloader');
   if(preloader){
-    var preloaderStartedAt=Date.now(),preloaderDone=false;
+    var preloaderDone=false;
     var preloaderMinDelay=5000,preloaderMaxDelay=5000,preloaderFadeDuration=reduced?0:240;
     function finishPreloader(){
       if(preloaderDone)return;

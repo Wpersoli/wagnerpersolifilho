@@ -3,5 +3,5 @@
 .section-heading.reveal:not(.is-revealed) h2,.contact-copy.reveal:not(.is-revealed) h2{filter:none!important;letter-spacing:inherit!important}
 .projects-grid{transform:none!important}
 
-/* Sem JavaScript, não bloquear o conteúdo com a tela de entrada. */
+/* Sem JavaScript, a tela de entrada não pode bloquear a página. */
 .site-preloader{display:none!important}

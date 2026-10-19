@@ -97,7 +97,7 @@ test('timer do formulário recupera sessões antigas e o WhatsApp mantém navega
   assert.doesNotMatch(js, /window\.open\(href/);
 });
 
-test('HTML usa assets versionados v3.4.8 e tem fallback de conteúdo sem JavaScript', function () {
+test('HTML usa assets versionados v3.4.7 e tem fallback de conteúdo sem JavaScript', function () {
   assert.match(html, /portfolio-general\.css\?v=3\.4\.8/);
   assert.match(html, /portfolio-general\.js\?v=3\.4\.8/);
   assert.match(html, /chat-client\.js\?v=3\.4\.8/);
@@ -123,14 +123,15 @@ test('metadados SEO e arquivos de indexação usam o domínio público de produ�
 });
 
 
-test('logo preloader é animado, acessível e tem fallback absoluto de até 3 segundos', function () {
+test('logo preloader é animado, acessível e tem limite absoluto inferior a 3 segundos', function () {
   assert.match(html, /id="site-preloader"[^>]*role="status"/);
   assert.match(html, /class="site-preloader__logo" src="\/img\/logo\.png"/);
   assert.match(html, /href="\/img\/logo\.png" type="image\/png" fetchpriority="high"/);
   assert.match(css, /site-preloader-failsafe 2\.9s linear forwards/);
-  assert.match(css, /@keyframes site-preloader-failsafe/);
   assert.match(css, /@keyframes site-preloader-logo/);
+  assert.match(css, /@keyframes site-preloader-scan/);
+  assert.match(js, /preloaderMinDelay=reduced\?180:650/);
   assert.match(js, /preloaderMaxDelay=reduced\?450:2650/);
-  assert.match(js, /document\.readyState==='complete'\)finishPreloader\(\)/);
+  assert.match(js, /document\.readyState==='complete'\)finishWhenReady\(\)/);
   assert.match(noJs, /\.site-preloader\{display:none!important\}/);
 });

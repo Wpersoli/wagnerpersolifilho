@@ -1,8 +1,8 @@
-WAGNER.OS v3.4.8 — tela de carregamento pela marca
+WAGNER.OS v3.4.8 — logo de carregamento
 
-- Adicionada tela de entrada com o logo oficial já usado no cabeçalho.
-- Animação leve com órbitas e barra indeterminada, sem bibliotecas externas.
-- Fechamento imediato no evento load; temporizador de segurança em 2,65 segundos e fallback CSS em 2,9 segundos.
-- Respeita prefers-reduced-motion e não bloqueia o conteúdo quando JavaScript está desabilitado.
-- Atualizados os parâmetros de cache dos assets, versão do projeto e identificação do canal de contato.
-- CI inclui contrato para a presença do logo, animações e limite máximo de exibição.
+- Adicionado preloader com o logo atual da marca e animações de brilho pulsante, varredura luminosa, órbitas e barra de progresso.
+- O preloader desaparece quando a página termina de carregar, após um breve tempo mínimo para a animação ser percebida.
+- Fallback em JavaScript de 2,65 segundos e salvaguarda CSS de 2,9 segundos; nunca deve bloquear a home por mais de 3 segundos.
+- Respeita prefers-reduced-motion e fica oculto quando JavaScript está desativado.
+- Adicionado teste de contrato para acessibilidade, animação, fallback e limite de tempo.
+- Ajustados os harnesses E2E para testar a interface depois de remover a tela de entrada do DOM de teste.

@@ -6,19 +6,22 @@
   var reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var preloader=$('#site-preloader');
   if(preloader){
-    var preloaderDone=false;
-    var preloaderMaxDelay=reduced?450:2650;
-    var preloaderTimer=window.setTimeout(finishPreloader,preloaderMaxDelay);
+    var preloaderStartedAt=Date.now(),preloaderDone=false;
+    var preloaderMinDelay=reduced?180:650,preloaderMaxDelay=reduced?450:2650;
     function finishPreloader(){
       if(preloaderDone)return;
       preloaderDone=true;
-      window.clearTimeout(preloaderTimer);
-      preloader.setAttribute('aria-hidden','true');
       preloader.classList.add('is-done');
+      preloader.setAttribute('aria-hidden','true');
       window.setTimeout(function(){if(preloader.parentNode)preloader.parentNode.removeChild(preloader);},260);
     }
-    if(document.readyState==='complete')finishPreloader();
-    else window.addEventListener('load',finishPreloader,{once:true});
+    function finishWhenReady(){
+      var remaining=Math.max(0,preloaderMinDelay-(Date.now()-preloaderStartedAt));
+      window.setTimeout(finishPreloader,remaining);
+    }
+    window.setTimeout(finishPreloader,preloaderMaxDelay);
+    if(document.readyState==='complete')finishWhenReady();
+    else window.addEventListener('load',finishWhenReady,{once:true});
   }
   if(menu&&nav){menu.addEventListener('click',function(){var open=nav.classList.toggle('is-open');menu.setAttribute('aria-expanded',String(open));menu.setAttribute('aria-label',open?'Fechar menu':'Abrir menu');});$$('.site-nav a').forEach(function(a){a.addEventListener('click',function(){nav.classList.remove('is-open');menu.setAttribute('aria-expanded','false');menu.setAttribute('aria-label','Abrir menu');});});document.addEventListener('keydown',function(e){if(e.key==='Escape'){nav.classList.remove('is-open');menu.setAttribute('aria-expanded','false');}});}
   function onScroll(){var max=document.documentElement.scrollHeight-window.innerHeight;var n=max>0?window.scrollY/max*100:0;if(progress)progress.style.width=Math.max(0,Math.min(100,n))+'%';if(topButton)topButton.classList.toggle('is-visible',window.scrollY>480);}

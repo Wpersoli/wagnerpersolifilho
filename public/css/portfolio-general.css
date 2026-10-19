@@ -320,3 +320,12 @@
 .button-whatsapp:hover{box-shadow:0 14px 38px #25c87940}
 .button-whatsapp .whatsapp-mark{color:#075c39}
 @media(max-width:560px){.form-actions{grid-template-columns:1fr}.form-actions .form-submit,.form-actions .form-whatsapp{min-height:50px}}
+
+
+/* v3.4.5 — elimina bloqueios de clique e toque nos campos e botões de contato. */
+#contact-form{position:relative;z-index:5;isolation:isolate;pointer-events:auto!important}
+#contact-form .form-row,#contact-form label,#contact-form input,#contact-form textarea,#contact-form .form-actions{position:relative;z-index:2;pointer-events:auto!important}
+#contact-form input,#contact-form textarea{touch-action:manipulation;-webkit-user-select:text;user-select:text}
+#contact-form input:not([type="hidden"]),#contact-form textarea{opacity:1!important;visibility:visible!important}
+#contact-whatsapp{position:relative;z-index:10;pointer-events:auto!important;cursor:pointer}
+#contact-form .honeypot{z-index:-1}

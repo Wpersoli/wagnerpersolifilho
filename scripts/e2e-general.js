@@ -100,7 +100,7 @@ async function run() {
   await cdp.evaluate("document.querySelector('.site-nav a').click()");
   assert(await cdp.evaluate("!document.getElementById('site-nav').classList.contains('is-open')"),'Menu mobile não fechou após navegação.');
   await cdp.evaluate("document.getElementById('chat-toggle').click()");
-  await cdp.evaluate("document.getElementById('chat-input').value='Teste de chat';document.getElementById('chat-form').dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}))");
+  await cdp.evaluate("window.WagnerChatClient={request:async function(){return {text:'CHAT_TEST_OK'}}};document.getElementById('chat-input').value='Teste de chat';document.getElementById('chat-form').dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}))");
   await waitForExpression(cdp, "document.getElementById('chat-messages').textContent.includes('CHAT_TEST_OK')", 3000, 'Chat não retornou a resposta simulada.');
   await cdp.evaluate("document.getElementById('chat-close').click()");
   assert(await cdp.evaluate("document.getElementById('chat-panel').getAttribute('aria-hidden')==='true'"),'Chat não fechou.');

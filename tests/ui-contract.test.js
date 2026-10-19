@@ -97,10 +97,10 @@ test('timer do formulário recupera sessões antigas e o WhatsApp mantém navega
   assert.doesNotMatch(js, /window\.open\(href/);
 });
 
-test('HTML usa assets versionados v3.4.7 e tem fallback de conteúdo sem JavaScript', function () {
-  assert.match(html, /portfolio-general\.css\?v=3\.4\.9/);
-  assert.match(html, /portfolio-general\.js\?v=3\.4\.9/);
-  assert.match(html, /chat-client\.js\?v=3\.4\.9/);
+test('HTML usa assets versionados v3.4.10 e tem fallback de conteúdo sem JavaScript', function () {
+  assert.match(html, /portfolio-general\.css\?v=3\.4\.10/);
+  assert.match(html, /portfolio-general\.js\?v=3\.4\.10/);
+  assert.match(html, /chat-client\.js\?v=3\.4\.10/);
   assert.match(html, /<noscript><link rel="stylesheet" href="\/css\/no-js\.css"><\/noscript>/);
 });
 
@@ -124,17 +124,18 @@ test('metadados SEO e arquivos de indexação usam o domínio público de produ�
 
 
 
-test('vinheta WebM da marca carrega com saída segura antes de 3 segundos', function () {
+test('vinheta WebM da marca dura cinco segundos e mantém a composição compacta', function () {
   assert.ok(html.includes('id="site-preloader-video"'));
   assert.ok(html.includes('src="/img/logo-wp-preloader.webm" type="video/webm"'));
   assert.ok(html.includes('href="/img/logo-wp-preloader.webm" type="video/webm" fetchpriority="high"'));
-  assert.ok(css.includes('site-preloader-failsafe 2.9s linear forwards'));
+  assert.ok(!css.includes('site-preloader-failsafe'), 'nenhum failsafe CSS deve encurtar a duração controlada pelo JavaScript');
   assert.ok(css.includes('@keyframes site-preloader-video-glow'));
-  assert.ok(css.includes('aspect-ratio:480/156'));
-  assert.ok(js.includes('preloaderMinDelay=2300,preloaderMaxDelay=2630'));
-  assert.ok(js.includes('preloaderMinDelay=2300,preloaderMaxDelay=2630'));
+  assert.ok(css.includes('@keyframes site-preloader-mark-in'));
+  assert.ok(css.includes('width:min(72vw,320px)'), 'marca compacta e centralizada');
+  assert.ok(css.includes('WAGNER.OS  /  DIGITAL SYSTEMS'), 'assinatura tipográfica da marca');
+  assert.ok(js.includes('preloaderMinDelay=5000,preloaderMaxDelay=5000,preloaderFadeDuration=reduced?0:240'));
   assert.ok(js.includes("preloaderVideo.addEventListener('ended'"));
+  assert.ok(js.includes('minimumMs-preloaderFadeDuration'));
   assert.ok(js.includes('finishAfter(preloaderMinDelay);'));
-  assert.ok(!css.includes('.site-preloader{animation-duration:.55s}'), 'preferência por movimento reduzido não pode quebrar o tempo mínimo');
   assert.ok(noJs.includes('.site-preloader{display:none!important}'));
 });

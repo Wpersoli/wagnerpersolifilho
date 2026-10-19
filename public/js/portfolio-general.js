@@ -11,6 +11,8 @@
   var reveal=$$('.reveal');if('IntersectionObserver'in window&&!reduced){var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add('is-revealed');observer.unobserve(entry.target);}});},{threshold:.12,rootMargin:'0px 0px -35px 0px'});reveal.forEach(function(el){observer.observe(el);});}else reveal.forEach(function(el){el.classList.add('is-revealed');});
   var sections=$$('main section[id]');if('IntersectionObserver'in window){var sectionObserver=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){$$('.nav-link').forEach(function(link){link.classList.toggle('is-active',link.getAttribute('href')==='#'+entry.target.id);});}});},{rootMargin:'-35% 0px -55% 0px'});sections.forEach(function(section){sectionObserver.observe(section);});}
   var form=$('#contact-form'),status=$('#form-status'),started=$('#form-started-at'),whatsappLink=$('#contact-whatsapp');
+  var contactMaxAge=2*60*60*1000;
+  function refreshContactStartIfStale(){if(!started)return;var now=Date.now(),prior=Number(started.value);if(!Number.isFinite(prior)||prior<=0||prior>now||now-prior>contactMaxAge)started.value=String(now);}
   if(form){
     // Todos os campos permanecem editáveis, independentemente da ordem de preenchimento.
     $('input,textarea,select',form).forEach(function(field){
@@ -33,6 +35,13 @@
     updateWhatsAppLink();
   }
   if(started)started.value=String(Date.now());
+  if(form&&started){
+    form.addEventListener('focusin',function(event){var target=event.target;if(target&&target.matches&&target.matches('input:not([type="hidden"]):not([name="company"]),textarea'))refreshContactStartIfStale();});
+    form.addEventListener('input',refreshContactStartIfStale);
+    form.addEventListener('change',refreshContactStartIfStale);
+    window.addEventListener('pageshow',refreshContactStartIfStale);
+    document.addEventListener('visibilitychange',function(){if(!document.hidden)refreshContactStartIfStale();});
+  }
   if(form)form.addEventListener('submit',async function(event){event.preventDefault();if(!form.reportValidity())return;var payload={};new FormData(form).forEach(function(value,key){payload[key]=String(value).trim();});if(status){status.className='form-status';status.textContent='Enviando sua mensagem com segurança…';}var submit=form.querySelector('[type="submit"]');if(submit){submit.disabled=true;submit.setAttribute('aria-busy','true');}try{var response=await fetch('/api/contact',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},credentials:'same-origin',body:JSON.stringify(payload)});var result={};try{result=await response.json();}catch(_){result={};}if(!response.ok)throw new Error(result.message||'Não foi possível enviar agora.');if(status){status.className='form-status is-success';status.textContent=result.message||'Mensagem recebida. Obrigado pelo contato!';}form.reset();if(started)started.value=String(Date.now());}catch(error){if(status){status.className='form-status is-error';status.textContent=(error&&error.message)||'O envio não foi concluído. Tente novamente ou fale comigo pelo WhatsApp.';var fallback=document.createElement('a');fallback.className='form-fallback-link';fallback.href='mailto:wagnerpersoli@hotmail.com?subject='+encodeURIComponent(payload.subject||'Contato pelo portfólio')+'&body='+encodeURIComponent('Nome: '+(payload.name||'')+'\nE-mail: '+(payload.email||'')+'\nTelefone: '+(payload.phone||'Não informado')+'\n\n'+(payload.message||''));fallback.textContent='Abrir e-mail com a mensagem preenchida';status.appendChild(document.createTextNode(' '));status.appendChild(fallback);}}finally{if(submit){submit.disabled=false;submit.removeAttribute('aria-busy');}}});
   var toggle=$('#chat-toggle'),panel=$('#chat-panel'),close=$('#chat-close'),chatForm=$('#chat-form'),input=$('#chat-input'),messages=$('#chat-messages'),history=[],busy=false;
   function setChatOpen(open){if(!panel||!toggle)return;panel.classList.toggle('is-open',open);panel.setAttribute('aria-hidden',String(!open));toggle.setAttribute('aria-expanded',String(open));if(open&&input)window.setTimeout(function(){input.focus();},100);}

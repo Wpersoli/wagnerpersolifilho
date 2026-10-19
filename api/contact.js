@@ -102,7 +102,7 @@ async function saveContactToSupabase(data, requestId) {
         Accept: 'application/json',
         'Content-Type': 'application/json',
         Prefer: 'return=minimal',
-        'X-Client-Info': 'WAGNER.OS/3.3.0'
+        'X-Client-Info': 'WAGNER.OS/3.4.7'
       },
       body: JSON.stringify({
         nome: data.name,
@@ -151,7 +151,7 @@ async function sendWithBrevo(data) {
         'api-key': apiKey,
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        'User-Agent': 'WAGNER.OS/3.3.0'
+        'User-Agent': 'WAGNER.OS/3.4.7'
       },
       body: JSON.stringify({
         sender: sender,
@@ -185,7 +185,7 @@ async function sendWithResend(data) {
       headers: {
         Authorization: 'Bearer ' + apiKey,
         'Content-Type': 'application/json',
-        'User-Agent': 'WAGNER.OS/3.3.0'
+        'User-Agent': 'WAGNER.OS/3.4.7'
       },
       body: JSON.stringify({
         from: fromEmail,

@@ -45,6 +45,12 @@ CDP.prototype.send = async function (method, params) { await this.ready; var id 
 CDP.prototype.on = function (name, fn) { if (!this.listeners.has(name)) this.listeners.set(name, []); this.listeners.get(name).push(fn); };
 CDP.prototype.evaluate = async function (expression) { var r = await this.send('Runtime.evaluate', { expression: expression, returnByValue: true, awaitPromise: true }); if (r.exceptionDetails) throw new Error(r.exceptionDetails.text || 'Erro de JavaScript no navegador'); return r.result ? r.result.value : undefined; };
 CDP.prototype.close = function () { if (this.ws) this.ws.close(); };
+function removePreloaderFromFixture(html) {
+  var start = html.indexOf('  <div class="site-preloader" id="site-preloader"');
+  var end = start >= 0 ? html.indexOf('  <a class="skip-link"', start) : -1;
+  if (start >= 0 && end > start) return html.slice(0, start) + html.slice(end);
+  return removePreloaderFromFixture(html);
+}
 function buildHtml() {
   var html = fs.readFileSync(path.join(root, 'public', 'index.html'), 'utf8');
   var css = fs.readFileSync(path.join(root, 'public', 'css', 'portfolio-general.css'), 'utf8').replace(/<\/style/gi, '<\\/style');

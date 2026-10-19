@@ -114,7 +114,7 @@ test('metadados SEO e arquivos de indexação usam o domínio público de produ�
   assert.match(html, /<link rel="canonical" href="https:\/\/wagnerpersolifilho\.vercel\.app\/">/);
   assert.match(html, /<meta property="og:url" content="https:\/\/wagnerpersolifilho\.vercel\.app\/">/);
   assert.match(html, /<meta property="og:image" content="https:\/\/wagnerpersolifilho\.vercel\.app\/og-image\.jpg">/);
-  assert.match(html, /"url":"https:\/\/wagnerpersolifilho\.vercel\.app\/">/);
+  assert.match(html, /"url":"https:\/\/wagnerpersolifilho\.vercel\.app\/"/);
   assert.match(curriculum, /<link rel="canonical" href="https:\/\/wagnerpersolifilho\.vercel\.app\/curriculo\.html">/);
   assert.match(robots, /Sitemap: https:\/\/wagnerpersolifilho\.vercel\.app\/sitemap\.xml/);
   assert.match(sitemap, /https:\/\/wagnerpersolifilho\.vercel\.app\/curriculo\.html/);

@@ -7,17 +7,19 @@
   var preloader=$('#site-preloader');
   if(preloader){
     var preloaderStartedAt=Date.now(),preloaderDone=false;
-    var preloaderMinDelay=reduced?180:650,preloaderMaxDelay=reduced?450:2650;
+    var preloaderMinDelay=2000,preloaderMaxDelay=4700,preloaderReadyTimer=0;
     function finishPreloader(){
       if(preloaderDone)return;
       preloaderDone=true;
+      window.clearTimeout(preloaderReadyTimer);
       preloader.classList.add('is-done');
       preloader.setAttribute('aria-hidden','true');
-      window.setTimeout(function(){if(preloader.parentNode)preloader.parentNode.removeChild(preloader);},260);
+      window.setTimeout(function(){if(preloader.parentNode)preloader.parentNode.removeChild(preloader);},220);
     }
     function finishWhenReady(){
+      if(preloaderDone)return;
       var remaining=Math.max(0,preloaderMinDelay-(Date.now()-preloaderStartedAt));
-      window.setTimeout(finishPreloader,remaining);
+      preloaderReadyTimer=window.setTimeout(finishPreloader,remaining);
     }
     window.setTimeout(finishPreloader,preloaderMaxDelay);
     if(document.readyState==='complete')finishWhenReady();

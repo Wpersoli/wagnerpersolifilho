@@ -36,7 +36,7 @@ CONTACT_RATE_LIMIT_MAX=5
 CONTACT_MAX_BODY_BYTES=16384
 CONTACT_PROVIDER_TIMEOUT_MS=9000
 RATE_LIMIT_HASH_SALT=<CONFIGURE_NA_VERCEL>
-ALLOWED_ORIGINS=https://wagnerpersoli.vercel.app
+ALLOWED_ORIGINS=https://wagnerpersolifilho.vercel.app
 ```
 
 Nunca use prefixos públicos para `BREVO_API_KEY`, chaves secretas do Supabase ou tokens de rate limit.

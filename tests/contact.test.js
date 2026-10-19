@@ -53,7 +53,7 @@ test('HTML do e-mail escapa conteúdo potencialmente executável', function () {
 });
 
 test('origens oficiais e localhost são aceitas; origem externa é bloqueada', function () {
-  assert.equal(internal.isAllowedOrigin(createRequest({}, { headers: { origin: 'https://wagnerpersoli.vercel.app' } })), true);
+  assert.equal(internal.isAllowedOrigin(createRequest({}, { headers: { origin: 'https://wagnerpersolifilho.vercel.app' } })), true);
   assert.equal(internal.isAllowedOrigin(createRequest({}, { headers: { origin: 'http://localhost:3000' } })), true);
   assert.equal(internal.isAllowedOrigin(createRequest({}, { headers: { origin: 'https://site-malicioso.example' } })), false);
 });

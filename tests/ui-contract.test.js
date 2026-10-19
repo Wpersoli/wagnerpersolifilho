@@ -102,6 +102,6 @@ test('HTML usa assets versionados v3.4.7 e tem fallback de conteúdo sem JavaScr
 
 
 test('inicialização do formulário itera todos os campos sem interromper o JavaScript', function () {
-  assert.equal(js.includes("$('input,textarea,select',form).forEach"), false);
+  assert.equal(js.split('\n').some(function (line) { return /^\s+\$('input,textarea,select',form)\.forEach/.test(line); }), false);
   assert.ok(js.includes("$$('input,textarea,select',form).forEach"));
 });

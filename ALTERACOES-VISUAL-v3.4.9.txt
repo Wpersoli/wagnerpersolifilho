@@ -1,0 +1,7 @@
+WAGNER.OS v3.4.9 — preloader fiel à vinheta do ZIP
+
+- Inclui a animação WebM da marca enviada pelo usuário, recortada para 2,5 segundos e otimizada para 4,3 KB.
+- O vídeo toca uma única vez e desaparece ao terminar; fallback JS de 2,63 s e salvaguarda CSS de 2,9 s.
+- Respeita prefers-reduced-motion, inclui fallback se o vídeo falhar e não bloqueia a home quando JavaScript está desativado.
+- Mantém a home, navegação, chat, formulário e interações existentes.
+- Inclui teste de contrato para a fonte WebM, animação, acessibilidade e limite de tempo.

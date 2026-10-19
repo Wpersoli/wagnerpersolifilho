@@ -26,7 +26,7 @@
         if(value)lines.push(labels[key]+': '+value);
       });
       lines.push('Enviei esta mensagem pelo formulário do seu site.');
-      whatsappLink.href='https://wa.me/5511981504061?text='+encodeURIComponent(lines.join('\\n\\n'));
+      whatsappLink.href='https://wa.me/5511981504061?text='+encodeURIComponent(lines.join('\n\n'));
     }
     contactFields.forEach(function(key){var field=form.elements.namedItem(key);if(field){field.addEventListener('input',updateWhatsAppLink);field.addEventListener('change',updateWhatsAppLink);}});
     updateWhatsAppLink();

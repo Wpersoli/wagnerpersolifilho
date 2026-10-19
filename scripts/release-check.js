@@ -73,7 +73,7 @@ for (var relative of auditedFiles) {
 var pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
 var index = fs.readFileSync(path.join(root, 'public', 'index.html'), 'utf8');
 if (!/data-site-version="portfolio-general"/.test(index)) failures.push('identificador do portfólio geral ausente');
-if (!/href="\/css\/portfolio-general\.css"/.test(index)) failures.push('CSS do portfólio geral não carregado');
+if (!/href="\/css\/portfolio-general\.css(?:\?[^"]*)?"/.test(index)) failures.push('CSS do portfólio geral não carregado');
 if (/href="css\/(?:main|cyber|hero-|wagner-|performance-safe)[^"]*\.css"/.test(index)) failures.push('CSS legado carregado diretamente no index');
 if (/\son[a-z]+\s*=/i.test(index)) failures.push('handler inline no index.html');
 if (/\sstyle\s*=/i.test(index)) failures.push('style inline no index.html');

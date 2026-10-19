@@ -90,8 +90,8 @@ test('chat mantém cliente assíncrono seguro no novo portfólio sem handlers in
   var html = fs.readFileSync(path.join(root, 'public', 'index.html'), 'utf8');
   var client = fs.readFileSync(path.join(root, 'public', 'js', 'chat-client.js'), 'utf8');
   var app = fs.readFileSync(path.join(root, 'public', 'js', 'portfolio-general.js'), 'utf8');
-  assert.match(html, /js\/chat-client\.js" defer/);
-  assert.match(html, /js\/portfolio-general\.js" defer/);
+  assert.match(html, /js\/chat-client\.js(?:\?[^"]*)?" defer/);
+  assert.match(html, /js\/portfolio-general\.js(?:\?[^"]*)?" defer/);
   assert.match(client, /AbortController/);
   assert.match(client, /credentials: 'same-origin'/);
   assert.match(client, /window\.WagnerChatClient = Object\.freeze\(\{ request: request \}\)/);

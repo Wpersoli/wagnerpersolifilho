@@ -123,15 +123,18 @@ test('metadados SEO e arquivos de indexação usam o domínio público de produ�
 });
 
 
-test('logo preloader é animado, acessível e tem limite absoluto inferior a 3 segundos', function () {
+
+test('logo preloader dura no mínimo 2 s, termina antes de 5 s e anima brasas e brilho', function () {
   assert.match(html, /id="site-preloader"[^>]*role="status"/);
-  assert.match(html, /class="site-preloader__logo" src="\/img\/logo\.png"/);
-  assert.match(html, /href="\/img\/logo\.png" type="image\/png" fetchpriority="high"/);
-  assert.match(css, /site-preloader-failsafe 2\.9s linear forwards/);
-  assert.match(css, /@keyframes site-preloader-logo/);
+  assert.match(html, /class="site-preloader__logo" src="\\/img\\/logo\\.png"/);
+  assert.match(html, /class="site-preloader__embers"/);
+  assert.match(html, /class="site-preloader__scan"/);
+  assert.match(css, /animation-duration:4\\.85s!important/);
+  assert.match(css, /@keyframes site-preloader-logo-fire/);
+  assert.match(css, /@keyframes site-preloader-embers/);
   assert.match(css, /@keyframes site-preloader-scan/);
-  assert.match(js, /preloaderMinDelay=reduced\?180:650/);
-  assert.match(js, /preloaderMaxDelay=reduced\?450:2650/);
-  assert.match(js, /document\.readyState==='complete'\)finishWhenReady\(\)/);
-  assert.match(noJs, /\.site-preloader\{display:none!important\}/);
+  assert.match(js, /preloaderMinDelay=2000,preloaderMaxDelay=4700/);
+  assert.match(js, /preloaderMinDelay-\\(Date\\.now\\(\\)-preloaderStartedAt\\)/);
+  assert.match(js, /document\\.readyState==='complete'\\)finishWhenReady\\(\\)/);
+  assert.match(noJs, /\\.site-preloader\\{display:none!important\\}/);
 });

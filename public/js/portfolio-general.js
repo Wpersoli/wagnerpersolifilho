@@ -29,6 +29,7 @@
       whatsappLink.href='https://wa.me/5511981504061?text='+encodeURIComponent(lines.join('\n\n'));
     }
     contactFields.forEach(function(key){var field=form.elements.namedItem(key);if(field){field.addEventListener('input',updateWhatsAppLink);field.addEventListener('change',updateWhatsAppLink);}});
+    if(whatsappLink){whatsappLink.addEventListener('click',function(event){updateWhatsAppLink();var href=whatsappLink.href;if(!href||href.indexOf('https://wa.me/5511981504061?text=')!==0){event.preventDefault();window.location.href='https://wa.me/5511981504061?text='+encodeURIComponent('Olá, Wagner! Gostaria de entrar em contato pelo seu portfólio.');}});}
     updateWhatsAppLink();
   }
   if(started)started.value=String(Date.now());

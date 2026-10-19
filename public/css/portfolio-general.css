@@ -374,4 +374,4 @@
 @keyframes site-preloader-aura{from{opacity:.48;scale:.9}to{opacity:1;scale:1.08}}
 @keyframes site-preloader-scan{0%{transform:translateX(-70%);opacity:0}20%{opacity:.8}80%{opacity:.85}100%{transform:translateX(520%);opacity:0}}
 @media(max-width:480px){.site-preloader__visual{width:90vw}.site-preloader__caption{font-size:10px}}
-@media(prefers-reduced-motion:reduce){.site-preloader{animation-duration:.55s}.site-preloader::before,.site-preloader__visual::before,.site-preloader__logo-video,.site-preloader__orbit,.site-preloader__scan,.site-preloader__track span{animation:none!important}.site-preloader.is-done{transition-duration:0s}}
+@media(prefers-reduced-motion:reduce){.site-preloader::before,.site-preloader__visual::before,.site-preloader__logo-video,.site-preloader__orbit,.site-preloader__scan,.site-preloader__track span{animation:none!important}.site-preloader.is-done{transition-duration:0s}}

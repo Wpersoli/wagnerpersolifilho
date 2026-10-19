@@ -378,3 +378,28 @@
 @keyframes site-preloader-scan{0%{transform:translateX(-70%);opacity:0}20%{opacity:.8}80%{opacity:.85}100%{transform:translateX(520%);opacity:0}}
 @media(max-width:480px){.site-preloader__visual{width:116px;height:116px}.site-preloader__logo{width:68px;height:68px}.site-preloader__brand{font-size:11px;letter-spacing:.24em}}
 @media(prefers-reduced-motion:reduce){.site-preloader{animation-duration:.55s}.site-preloader::before,.site-preloader__visual::before,.site-preloader__logo,.site-preloader__orbit,.site-preloader__scan,.site-preloader__track span{animation:none!important}.site-preloader.is-done{transition-duration:0s}}
+
+
+/* v3.4.8.1 — fogo, varredura e partículas; tempo de segurança inferior a 5 s. */
+.site-preloader{background:radial-gradient(ellipse at 50% 46%,#1c0909 0%,#090607 44%,#030303 100%);animation-duration:4.85s!important}
+.site-preloader::before{background:radial-gradient(circle,rgba(255,48,22,.18),rgba(140,13,8,.07) 42%,transparent 70%);animation:site-preloader-aura 1.8s ease-in-out infinite alternate}
+.site-preloader::after{background:radial-gradient(circle,rgba(255,113,47,.12),transparent 68%);animation:site-preloader-aura 2.3s ease-in-out infinite alternate-reverse}
+.site-preloader__embers{position:absolute;inset:0;z-index:-1;overflow:hidden;pointer-events:none;background-image:radial-gradient(circle,rgba(255,76,37,.95) 0 1px,transparent 2px),radial-gradient(circle,rgba(255,151,64,.8) 0 1px,transparent 2px),radial-gradient(circle,rgba(186,29,18,.9) 0 1.4px,transparent 2.6px),radial-gradient(circle,rgba(255,86,44,.72) 0 1px,transparent 2px);background-size:137px 193px,211px 173px,181px 239px,263px 207px;background-position:17px 11px,74px 66px,121px 32px,42px 148px;opacity:.5;mask-image:radial-gradient(ellipse at center,#000 0%,rgba(0,0,0,.6) 55%,transparent 82%);animation:site-preloader-embers 4.4s linear infinite}
+.site-preloader__visual{isolation:isolate}
+.site-preloader__visual::before{position:absolute;inset:8px;content:"";border-radius:50%;background:radial-gradient(circle,rgba(255,39,16,.28),rgba(220,28,13,.08) 52%,transparent 72%);filter:blur(3px);animation:site-preloader-core 1.35s ease-in-out infinite alternate;pointer-events:none}
+.site-preloader__logo{filter:drop-shadow(0 0 9px rgba(255,62,30,.38));animation:site-preloader-logo-fire 1.25s ease-in-out infinite}
+.site-preloader__orbit--outer{border-color:rgba(255,66,36,.42);border-top-color:#ff5134;border-right-color:#ffb66d;box-shadow:0 0 15px rgba(255,48,25,.18)}
+.site-preloader__orbit--inner{border-color:rgba(255,128,67,.46);border-bottom-color:#ff4e2d}
+.site-preloader__scan{position:absolute;z-index:3;top:9%;bottom:9%;left:0;width:30%;background:linear-gradient(90deg,transparent,rgba(255,63,34,.1),rgba(255,170,98,.46),transparent);filter:blur(4px);mix-blend-mode:screen;animation:site-preloader-scan 1.6s ease-in-out infinite;pointer-events:none}
+.site-preloader__brand{text-shadow:0 0 20px rgba(255,55,32,.16)}
+.site-preloader__brand span{color:#ff6547}
+.site-preloader__caption{color:#bda3a0}
+.site-preloader__track span{background:linear-gradient(90deg,#a91d17,#ff5738,#ffc078);box-shadow:0 0 12px rgba(255,67,36,.5)}
+.site-preloader.is-done .site-preloader__logo,.site-preloader.is-done .site-preloader__orbit,.site-preloader.is-done .site-preloader__scan,.site-preloader.is-done .site-preloader__track span,.site-preloader.is-done .site-preloader__embers{animation:none}
+@keyframes site-preloader-logo-fire{0%,100%{transform:scale(.96);filter:drop-shadow(0 0 7px rgba(255,64,28,.2))}50%{transform:scale(1.055);filter:drop-shadow(0 0 18px rgba(255,57,28,.58))}}
+@keyframes site-preloader-aura{from{opacity:.4;scale:.9}to{opacity:1;scale:1.08}}
+@keyframes site-preloader-core{from{opacity:.45;scale:.92}to{opacity:1;scale:1.08}}
+@keyframes site-preloader-embers{from{background-position:17px 11px,74px 66px,121px 32px,42px 148px}to{background-position:17px -142px,74px -116px,121px -202px,42px -59px}}
+@keyframes site-preloader-scan{0%{transform:translateX(-70%);opacity:0}20%{opacity:.8}80%{opacity:.85}100%{transform:translateX(520%);opacity:0}}
+@media(max-width:480px){.site-preloader__brand{font-size:11px;letter-spacing:.24em}}
+@media(prefers-reduced-motion:reduce){.site-preloader__logo,.site-preloader__orbit,.site-preloader__scan,.site-preloader__track span,.site-preloader__embers,.site-preloader::before,.site-preloader::after,.site-preloader__visual::before{animation:none!important}.site-preloader.is-done{transition-duration:0s}}

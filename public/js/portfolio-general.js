@@ -10,7 +10,28 @@
   var year=$('#current-year');if(year)year.textContent=String(new Date().getFullYear());
   var reveal=$$('.reveal');if('IntersectionObserver'in window&&!reduced){var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add('is-revealed');observer.unobserve(entry.target);}});},{threshold:.12,rootMargin:'0px 0px -35px 0px'});reveal.forEach(function(el){observer.observe(el);});}else reveal.forEach(function(el){el.classList.add('is-revealed');});
   var sections=$$('main section[id]');if('IntersectionObserver'in window){var sectionObserver=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){$$('.nav-link').forEach(function(link){link.classList.toggle('is-active',link.getAttribute('href')==='#'+entry.target.id);});}});},{rootMargin:'-35% 0px -55% 0px'});sections.forEach(function(section){sectionObserver.observe(section);});}
-  var form=$('#contact-form'),status=$('#form-status'),started=$('#form-started-at');if(started)started.value=String(Date.now());
+  var form=$('#contact-form'),status=$('#form-status'),started=$('#form-started-at'),whatsappLink=$('#contact-whatsapp');
+  if(form){
+    // Todos os campos permanecem editáveis, independentemente da ordem de preenchimento.
+    $('input,textarea,select',form).forEach(function(field){
+      if(field.name!=='startedAt'&&field.name!=='company'){field.disabled=false;field.readOnly=false;field.removeAttribute('disabled');field.removeAttribute('readonly');}
+    });
+    var contactFields=['name','email','phone','subject','message'];
+    function updateWhatsAppLink(){
+      if(!whatsappLink)return;
+      var labels={name:'Nome',email:'E-mail',phone:'WhatsApp / telefone',subject:'Assunto',message:'Mensagem'};
+      var lines=['Olá, Wagner! Gostaria de entrar em contato pelo seu portfólio.'];
+      contactFields.forEach(function(key){
+        var field=form.elements.namedItem(key),value=field?String(field.value||'').trim():'';
+        if(value)lines.push(labels[key]+': '+value);
+      });
+      lines.push('Enviei esta mensagem pelo formulário do seu site.');
+      whatsappLink.href='https://wa.me/5511981504061?text='+encodeURIComponent(lines.join('\\n\\n'));
+    }
+    contactFields.forEach(function(key){var field=form.elements.namedItem(key);if(field){field.addEventListener('input',updateWhatsAppLink);field.addEventListener('change',updateWhatsAppLink);}});
+    updateWhatsAppLink();
+  }
+  if(started)started.value=String(Date.now());
   if(form)form.addEventListener('submit',async function(event){event.preventDefault();if(!form.reportValidity())return;var payload={};new FormData(form).forEach(function(value,key){payload[key]=String(value).trim();});if(status){status.className='form-status';status.textContent='Enviando sua mensagem com segurança…';}var submit=form.querySelector('[type="submit"]');if(submit){submit.disabled=true;submit.setAttribute('aria-busy','true');}try{var response=await fetch('/api/contact',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},credentials:'same-origin',body:JSON.stringify(payload)});var result={};try{result=await response.json();}catch(_){result={};}if(!response.ok)throw new Error(result.message||'Não foi possível enviar agora.');if(status){status.className='form-status is-success';status.textContent=result.message||'Mensagem recebida. Obrigado pelo contato!';}form.reset();if(started)started.value=String(Date.now());}catch(error){if(status){status.className='form-status is-error';status.textContent=(error&&error.message)||'O envio não foi concluído. Tente novamente ou fale comigo pelo WhatsApp.';var fallback=document.createElement('a');fallback.className='form-fallback-link';fallback.href='mailto:wagnerpersoli@hotmail.com?subject='+encodeURIComponent(payload.subject||'Contato pelo portfólio')+'&body='+encodeURIComponent('Nome: '+(payload.name||'')+'\nE-mail: '+(payload.email||'')+'\nTelefone: '+(payload.phone||'Não informado')+'\n\n'+(payload.message||''));fallback.textContent='Abrir e-mail com a mensagem preenchida';status.appendChild(document.createTextNode(' '));status.appendChild(fallback);}}finally{if(submit){submit.disabled=false;submit.removeAttribute('aria-busy');}}});
   var toggle=$('#chat-toggle'),panel=$('#chat-panel'),close=$('#chat-close'),chatForm=$('#chat-form'),input=$('#chat-input'),messages=$('#chat-messages'),history=[],busy=false;
   function setChatOpen(open){if(!panel||!toggle)return;panel.classList.toggle('is-open',open);panel.setAttribute('aria-hidden',String(!open));toggle.setAttribute('aria-expanded',String(open));if(open&&input)window.setTimeout(function(){input.focus();},100);}

@@ -7,7 +7,7 @@
   var preloader=$('#site-preloader'),preloaderVideo=$('#site-preloader-video');
   if(preloader){
     var preloaderStartedAt=Date.now(),preloaderDone=false;
-    var preloaderMinDelay=2300,preloaderMaxDelay=2630;
+    var preloaderMinDelay=5000,preloaderMaxDelay=5000,preloaderFadeDuration=reduced?0:240;
     function finishPreloader(){
       if(preloaderDone)return;
       preloaderDone=true;
@@ -18,13 +18,13 @@
       window.setTimeout(function(){if(preloader.parentNode)preloader.parentNode.removeChild(preloader);},260);
     }
     function finishAfter(minimumMs){
-      var remaining=Math.max(0,minimumMs-(Date.now()-preloaderStartedAt));
+      var remaining=Math.max(0,minimumMs-preloaderFadeDuration-(Date.now()-preloaderStartedAt));
       window.setTimeout(finishPreloader,remaining);
     }
     function finishFallback(){
       finishAfter(preloaderMinDelay);
     }
-    var preloaderTimer=window.setTimeout(finishPreloader,preloaderMaxDelay);
+    var preloaderTimer=window.setTimeout(finishPreloader,preloaderMaxDelay-preloaderFadeDuration);
     if(preloaderVideo){
       preloaderVideo.muted=true;
       preloaderVideo.playsInline=true;

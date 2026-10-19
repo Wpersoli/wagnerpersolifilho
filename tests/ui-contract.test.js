@@ -98,9 +98,9 @@ test('timer do formulário recupera sessões antigas e o WhatsApp mantém navega
 });
 
 test('HTML usa assets versionados v3.4.10 e tem fallback de conteúdo sem JavaScript', function () {
-  assert.match(html, /portfolio-general\.css\?v=3\.4\.10/);
-  assert.match(html, /portfolio-general\.js\?v=3\.4\.10/);
-  assert.match(html, /chat-client\.js\?v=3\.4\.10/);
+  assert.match(html, /portfolio-general\.css\?v=3\.4\.11/);
+  assert.match(html, /portfolio-general\.js\?v=3\.4\.11/);
+  assert.match(html, /chat-client\.js\?v=3\.4\.11/);
   assert.match(html, /<noscript><link rel="stylesheet" href="\/css\/no-js\.css"><\/noscript>/);
 });
 
@@ -124,18 +124,18 @@ test('metadados SEO e arquivos de indexação usam o domínio público de produ�
 
 
 
-test('vinheta WebM da marca dura cinco segundos e mantém a composição compacta', function () {
-  assert.ok(html.includes('id="site-preloader-video"'));
-  assert.ok(html.includes('src="/img/logo-wp-preloader.webm" type="video/webm"'));
-  assert.ok(html.includes('href="/img/logo-wp-preloader.webm" type="video/webm" fetchpriority="high"'));
-  assert.ok(!css.includes('site-preloader-failsafe'), 'nenhum failsafe CSS deve encurtar a duração controlada pelo JavaScript');
-  assert.ok(css.includes('@keyframes site-preloader-video-glow'));
-  assert.ok(css.includes('@keyframes site-preloader-mark-in'));
-  assert.ok(css.includes('width:min(72vw,320px)'), 'marca compacta e centralizada');
+test('preloader usa logo oficial, composição compacta e rodapé com duração de cinco segundos', function () {
+  assert.ok(html.includes('id="site-preloader-logo"'));
+  assert.ok(html.includes('src="/img/logo-wp-oficial.webp"'));
+  assert.ok(html.includes('href="/img/logo-wp-oficial.webp" type="image/webp" fetchpriority="high"'));
+  assert.ok(html.includes('© 2026 Wagner Persoli Filho. Todos os direitos reservados.'));
+  assert.ok(!html.includes('id="site-preloader-video"'), 'preloader deve exibir a marca oficial estática');
+  assert.ok(!css.includes('site-preloader-failsafe'), 'nenhum failsafe CSS pode encurtar a duração controlada pelo JavaScript');
+  assert.ok(css.includes('@keyframes site-preloader-logo-glow'));
+  assert.ok(css.includes('@keyframes site-preloader-copyright-in'));
+  assert.ok(css.includes('width:min(34vw,138px)'), 'marca reduzida e centralizada');
   assert.ok(css.includes('WAGNER.OS  /  DIGITAL SYSTEMS'), 'assinatura tipográfica da marca');
   assert.ok(js.includes('preloaderMinDelay=5000,preloaderMaxDelay=5000,preloaderFadeDuration=reduced?0:240'));
-  assert.ok(js.includes("preloaderVideo.addEventListener('ended'"));
-  assert.ok(js.includes('minimumMs-preloaderFadeDuration'));
-  assert.ok(js.includes('finishAfter(preloaderMinDelay);'));
+  assert.ok(js.includes('Math.min(preloaderMaxDelay,Math.max(preloaderMinDelay,5000))'));
   assert.ok(noJs.includes('.site-preloader{display:none!important}'));
 });

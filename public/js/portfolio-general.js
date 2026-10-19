@@ -6,7 +6,7 @@
   var reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(menu&&nav){menu.addEventListener('click',function(){var open=nav.classList.toggle('is-open');menu.setAttribute('aria-expanded',String(open));menu.setAttribute('aria-label',open?'Fechar menu':'Abrir menu');});$$('.site-nav a').forEach(function(a){a.addEventListener('click',function(){nav.classList.remove('is-open');menu.setAttribute('aria-expanded','false');menu.setAttribute('aria-label','Abrir menu');});});document.addEventListener('keydown',function(e){if(e.key==='Escape'){nav.classList.remove('is-open');menu.setAttribute('aria-expanded','false');}});}
   function onScroll(){var max=document.documentElement.scrollHeight-window.innerHeight;var n=max>0?window.scrollY/max*100:0;if(progress)progress.style.width=Math.max(0,Math.min(100,n))+'%';if(topButton)topButton.classList.toggle('is-visible',window.scrollY>480);}
-  window.addEventListener('scroll',onScroll,{passive:true});onScroll();if(topButton)topButton.addEventListener('click',function(event){event.preventDefault();window.scrollTo({top:0,behavior:reduced?'auto':'smooth'});});
+  window.addEventListener('scroll',onScroll,{passive:true});onScroll();if(topButton)topButton.addEventListener('click',function(event){event.preventDefault();var target=document.getElementById('topo');try{if(target&&typeof target.scrollIntoView==='function'){target.scrollIntoView({behavior:reduced?'auto':'smooth',block:'start'});}else{window.scrollTo({top:0,left:0,behavior:reduced?'auto':'smooth'});}}catch(_){window.scrollTo(0,0);}window.setTimeout(function(){if(window.scrollY>0&&(!target||target.getBoundingClientRect().top>8)){document.documentElement.scrollTop=0;document.body.scrollTop=0;}},reduced?0:900);});
   var year=$('#current-year');if(year)year.textContent=String(new Date().getFullYear());
   var reveal=$$('.reveal');if('IntersectionObserver'in window&&!reduced){var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add('is-revealed');observer.unobserve(entry.target);}});},{threshold:.12,rootMargin:'0px 0px -35px 0px'});reveal.forEach(function(el){observer.observe(el);});}else reveal.forEach(function(el){el.classList.add('is-revealed');});
   var sections=$$('main section[id]');if('IntersectionObserver'in window){var sectionObserver=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){$$('.nav-link').forEach(function(link){link.classList.toggle('is-active',link.getAttribute('href')==='#'+entry.target.id);});}});},{rootMargin:'-35% 0px -55% 0px'});sections.forEach(function(section){sectionObserver.observe(section);});}
@@ -71,7 +71,7 @@
     controls.appendChild(prev); controls.appendChild(dotsBox); controls.appendChild(pause); controls.appendChild(next);
     wrap.appendChild(controls);
 
-    var S = { x: 0, speed: 32, user: reduced, hover: false, focus: false, dragging: false, visible: false, tween: null, raf: 0, last: 0, center: -1, drag: null, moved: false };
+    var S = { x: 0, user: false, hover: false, focus: false, dragging: false, visible: false, tween: null, raf: 0, last: 0, center: -1, drag: null, moved: false, nextAutoAt: 0 };
     var M = { vw: 0, cardW: 0, gap: 20, slot: 0, setW: 0, copies: 3, c0: 0 };
 
     function setPauseUI() {
@@ -98,7 +98,7 @@
         dots.forEach(function (d, i) { d.setAttribute('aria-current', i === cur ? 'true' : 'false'); });
       }
     }
-    function canPlay() { return !S.user && !S.hover && !S.focus && !S.dragging && S.visible && !document.hidden && !reduced; }
+    function canPlay() { return !S.user && !S.hover && !S.focus && !S.dragging && S.visible && !document.hidden; }
     function need() { return !!S.tween || S.dragging || canPlay(); }
     function frame(t) {
       var dt = Math.min(0.05, (t - S.last) / 1000);
@@ -110,7 +110,15 @@
         S.x = wrapX(tw.from + (tw.to - tw.from) * ease(p));
         if (p >= 1) S.tween = null;
       } else if (canPlay()) {
-        S.x = wrapX(S.x + S.speed * dt);
+        if (!S.nextAutoAt) S.nextAutoAt = t + 5000;
+        if (t >= S.nextAutoAt) {
+          var currentK = nearestK();
+          S.tween = { from: S.x, to: centeredX(currentK + 1), t0: t, dur: reduced ? 0 : 700 };
+          S.nextAutoAt = t + 5000;
+          if (reduced) { S.x = wrapX(S.tween.to); S.tween = null; }
+        }
+      } else {
+        S.nextAutoAt = 0;
       }
       paint();
       S.raf = need() ? requestAnimationFrame(frame) : 0;
@@ -166,10 +174,11 @@
     }
 
     // Eventos de pausa (mouse, foco, visibilidade da seção e da aba).
-    wrap.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') { S.hover = true; } });
+    wrap.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') { S.hover = true; S.nextAutoAt = 0; } });
     wrap.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') { S.hover = false; kick(); } });
     wrap.addEventListener('focusin', function (e) {
       S.focus = true;
+      S.nextAutoAt = 0;
       var card = e.target.closest ? e.target.closest('.project-card') : null;
       var i = card ? originals.indexOf(card) : -1;
       if (i > -1) goToIndex(i);

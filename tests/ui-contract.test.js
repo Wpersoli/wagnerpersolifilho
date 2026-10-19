@@ -21,8 +21,8 @@ test('portfólio geral mantém todas as seções e navegação principal', funct
   assert.match(html, /href="#contato"/);
   assert.match(html, /href="curriculo\.html"/);
   assert.match(html, /href="docs\/curriculo-wagner-persoli-filho\.pdf" download/);
-  assert.match(html, /href="\/css\/portfolio-general\.css"/);
-  assert.match(html, /src="\/js\/portfolio-general\.js" defer/);
+  assert.match(html, /href="\/css\/portfolio-general\.css(?:\?[^"]*)?"/);
+  assert.match(html, /src="\/js\/portfolio-general\.js(?:\?[^"]*)?" defer/);
   assert.equal((html.match(/class="project-card/g) || []).length, 2);
   assert.match(html, /project-image-label">PET CARE · WEBSITE/);
   assert.match(html, /project-image-label">AUTOMOTIVO · LANDING PAGE/);
@@ -75,4 +75,33 @@ test('CSP permite apenas o JSON-LD validado e imagens públicas dos projetos', f
   assert.ok(csp.includes('https://raw.githubusercontent.com'), 'CSP deve permitir as imagens dos projetos');
   assert.ok(csp.includes('https://d2ol7oe51mr4n9.cloudfront.net'), 'CSP deve permitir a imagem verificada do projeto SÓGM');
   assert.ok(csp.includes("script-src-attr 'none'"), 'CSP não deve permitir handlers inline');
+});
+
+test('widget de chat invisível não deve capturar cliques fora de seus controles', function () {
+  assert.match(css, /\.chat-widget\{pointer-events:none\}/);
+  assert.match(css, /\.chat-widget>\.chat-toggle\{pointer-events:auto;touch-action:manipulation\}/);
+  assert.match(css, /\.chat-widget>\.chat-panel\.is-open\{pointer-events:auto;touch-action:auto\}/);
+  assert.match(css, /#contact-form \.form-row\{position:relative;z-index:1\}/);
+  assert.match(css, /#contact-form input:not\(\[type="hidden"\]\),#contact-form textarea\{position:relative;z-index:3;display:block;pointer-events:auto/);
+});
+
+test('timer do formulário recupera sessões antigas e o WhatsApp mantém navegação nativa', function () {
+  assert.match(js, /contactMaxAge=2\*60\*60\*1000/);
+  assert.match(js, /refreshContactStartIfStale/);
+  assert.match(js, /document\.addEventListener\('visibilitychange',function\(\)\{if\(!document\.hidden\)refreshContactStartIfStale\(\);\}\)/);
+  assert.match(js, /whatsappLink\.addEventListener\('click',function\(\)\{updateWhatsAppLink\(\);\}\)/);
+  assert.doesNotMatch(js, /window\.open\(href/);
+});
+
+test('HTML usa assets versionados v3.4.7 e tem fallback de conteúdo sem JavaScript', function () {
+  assert.match(html, /portfolio-general\.css\?v=3\.4\.7/);
+  assert.match(html, /portfolio-general\.js\?v=3\.4\.7/);
+  assert.match(html, /chat-client\.js\?v=3\.4\.7/);
+  assert.match(html, /<noscript><link rel="stylesheet" href="\/css\/no-js\.css"><\/noscript>/);
+});
+
+
+test('inicialização do formulário itera todos os campos sem interromper o JavaScript', function () {
+  assert.equal(js.split('\n').some(function (line) { return /^\s+\$('input,textarea,select',form)\.forEach/.test(line); }), false);
+  assert.ok(js.includes("$$('input,textarea,select',form).forEach"));
 });

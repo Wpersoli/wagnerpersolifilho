@@ -104,7 +104,7 @@ jobs:
             --throw-deprecation
           E2E_DEBUG_PORT: "9237"
           CDP_COMMAND_TIMEOUT_MS: "90000"
-        run: npm run test:e2e
+        run: npm run test:e2e && npm run test:e2e:interactions
 
   visual:
     name: Pixel-perfect visual audit

@@ -295,3 +295,11 @@
 
 /* v3.4.2 — acessibilidade e fallback visual dos controles. */
 .whatsapp-fab{position:fixed;place-items:center}.whatsapp-fab svg{display:block;width:25px;height:25px;fill:currentColor}.whatsapp-fab:active{transform:scale(.94)}.whatsapp-fab:focus-visible,.back-to-top:focus-visible{outline:2px solid var(--cyan);outline-offset:4px}.back-to-top{display:grid;place-items:center;text-decoration:none;line-height:1}.back-to-top:active{transform:scale(.94)}.form-fallback-link{display:inline-block;margin-top:8px;color:var(--cyan);font-weight:800;text-decoration:underline;text-underline-offset:3px}.project-card:focus-within .project-zoom:before{transform:translateX(120%)}.project-card:focus-within .project-image .project-zoom .project-shot{--z:1.05}
+
+
+/* v3.4.3 — robust interaction fixes for contact controls and back-to-top. */
+.back-to-top{pointer-events:auto;z-index:1200;display:grid;place-items:center;padding:0;line-height:1;}
+.contact-form{position:relative;z-index:2;pointer-events:auto;}
+.contact-form input:not([type=hidden]),.contact-form textarea{position:relative;z-index:1;pointer-events:auto;user-select:text;-webkit-user-select:text;}
+.contact-form input:disabled,.contact-form textarea:disabled{opacity:1;cursor:text;}
+.contact-form input:focus-visible,.contact-form textarea:focus-visible{position:relative;z-index:3;outline:2px solid var(--cyan);outline-offset:2px;}

@@ -133,7 +133,7 @@ test('preloader usa logo oficial, composição compacta e rodapé com duração 
   assert.ok(!css.includes('site-preloader-failsafe'), 'nenhum failsafe CSS pode encurtar a duração controlada pelo JavaScript');
   assert.ok(css.includes('@keyframes site-preloader-logo-glow'));
   assert.ok(css.includes('@keyframes site-preloader-copyright-in'));
-  assert.ok(css.includes('width:min(34vw,138px)'), 'marca reduzida e centralizada');
+  assert.ok(css.includes('width:min(30vw,120px)'), 'marca reduzida e centralizada');
   assert.ok(css.includes('WAGNER.OS  /  DIGITAL SYSTEMS'), 'assinatura tipográfica da marca');
   assert.ok(js.includes('preloaderMinDelay=5000,preloaderMaxDelay=5000,preloaderFadeDuration=reduced?0:240'));
   assert.ok(js.includes('Math.min(preloaderMaxDelay,Math.max(preloaderMinDelay,5000))'));

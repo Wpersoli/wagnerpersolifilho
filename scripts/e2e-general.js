@@ -48,8 +48,9 @@ CDP.prototype.close = function () { if (this.ws) this.ws.close(); };
 function buildHtml() {
   var html = fs.readFileSync(path.join(root, 'public', 'index.html'), 'utf8');
   var css = fs.readFileSync(path.join(root, 'public', 'css', 'portfolio-general.css'), 'utf8').replace(/<\/style/gi, '<\\/style');
-  html = html.replace(/<link rel="stylesheet" href="\/css\/portfolio-general\.css">/i, '<style id="e2e-portfolio-css">' + css + '</style>');
-  html = html.replace(/<script src="\/js\/(?:chat-client|portfolio-general)\.js" defer><\/script>/g, '');
+  html = html.replace(/<link rel="stylesheet" href="\/css\/portfolio-general\.css(?:\?[^"]*)?">/i, '<style id="e2e-portfolio-css">' + css + '</style>');
+  if (!html.includes('id="e2e-portfolio-css"')) throw new Error('CSS do portfólio não foi injetado no E2E.');
+  html = html.replace(/<script src="\/js\/(?:chat-client|portfolio-general)\.js(?:\?[^"]*)?" defer><\/script>/g, '');
   var placeholder = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22480%22 height=%22270%22 viewBox=%220 0 480 270%22%3E%3Crect width=%22480%22 height=%22270%22 fill=%22%230d1424%22/%3E%3Ccircle cx=%22240%22 cy=%22135%22 r=%2270%22 fill=%22%2356e8f7%22 fill-opacity=%22.18%22/%3E%3C/svg%3E';
   html = html.replace(/src="\/img\/[^"]+"/g, 'src="' + placeholder + '"').replace(/src="https:\/\/raw\.githubusercontent\.com\/[^"]+"/g, 'src="' + placeholder + '"');
   return html;

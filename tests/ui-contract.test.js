@@ -99,3 +99,9 @@ test('HTML usa assets versionados v3.4.7 e tem fallback de conteúdo sem JavaScr
   assert.match(html, /chat-client\.js\?v=3\.4\.7/);
   assert.match(html, /<noscript><link rel="stylesheet" href="\/css\/no-js\.css"><\/noscript>/);
 });
+
+
+test('inicialização do formulário itera todos os campos sem interromper o JavaScript', function () {
+  assert.match(js, /\$\$\('input,textarea,select',form\)\.forEach/);
+  assert.doesNotMatch(js, /[^$]\$('input,textarea,select',form\)\.forEach/);
+});

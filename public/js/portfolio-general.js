@@ -15,7 +15,7 @@
   function refreshContactStartIfStale(){if(!started)return;var now=Date.now(),prior=Number(started.value);if(!Number.isFinite(prior)||prior<=0||prior>now||now-prior>contactMaxAge)started.value=String(now);}
   if(form){
     // Todos os campos permanecem editáveis, independentemente da ordem de preenchimento.
-    $('input,textarea,select',form).forEach(function(field){
+    $$('input,textarea,select',form).forEach(function(field){
       if(field.name!=='startedAt'&&field.name!=='company'){field.disabled=false;field.readOnly=false;field.removeAttribute('disabled');field.removeAttribute('readonly');}
     });
     var contactFields=['name','email','phone','subject','message'];

@@ -28,7 +28,7 @@ function mockRequest(question, ip, extraHeaders) {
   return {
     method: 'POST',
     headers: Object.assign({
-      origin: 'https://wagnerpersoli.vercel.app',
+      origin: 'https://wagnerpersolifilho.vercel.app',
       'content-type': 'application/json',
       'sec-fetch-site': 'same-origin',
       'x-forwarded-for': ip || '203.0.113.10'

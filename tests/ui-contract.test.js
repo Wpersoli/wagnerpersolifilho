@@ -8,6 +8,9 @@ var root = path.resolve(__dirname, '..');
 var html = fs.readFileSync(path.join(root, 'public', 'index.html'), 'utf8');
 var css = fs.readFileSync(path.join(root, 'public', 'css', 'portfolio-general.css'), 'utf8');
 var js = fs.readFileSync(path.join(root, 'public', 'js', 'portfolio-general.js'), 'utf8');
+var curriculum = fs.readFileSync(path.join(root, 'public', 'curriculo.html'), 'utf8');
+var robots = fs.readFileSync(path.join(root, 'public', 'robots.txt'), 'utf8');
+var sitemap = fs.readFileSync(path.join(root, 'public', 'sitemap.xml'), 'utf8');
 var config = JSON.parse(fs.readFileSync(path.join(root, 'vercel.json'), 'utf8'));
 
 test('portfólio geral mantém todas as seções e navegação principal', function () {
@@ -104,4 +107,16 @@ test('HTML usa assets versionados v3.4.7 e tem fallback de conteúdo sem JavaScr
 test('inicialização do formulário itera todos os campos sem interromper o JavaScript', function () {
   assert.equal(js.split('\n').some(function (line) { return /^\s+\$('input,textarea,select',form)\.forEach/.test(line); }), false);
   assert.ok(js.includes("$$('input,textarea,select',form).forEach"));
+});
+
+
+test('metadados SEO e arquivos de indexação usam o domínio público de produção', function () {
+  assert.match(html, /<link rel="canonical" href="https:\/\/wagnerpersolifilho\.vercel\.app\/">/);
+  assert.match(html, /<meta property="og:url" content="https:\/\/wagnerpersolifilho\.vercel\.app\/">/);
+  assert.match(html, /<meta property="og:image" content="https:\/\/wagnerpersolifilho\.vercel\.app\/og-image\.jpg">/);
+  assert.match(html, /"url":"https:\/\/wagnerpersolifilho\.vercel\.app\/"/);
+  assert.match(curriculum, /<link rel="canonical" href="https:\/\/wagnerpersolifilho\.vercel\.app\/curriculo\.html">/);
+  assert.match(robots, /Sitemap: https:\/\/wagnerpersolifilho\.vercel\.app\/sitemap\.xml/);
+  assert.match(sitemap, /https:\/\/wagnerpersolifilho\.vercel\.app\/curriculo\.html/);
+  assert.doesNotMatch([html, curriculum, robots, sitemap].join('\n'), /https:\/\/wagnerpersoli\.vercel\.app(?:\/|["<\s])/);
 });

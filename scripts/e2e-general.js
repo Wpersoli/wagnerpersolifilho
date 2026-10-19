@@ -15,7 +15,8 @@ async function waitForExpression(cdp, expression, timeout, message) {
     if (await cdp.evaluate(expression)) return;
     await sleep(50);
   }
-  throw new Error(message + ' (timeout ' + timeout + 'ms)');
+  var diagnostic = await cdp.evaluate("({text:document.getElementById('chat-messages')&&document.getElementById('chat-messages').textContent,input:document.getElementById('chat-input')&&document.getElementById('chat-input').value,panel:document.getElementById('chat-panel')&&document.getElementById('chat-panel').className,client:typeof window.WagnerChatClient,request:window.WagnerChatClient&&typeof window.WagnerChatClient.request,mockCalls:window.__chatMockCalls,status:document.getElementById('form-status')&&document.getElementById('form-status').textContent})").catch(function(){return null;});
+  throw new Error(message + ' (timeout ' + timeout + 'ms; diagnostics=' + JSON.stringify(diagnostic) + ')');
 }
 function findChrome() {
   var candidates = [process.env.CHROME_BIN, process.env.PROGRAMFILES && path.join(process.env.PROGRAMFILES, 'Google', 'Chrome', 'Application', 'chrome.exe'), process.env['PROGRAMFILES(X86)'] && path.join(process.env['PROGRAMFILES(X86)'], 'Microsoft', 'Edge', 'Application', 'msedge.exe')].filter(Boolean);
@@ -100,7 +101,7 @@ async function run() {
   await cdp.evaluate("document.querySelector('.site-nav a').click()");
   assert(await cdp.evaluate("!document.getElementById('site-nav').classList.contains('is-open')"),'Menu mobile não fechou após navegação.');
   await cdp.evaluate("document.getElementById('chat-toggle').click()");
-  await cdp.evaluate("window.WagnerChatClient={request:async function(){return {text:'CHAT_TEST_OK'}}};document.getElementById('chat-input').value='Teste de chat';document.getElementById('chat-form').dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}))");
+  await cdp.evaluate("window.__chatMockCalls=0;window.WagnerChatClient={request:async function(){window.__chatMockCalls++;return {text:'CHAT_TEST_OK'}}};document.getElementById('chat-input').value='Teste de chat';document.getElementById('chat-form').dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}))");
   await waitForExpression(cdp, "document.getElementById('chat-messages').textContent.includes('CHAT_TEST_OK')", 3000, 'Chat não retornou a resposta simulada.');
   await cdp.evaluate("document.getElementById('chat-close').click()");
   assert(await cdp.evaluate("document.getElementById('chat-panel').getAttribute('aria-hidden')==='true'"),'Chat não fechou.');

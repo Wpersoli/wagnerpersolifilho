@@ -11,6 +11,7 @@ var js = fs.readFileSync(path.join(root, 'public', 'js', 'portfolio-general.js')
 var curriculum = fs.readFileSync(path.join(root, 'public', 'curriculo.html'), 'utf8');
 var robots = fs.readFileSync(path.join(root, 'public', 'robots.txt'), 'utf8');
 var sitemap = fs.readFileSync(path.join(root, 'public', 'sitemap.xml'), 'utf8');
+var noJs = fs.readFileSync(path.join(root, 'public', 'css', 'no-js.css'), 'utf8');
 var config = JSON.parse(fs.readFileSync(path.join(root, 'vercel.json'), 'utf8'));
 
 test('portfólio geral mantém todas as seções e navegação principal', function () {
@@ -97,9 +98,9 @@ test('timer do formulário recupera sessões antigas e o WhatsApp mantém navega
 });
 
 test('HTML usa assets versionados v3.4.7 e tem fallback de conteúdo sem JavaScript', function () {
-  assert.match(html, /portfolio-general\.css\?v=3\.4\.7/);
-  assert.match(html, /portfolio-general\.js\?v=3\.4\.7/);
-  assert.match(html, /chat-client\.js\?v=3\.4\.7/);
+  assert.match(html, /portfolio-general\.css\?v=3\.4\.8/);
+  assert.match(html, /portfolio-general\.js\?v=3\.4\.8/);
+  assert.match(html, /chat-client\.js\?v=3\.4\.8/);
   assert.match(html, /<noscript><link rel="stylesheet" href="\/css\/no-js\.css"><\/noscript>/);
 });
 
@@ -119,4 +120,18 @@ test('metadados SEO e arquivos de indexação usam o domínio público de produ�
   assert.match(robots, /Sitemap: https:\/\/wagnerpersolifilho\.vercel\.app\/sitemap\.xml/);
   assert.match(sitemap, /https:\/\/wagnerpersolifilho\.vercel\.app\/curriculo\.html/);
   assert.doesNotMatch([html, curriculum, robots, sitemap].join('\n'), /https:\/\/wagnerpersoli\.vercel\.app(?:\/|["<\s])/);
+});
+
+
+test('logo preloader é animado, acessível e tem limite absoluto inferior a 3 segundos', function () {
+  assert.match(html, /id="site-preloader"[^>]*role="status"/);
+  assert.match(html, /class="site-preloader__logo" src="\/img\/logo\.png"/);
+  assert.match(html, /href="\/img\/logo\.png" type="image\/png" fetchpriority="high"/);
+  assert.match(css, /site-preloader-failsafe 2\.9s linear forwards/);
+  assert.match(css, /@keyframes site-preloader-logo/);
+  assert.match(css, /@keyframes site-preloader-scan/);
+  assert.match(js, /preloaderMinDelay=reduced\?180:650/);
+  assert.match(js, /preloaderMaxDelay=reduced\?450:2650/);
+  assert.match(js, /document\.readyState==='complete'\)finishWhenReady\(\)/);
+  assert.match(noJs, /\.site-preloader\{display:none!important\}/);
 });

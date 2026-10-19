@@ -58,6 +58,7 @@ function buildHtml() {
 async function setPage(cdp, html, js) {
   var tree = await cdp.send('Page.getFrameTree');
   await cdp.send('Page.setDocumentContent', { frameId: tree.frameTree.frame.id, html: html });
+  await cdp.evaluate("document.getElementById('site-preloader')?.remove()");
   await sleep(100);
   await cdp.evaluate("window.fetch = async function(url, options){ if(String(url).indexOf('/api/contact')===0) return {ok:true,status:200,json:async function(){return {message:'CONTACT_TEST_OK'};}}; return {ok:false,status:404,json:async function(){return {};}}; }; window.WagnerChatClient={request:async function(){return {text:'CHAT_TEST_OK'};}};");
   await cdp.evaluate('(function(){var s=document.createElement("script");s.textContent=' + JSON.stringify(js) + ';document.body.appendChild(s);return true;}())');

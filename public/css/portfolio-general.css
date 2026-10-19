@@ -292,3 +292,6 @@
 }
 @media(max-width:380px){.projects-carousel .projects-track{--card-w:min(90vw,340px)}}
 @media(prefers-reduced-motion:reduce){.project-image .project-zoom .project-shot{transition-duration:.01ms}.project-card:hover .project-zoom:before{transform:translateX(-120%)}}
+
+/* v3.4.2 — acessibilidade e fallback visual dos controles. */
+.whatsapp-fab{position:fixed;place-items:center}.whatsapp-fab svg{display:block;width:25px;height:25px;fill:currentColor}.whatsapp-fab:active{transform:scale(.94)}.whatsapp-fab:focus-visible,.back-to-top:focus-visible{outline:2px solid var(--cyan);outline-offset:4px}.back-to-top{display:grid;place-items:center;text-decoration:none;line-height:1}.back-to-top:active{transform:scale(.94)}.form-fallback-link{display:inline-block;margin-top:8px;color:var(--cyan);font-weight:800;text-decoration:underline;text-underline-offset:3px}.project-card:focus-within .project-zoom:before{transform:translateX(120%)}.project-card:focus-within .project-image .project-zoom .project-shot{--z:1.05}

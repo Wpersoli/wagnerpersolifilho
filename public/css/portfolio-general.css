@@ -303,3 +303,20 @@
 .contact-form input:not([type=hidden]),.contact-form textarea{position:relative;z-index:1;pointer-events:auto;user-select:text;-webkit-user-select:text;}
 .contact-form input:disabled,.contact-form textarea:disabled{opacity:1;cursor:text;}
 .contact-form input:focus-visible,.contact-form textarea:focus-visible{position:relative;z-index:3;outline:2px solid var(--cyan);outline-offset:2px;}
+
+
+/* v3.4.4 — formulário: campos sempre editáveis e envio por e-mail/WhatsApp lado a lado. */
+.contact-form input:not([type="hidden"]),.contact-form textarea,.contact-form select{
+  pointer-events:auto!important;user-select:text;-webkit-user-select:text;cursor:text;
+}
+.contact-form input:not([type="hidden"]):disabled,.contact-form input:not([type="hidden"])[readonly],
+.contact-form textarea:disabled,.contact-form textarea[readonly]{
+  opacity:1!important;cursor:text!important;filter:none!important;
+}
+.form-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:stretch;margin-top:4px}
+.form-actions .form-submit,.form-actions .form-whatsapp{width:100%;min-width:0;min-height:54px;display:flex;align-items:center;justify-content:center;gap:9px;text-align:center;padding:14px 16px;white-space:normal}
+.form-actions .form-submit{justify-content:space-between}
+.button-whatsapp{color:#052216;background:linear-gradient(110deg,#5ce7a7,#b0f6d1);border:1px solid #51e2a0;box-shadow:0 10px 32px #25c87920}
+.button-whatsapp:hover{box-shadow:0 14px 38px #25c87940}
+.button-whatsapp .whatsapp-mark{color:#075c39}
+@media(max-width:560px){.form-actions{grid-template-columns:1fr}.form-actions .form-submit,.form-actions .form-whatsapp{min-height:50px}}

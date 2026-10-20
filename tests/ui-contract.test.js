@@ -119,7 +119,7 @@ test('metadados SEO e arquivos de indexação usam o domínio público de produ�
   assert.match(curriculum, /<link rel="canonical" href="https:\/\/wagnerpersoli\.vercel\.app\/curriculo\.html">/);
   assert.match(robots, /Sitemap: https:\/\/wagnerpersoli\.vercel\.app\/sitemap\.xml/);
   assert.match(sitemap, /https:\/\/wagnerpersoli\.vercel\.app\/curriculo\.html/);
-  assert.doesNotMatch([html, curriculum, robots, sitemap].join('\n'), /https:\/\/wagnerpersoli\.vercel\.app(?:\/|["<\s])/);
+  assert.doesNotMatch([html, curriculum, robots, sitemap].join('\n'), /https:\/\/wagnerpersolifilho\.vercel\.app(?:\/|["<\s])/);
 });
 
 

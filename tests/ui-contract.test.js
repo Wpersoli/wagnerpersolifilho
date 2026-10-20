@@ -98,9 +98,9 @@ test('timer do formulário recupera sessões antigas e o WhatsApp mantém navega
 });
 
 test('HTML usa assets versionados v3.4.10 e tem fallback de conteúdo sem JavaScript', function () {
-  assert.match(html, /portfolio-general\.css\?v=3\.4\.11/);
-  assert.match(html, /portfolio-general\.js\?v=3\.4\.11/);
-  assert.match(html, /chat-client\.js\?v=3\.4\.11/);
+  assert.match(html, /portfolio-general\.css\?v=3\.4\.12/);
+  assert.match(html, /portfolio-general\.js\?v=3\.4\.12/);
+  assert.match(html, /chat-client\.js\?v=3\.4\.12/);
   assert.match(html, /<noscript><link rel="stylesheet" href="\/css\/no-js\.css"><\/noscript>/);
 });
 
@@ -138,4 +138,21 @@ test('preloader usa logo oficial, composição compacta e rodapé com duração 
   assert.ok(js.includes('preloaderMinDelay=5000,preloaderMaxDelay=5000,preloaderFadeDuration=reduced?0:240'));
   assert.ok(js.includes('Math.min(preloaderMaxDelay,Math.max(preloaderMinDelay,5000))'));
   assert.ok(noJs.includes('.site-preloader{display:none!important}'));
+});
+
+
+test('paleta de referência aplicada apenas às seções abaixo do hero, sem trocar foto, loader ou carrossel', function () {
+  var marker = '/* v3.4.12 — paleta inspirada na referência';
+  var visualLayer = css.slice(css.indexOf(marker));
+  assert.ok(visualLayer.includes('--reference-cyan: #00f3ff'));
+  assert.ok(visualLayer.includes('--reference-purple: #9d4edd'));
+  assert.ok(visualLayer.includes('--reference-pink: #ff007f'));
+  assert.ok(visualLayer.includes('.about-section .value-grid .value-card'));
+  assert.ok(visualLayer.includes('.skills-section .skill-tags span:before'));
+  assert.ok(visualLayer.includes('.projects-section .projects-carousel .project-card'));
+  assert.ok(visualLayer.includes('.contact-section .contact-links>a:nth-child(2)'));
+  assert.doesNotMatch(visualLayer, /\.hero\b|\.profile-frame\b|\.site-preloader\b/, 'a nova camada não deve atingir a abertura, o retrato ou a loaderpage');
+  assert.ok(html.includes('src="/img/wagner-profile.webp"'), 'mantém a foto de perfil atual');
+  assert.ok(html.includes('id="site-preloader"'), 'mantém a loaderpage atual');
+  assert.ok(html.includes('id="projetos"') && js.includes('projects-carousel'), 'mantém a seção e a lógica do carrossel de projetos');
 });

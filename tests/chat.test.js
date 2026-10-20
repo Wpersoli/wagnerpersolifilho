@@ -48,6 +48,13 @@ function apiResponse(status, payload) {
 
 test.beforeEach(function () { internal.resetState(); });
 
+test('domínio canônico wagnerpersoli.vercel.app está autorizado para o chat', function () {
+  var http = require('../api/_shared/http.js');
+  assert.equal(http.isAllowedOrigin({ headers: { origin: 'https://wagnerpersoli.vercel.app' } }), true);
+  assert.equal(http.isAllowedOrigin({ headers: { origin: 'https://wagnerpersolifilho.vercel.app' } }), true);
+  assert.equal(http.isAllowedOrigin({ headers: { origin: 'https://example.invalid' } }), false);
+});
+
 test('base oficial usa uma única fonte JSON canônica e sem contradição antiga', function () {
   assert.match(internal.knowledge.combined, /Wagner Persoli Filho/);
   assert.match(internal.knowledge.combined, /DADOS ESTRUTURADOS \(FONTE CANÔNICA\)/);

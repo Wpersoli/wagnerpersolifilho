@@ -97,10 +97,10 @@ test('timer do formulário recupera sessões antigas e o WhatsApp mantém navega
   assert.doesNotMatch(js, /window\.open\(href/);
 });
 
-test('HTML usa assets versionados v3.4.10 e tem fallback de conteúdo sem JavaScript', function () {
-  assert.match(html, /portfolio-general\.css\?v=3\.4\.12/);
-  assert.match(html, /portfolio-general\.js\?v=3\.4\.12/);
-  assert.match(html, /chat-client\.js\?v=3\.4\.12/);
+test('HTML usa assets versionados v3.4.14 e tem fallback de conteúdo sem JavaScript', function () {
+  assert.match(html, /portfolio-general\.css\?v=3\.4\.13/);
+  assert.match(html, /portfolio-general\.js\?v=3\.4\.14/);
+  assert.match(html, /chat-client\.js\?v=3\.4\.14/);
   assert.match(html, /<noscript><link rel="stylesheet" href="\/css\/no-js\.css"><\/noscript>/);
 });
 
@@ -112,14 +112,14 @@ test('inicialização do formulário itera todos os campos sem interromper o Jav
 
 
 test('metadados SEO e arquivos de indexação usam o domínio público de produção', function () {
-  assert.match(html, /<link rel="canonical" href="https:\/\/wagnerpersolifilho\.vercel\.app\/">/);
-  assert.match(html, /<meta property="og:url" content="https:\/\/wagnerpersolifilho\.vercel\.app\/">/);
-  assert.match(html, /<meta property="og:image" content="https:\/\/wagnerpersolifilho\.vercel\.app\/og-image\.jpg">/);
-  assert.match(html, /"url":"https:\/\/wagnerpersolifilho\.vercel\.app\/"/);
-  assert.match(curriculum, /<link rel="canonical" href="https:\/\/wagnerpersolifilho\.vercel\.app\/curriculo\.html">/);
-  assert.match(robots, /Sitemap: https:\/\/wagnerpersolifilho\.vercel\.app\/sitemap\.xml/);
-  assert.match(sitemap, /https:\/\/wagnerpersolifilho\.vercel\.app\/curriculo\.html/);
-  assert.doesNotMatch([html, curriculum, robots, sitemap].join('\n'), /https:\/\/wagnerpersoli\.vercel\.app(?:\/|["<\s])/);
+  assert.match(html, /<link rel="canonical" href="https:\/\/wagnerpersoli\.vercel\.app\/">/);
+  assert.match(html, /<meta property="og:url" content="https:\/\/wagnerpersoli\.vercel\.app\/">/);
+  assert.match(html, /<meta property="og:image" content="https:\/\/wagnerpersoli\.vercel\.app\/og-image\.jpg">/);
+  assert.match(html, /"url":"https:\/\/wagnerpersoli\.vercel\.app\/"/);
+  assert.match(curriculum, /<link rel="canonical" href="https:\/\/wagnerpersoli\.vercel\.app\/curriculo\.html">/);
+  assert.match(robots, /Sitemap: https:\/\/wagnerpersoli\.vercel\.app\/sitemap\.xml/);
+  assert.match(sitemap, /https:\/\/wagnerpersoli\.vercel\.app\/curriculo\.html/);
+  assert.doesNotMatch([html, curriculum, robots, sitemap].join('\n'), /https:\/\/wagnerpersolifilho\.vercel\.app(?:\/|["<\s])/);
 });
 
 

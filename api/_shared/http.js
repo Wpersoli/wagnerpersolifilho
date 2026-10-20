@@ -3,7 +3,8 @@
 var crypto = require('crypto');
 
 var DEFAULT_ORIGINS = [
-  'https://wagnerpersolifilho.vercel.app'
+  'https://wagnerpersolifilho.vercel.app',
+  'https://wagnerpersoli.vercel.app'
 ];
 var LOCAL_ORIGIN = /^http:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?$/i;
 

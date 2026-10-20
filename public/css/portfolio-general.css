@@ -383,3 +383,249 @@
 @media(max-width:480px){.site-preloader{padding:18px}.site-preloader__visual{width:min(37vw,106px);margin-bottom:14px}.site-preloader__caption{font-size:10px}.site-preloader__caption::before{font-size:7px;letter-spacing:.16em}.site-preloader__track{width:min(154px,54vw)}.site-preloader__copyright{font-size:9px;bottom:22px}}
 @media(max-height:520px){.site-preloader__visual{width:min(22vh,100px);margin-bottom:10px}.site-preloader__caption::before{margin-bottom:5px}.site-preloader__track{margin-top:10px}.site-preloader__copyright{bottom:12px;font-size:9px}}
 @media(prefers-reduced-motion:reduce){.site-preloader::before,.site-preloader__visual::before,.site-preloader__official-logo,.site-preloader__orbit,.site-preloader__scan,.site-preloader__track span,.site-preloader__caption,.site-preloader__caption::before,.site-preloader__copyright{animation:none!important;opacity:1!important;filter:none!important;transform:none!important;letter-spacing:inherit!important}.site-preloader.is-done{transition-duration:0s}}
+
+
+
+/* v3.4.12 — paleta inspirada na referência: ciano, violeta e rosa.
+   Aplicação seletiva às seções Sobre, Competências, Projetos, Contato e rodapé.
+   Não estiliza a abertura/hero, o retrato de perfil nem a tela de carregamento. */
+.about-section,
+.skills-section,
+.projects-section,
+.contact-section,
+.intro-strip,
+.site-footer {
+  --reference-cyan: #00f3ff;
+  --reference-purple: #9d4edd;
+  --reference-pink: #ff007f;
+  --reference-card: #121218;
+}
+.about-section .section-heading h2 span,
+.skills-section .section-heading h2 span,
+.projects-section .section-heading h2 span,
+.contact-section .contact-copy h2 span {
+  background-image: linear-gradient(100deg, var(--reference-cyan) 0%, var(--reference-purple) 56%, var(--reference-pink) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.about-section .section-label:after,
+.skills-section .section-label:after,
+.projects-section .section-label:after,
+.contact-section .section-label:after {
+  background: linear-gradient(90deg, var(--reference-cyan), var(--reference-purple), transparent);
+}
+
+/* Cards de valor: acentos individuais para os ícones existentes. */
+.about-section .value-grid .value-card {
+  background: linear-gradient(145deg, rgba(18,18,24,.97), rgba(8,8,10,.97));
+  border-color: var(--reference-edge, rgba(0,243,255,.2));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.025), 0 12px 34px rgba(0,0,0,.12);
+}
+.about-section .value-grid .value-card:nth-child(3n+1) {
+  --reference-accent: #00f3ff;
+  --reference-edge: rgba(0,243,255,.23);
+  --reference-wash: rgba(0,243,255,.075);
+  --reference-glow: rgba(0,243,255,.14);
+}
+.about-section .value-grid .value-card:nth-child(3n+2) {
+  --reference-accent: #9d4edd;
+  --reference-edge: rgba(157,78,221,.28);
+  --reference-wash: rgba(157,78,221,.09);
+  --reference-glow: rgba(157,78,221,.16);
+}
+.about-section .value-grid .value-card:nth-child(3n) {
+  --reference-accent: #ff007f;
+  --reference-edge: rgba(255,0,127,.23);
+  --reference-wash: rgba(255,0,127,.075);
+  --reference-glow: rgba(255,0,127,.13);
+}
+.about-section .value-grid .value-card:before {
+  background: radial-gradient(ellipse, var(--reference-wash) 0%, transparent 72%);
+}
+.about-section .value-grid .value-card:after {
+  background: radial-gradient(280px circle at var(--mx) var(--my), var(--reference-glow), transparent 62%);
+}
+.about-section .value-grid .line-icon {
+  color: var(--reference-accent);
+  border-color: var(--reference-edge);
+  background: var(--reference-wash);
+}
+.about-section .value-grid .value-card:hover .line-icon {
+  box-shadow: 0 9px 26px var(--reference-glow);
+}
+.about-section .value-grid .card-index,
+.about-section .value-grid .card-bottom b {
+  color: var(--reference-accent);
+}
+.about-section .value-grid .card-bottom {
+  border-top-color: var(--reference-edge);
+}
+
+/* Tags de competências: chips coloridos e marcadores pequenos, sem mudar a stack. */
+.skills-section .skill-panel {
+  background: linear-gradient(145deg, rgba(18,18,24,.96), rgba(8,8,10,.94));
+  border-color: rgba(157,78,221,.2);
+  box-shadow: 0 18px 54px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.025);
+}
+.skills-section .skill-group:nth-child(1) h3 { color: var(--reference-cyan); }
+.skills-section .skill-group:nth-child(3) h3 { color: #c79af0; }
+.skills-section .skill-group:nth-child(5) h3 { color: #ff70b2; }
+.skills-section .skill-tags span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border-color: rgba(157,78,221,.2);
+  background: rgba(18,18,24,.68);
+}
+.skills-section .skill-tags span:before {
+  content: "";
+  flex: 0 0 4px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--skill-accent, #00f3ff);
+  box-shadow: 0 0 8px var(--skill-glow, rgba(0,243,255,.55));
+}
+.skills-section .skill-tags span:nth-child(3n+1) {
+  --skill-accent: #00f3ff;
+  --skill-glow: rgba(0,243,255,.55);
+  border-color: rgba(0,243,255,.2);
+}
+.skills-section .skill-tags span:nth-child(3n+2) {
+  --skill-accent: #b77be8;
+  --skill-glow: rgba(157,78,221,.55);
+  border-color: rgba(157,78,221,.22);
+}
+.skills-section .skill-tags span:nth-child(3n) {
+  --skill-accent: #ff62ad;
+  --skill-glow: rgba(255,0,127,.48);
+  border-color: rgba(255,0,127,.2);
+}
+.skills-section .skill-tags span:hover {
+  color: #fff;
+  border-color: var(--skill-accent);
+  background: rgba(18,18,24,.94);
+  box-shadow: 0 0 18px var(--skill-glow);
+}
+.skills-section .skill-divider {
+  background: linear-gradient(90deg, rgba(0,243,255,.16), rgba(157,78,221,.2), rgba(255,0,127,.12));
+}
+.skills-section .panel-orb {
+  background: radial-gradient(circle, rgba(157,78,221,.18), rgba(0,243,255,.045) 46%, transparent 72%);
+}
+
+/* Project cards: only surface styling. Existing images, links, track and carousel controls stay intact. */
+.projects-section .projects-carousel .project-card {
+  --project-accent: #00f3ff;
+  --project-edge: rgba(0,243,255,.23);
+  --project-glow: rgba(0,243,255,.12);
+  --project-wash: rgba(0,243,255,.07);
+  border-color: var(--project-edge);
+  background: linear-gradient(145deg, rgba(18,18,24,.98), rgba(8,8,10,.98));
+}
+.projects-section .projects-carousel .project-card:nth-child(3n+2) {
+  --project-accent: #b77be8;
+  --project-edge: rgba(157,78,221,.27);
+  --project-glow: rgba(157,78,221,.15);
+  --project-wash: rgba(157,78,221,.075);
+}
+.projects-section .projects-carousel .project-card:nth-child(3n) {
+  --project-accent: #ff62ad;
+  --project-edge: rgba(255,0,127,.24);
+  --project-glow: rgba(255,0,127,.13);
+  --project-wash: rgba(255,0,127,.065);
+}
+.projects-section .projects-carousel .project-card:after {
+  background: radial-gradient(280px circle at var(--mx) var(--my), var(--project-glow), transparent 62%);
+}
+.projects-section .projects-carousel .project-card:hover {
+  border-color: var(--project-accent);
+  box-shadow: 0 24px 58px rgba(0,0,0,.34), 0 0 22px var(--project-glow);
+}
+.projects-section .projects-carousel .project-image-label {
+  color: var(--project-accent);
+}
+.projects-section .projects-carousel .project-open {
+  color: var(--project-accent);
+  border-color: var(--project-edge);
+  background: rgba(8,8,10,.84);
+}
+.projects-section .projects-carousel .project-zoom {
+  box-shadow: inset 0 -2px 0 var(--project-edge);
+}
+.projects-section .projects-carousel .project-meta span:last-child {
+  color: var(--project-accent);
+}
+.projects-section .projects-carousel .project-pill {
+  border-color: var(--project-edge);
+  background: var(--project-wash);
+}
+.projects-section .projects-carousel .project-footer>a {
+  color: var(--project-accent);
+}
+.projects-section .projects-note>span:first-child {
+  color: var(--reference-purple);
+  text-shadow: 0 0 12px rgba(157,78,221,.35);
+}
+
+/* Contato: mesmo vocabulário de cores, mantendo formulários e destinos originais. */
+.contact-section .contact-links>a {
+  border-color: rgba(157,78,221,.17);
+  background: linear-gradient(135deg, rgba(18,18,24,.62), rgba(8,8,10,.76));
+}
+.contact-section .contact-links>a:nth-child(1) .contact-link-icon {
+  color: var(--reference-cyan);
+  border: 1px solid rgba(0,243,255,.2);
+  background: rgba(0,243,255,.07);
+}
+.contact-section .contact-links>a:nth-child(2) .contact-link-icon {
+  color: #b77be8;
+  border: 1px solid rgba(157,78,221,.24);
+  background: rgba(157,78,221,.09);
+}
+.contact-section .contact-links>a:nth-child(3) .contact-link-icon {
+  color: #ff62ad;
+  border: 1px solid rgba(255,0,127,.2);
+  background: rgba(255,0,127,.07);
+}
+.contact-section .contact-links>a:nth-child(1):hover { border-color: rgba(0,243,255,.35); }
+.contact-section .contact-links>a:nth-child(2):hover { border-color: rgba(157,78,221,.4); }
+.contact-section .contact-links>a:nth-child(3):hover { border-color: rgba(255,0,127,.34); }
+.contact-section .contact-form {
+  border-color: rgba(157,78,221,.24);
+  background: linear-gradient(145deg, rgba(18,18,24,.95), rgba(8,8,10,.96));
+}
+.contact-section .contact-form input:focus,
+.contact-section .contact-form textarea:focus {
+  border-color: rgba(0,243,255,.7);
+  box-shadow: 0 0 0 3px rgba(157,78,221,.1), 0 0 16px rgba(0,243,255,.06);
+}
+.contact-section .contact-form .form-submit {
+  color: #08080a;
+  background: linear-gradient(105deg, #00f3ff, #9d4edd 62%, #c782ee);
+  box-shadow: 0 10px 30px rgba(0,243,255,.12), 0 8px 24px rgba(157,78,221,.1);
+}
+.contact-section .contact-form .form-submit:hover {
+  box-shadow: 0 13px 34px rgba(0,243,255,.19), 0 12px 28px rgba(157,78,221,.16);
+}
+
+/* Strip e rodapé recebem somente detalhes da paleta de referência. */
+.intro-strip {
+  border-color: rgba(157,78,221,.16);
+  background-image: linear-gradient(90deg, rgba(0,243,255,.025), rgba(157,78,221,.035), rgba(255,0,127,.025));
+}
+.intro-strip span:nth-of-type(3n+1) { color: rgba(0,243,255,.82); }
+.intro-strip span:nth-of-type(3n+2) { color: rgba(191,145,231,.9); }
+.intro-strip span:nth-of-type(3n) { color: rgba(255,112,178,.84); }
+.intro-strip i {
+  background: linear-gradient(180deg, rgba(0,243,255,.4), rgba(157,78,221,.42), rgba(255,0,127,.32));
+}
+.site-footer {
+  box-shadow: inset 0 1px 0 rgba(0,243,255,.055);
+}
+.site-footer .footer-social a:hover,
+.site-footer .footer-bottom a:hover {
+  color: var(--reference-cyan);
+}
+
+/* Animações decorativas reduzidas são desligadas pelo contrato global de acessibilidade. */

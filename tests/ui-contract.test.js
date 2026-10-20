@@ -151,7 +151,7 @@ test('paleta de referência aplicada apenas às seções abaixo do hero, sem tro
   assert.ok(visualLayer.includes('.skills-section .skill-tags span:before'));
   assert.ok(visualLayer.includes('.projects-section .projects-carousel .project-card'));
   assert.ok(visualLayer.includes('.contact-section .contact-links>a:nth-child(2)'));
-  assert.doesNotMatch(visualLayer, /\.hero\\b|\.profile-frame\\b|\.site-preloader\\b/, 'a nova camada não deve atingir a abertura, o retrato ou a loaderpage');
+  assert.doesNotMatch(visualLayer, /\.hero\b|\.profile-frame\b|\.site-preloader\b/, 'a nova camada não deve atingir a abertura, o retrato ou a loaderpage');
   assert.ok(html.includes('src="/img/wagner-profile.webp"'), 'mantém a foto de perfil atual');
   assert.ok(html.includes('id="site-preloader"'), 'mantém a loaderpage atual');
   assert.ok(html.includes('id="projetos"') && js.includes('projects-carousel'), 'mantém a seção e a lógica do carrossel de projetos');

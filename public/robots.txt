@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 Disallow: /api/
-Sitemap: https://wagnerpersolifilho.vercel.app/sitemap.xml
+Sitemap: https://wagnerpersoli.vercel.app/sitemap.xml

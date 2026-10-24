@@ -137,6 +137,29 @@ test('sanitização limita histórico e remove controles invisíveis', function 
   assert.doesNotMatch(clean[0].content, /\u0000/);
 });
 
+
+test('chat aceita o domínio oficial alternativo wagnerpersoli.vercel.app', async function () {
+  var originalFetch = global.fetch;
+  global.fetch = async function () {
+    return apiResponse(200, {
+      candidates: [{ content: { parts: [{ text: 'Resposta de teste para uma pergunta complexa.' }] } }]
+    });
+  };
+  try {
+    var res = mockResponse();
+    var req = mockRequest(
+      'Explique uma arquitetura para integrar APIs e processar erros com segurança.',
+      '203.0.113.41',
+      { origin: 'https://wagnerpersoli.vercel.app' }
+    );
+    await handler(req, res);
+    assert.equal(res.statusCode, 200);
+    assert.equal(res.headers['access-control-allow-origin'], 'https://wagnerpersoli.vercel.app');
+    assert.equal(res.headers['x-wagner-chat-source'], 'gemini');
+    assert.match(res.body.content[0].text, /Resposta de teste para uma pergunta complexa/);
+  } finally { global.fetch = originalFetch; }
+});
+
 test('chat bloqueia fetch cross-site e content-type incorreto', async function () {
   var crossSite = mockResponse();
   await handler(mockRequest('oi', '203.0.113.21', { 'sec-fetch-site': 'cross-site' }), crossSite);

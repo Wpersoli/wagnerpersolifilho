@@ -430,7 +430,8 @@
       canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);
       canvas.style.width=w+'px';canvas.style.height=h+'px';ctx.setTransform(dpr,0,0,dpr,0,0);
       var count=Math.min(76,Math.max(24,Math.round(w*h/18000)));
-      embers=Array.from({length:count},function(){return makeEmber(true);});\n      rainDrops=Array.from({length:Math.min(84,Math.max(28,Math.round(w*h/26000)))},function(){return{x:Math.random()*w,y:Math.random()*h,len:8+Math.random()*17,speed:1.1+Math.random()*2.4,alpha:.035+Math.random()*.07};});
+      embers=Array.from({length:count},function(){return makeEmber(true);});
+      rainDrops=Array.from({length:Math.min(84,Math.max(28,Math.round(w*h/26000)))},function(){return{x:Math.random()*w,y:Math.random()*h,len:8+Math.random()*17,speed:1.1+Math.random()*2.4,alpha:.035+Math.random()*.07};});
     }
     function makeEmber(initial){return{x:Math.random()*w,y:initial?Math.random()*h:h+Math.random()*30,r:.6+Math.random()*1.8,v:.18+Math.random()*.6,drift:(Math.random()-.5)*.32,alpha:.18+Math.random()*.56,phase:Math.random()*6.28,twinkle:.012+Math.random()*.025,color:palette[Math.floor(Math.random()*palette.length)]};}
     function draw(now){

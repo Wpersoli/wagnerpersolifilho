@@ -811,3 +811,53 @@
 @keyframes ambientHazeDrift{from{transform:translate3d(-2vw,1vh,0) scale(.92)}to{transform:translate3d(4vw,-3vh,0) scale(1.12)}}
 @media(max-width:700px){.ambient-haze{filter:blur(65px);opacity:.075}.ambient-bolt{stroke-width:3}}
 @media(prefers-reduced-motion:reduce){.ambient-haze,.ambient-bolt-a,.ambient-bolt-b,.ambient-bolt-c{animation:none!important}.ambient-lightning{display:none}#ambient-embers{opacity:.35}}
+
+
+/* Atmosfera cinematográfica premium v3.4.24 — somente camada decorativa, sem alterar componentes. */
+.ambient-atmosphere{
+  position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;isolation:isolate;
+  background:
+    radial-gradient(ellipse at 7% 43%,rgba(255,62,20,.15),transparent 31%),
+    radial-gradient(ellipse at 93% 31%,rgba(0,108,255,.14),transparent 33%),
+    radial-gradient(ellipse at 52% 100%,rgba(255,83,22,.10),transparent 38%);
+}
+.ambient-atmosphere::before,.ambient-atmosphere::after{content:"";position:absolute;inset:0;pointer-events:none}
+.ambient-atmosphere::before{
+  background:
+    radial-gradient(ellipse at 0% 55%,rgba(255,72,24,.17),transparent 42%),
+    radial-gradient(ellipse at 100% 57%,rgba(34,99,255,.15),transparent 40%),
+    radial-gradient(ellipse at 50% 0%,rgba(100,36,90,.08),transparent 46%);
+  mix-blend-mode:screen;opacity:.88;
+}
+.ambient-atmosphere::after{
+  background:radial-gradient(ellipse at center,transparent 36%,rgba(2,4,10,.24) 78%,rgba(0,0,0,.48) 120%);
+}
+#ambient-embers{position:absolute;inset:0;width:100%;height:100%;opacity:.94;mix-blend-mode:screen}
+.ambient-lightning{position:absolute;inset:0;width:100%;height:100%;opacity:1;overflow:hidden;mix-blend-mode:screen}
+.ambient-bolt{fill:none;stroke:#ff7547;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;opacity:0;vector-effect:non-scaling-stroke;filter:drop-shadow(0 0 4px rgba(255,90,44,.95)) drop-shadow(0 0 12px rgba(255,51,25,.72)) drop-shadow(0 0 28px rgba(255,57,28,.28))}
+.ambient-bolt-a{animation:ambientFlashA 11.8s linear infinite}
+.ambient-bolt-b{stroke:#56b9ff;filter:drop-shadow(0 0 4px rgba(63,157,255,.98)) drop-shadow(0 0 13px rgba(36,114,255,.82)) drop-shadow(0 0 28px rgba(30,84,255,.35));animation:ambientFlashB 15.4s linear infinite;animation-delay:-6.7s}
+.ambient-bolt-c{stroke:#ffb45f;filter:drop-shadow(0 0 4px rgba(255,164,73,.95)) drop-shadow(0 0 14px rgba(255,91,29,.75));animation:ambientFlashC 18.6s linear infinite;animation-delay:-10.3s}
+.ambient-bolt-d{stroke:#7b7dff;filter:drop-shadow(0 0 5px rgba(121,108,255,.95)) drop-shadow(0 0 17px rgba(86,65,255,.7));animation:ambientFlashD 22s linear infinite;animation-delay:-15s}
+.ambient-haze{position:absolute;display:block;width:49vw;height:49vw;max-width:900px;max-height:900px;border-radius:50%;filter:blur(88px);opacity:.17;mix-blend-mode:screen;will-change:transform,opacity}
+.ambient-haze-one{left:-25vw;bottom:-23vw;background:radial-gradient(circle,rgba(255,67,25,.95) 0%,rgba(174,29,47,.42) 30%,transparent 70%);animation:ambientHazeDrift 25s ease-in-out infinite alternate}
+.ambient-haze-two{right:-27vw;top:2vh;background:radial-gradient(circle,rgba(35,123,255,.88) 0%,rgba(83,53,208,.38) 36%,transparent 72%);animation:ambientHazeDrift 31s ease-in-out infinite alternate-reverse}
+@keyframes ambientFlashA{0%,61%,62%,63%,100%{opacity:0}61.08%{opacity:.94}61.2%{opacity:.08}61.42%{opacity:.76}61.7%{opacity:0}}
+@keyframes ambientFlashB{0%,38%,39%,40%,100%{opacity:0}38.08%{opacity:.96}38.2%{opacity:.12}38.43%{opacity:.86}38.68%{opacity:0}}
+@keyframes ambientFlashC{0%,76%,77%,78%,100%{opacity:0}76.1%{opacity:.9}76.24%{opacity:.06}76.5%{opacity:.72}76.78%{opacity:0}}
+@keyframes ambientFlashD{0%,52%,53%,54%,100%{opacity:0}52.1%{opacity:.8}52.28%{opacity:.04}52.52%{opacity:.66}52.78%{opacity:0}}
+@keyframes ambientHazeDrift{from{transform:translate3d(-1vw,1vh,0) scale(.91);opacity:.11}to{transform:translate3d(4vw,-3vh,0) scale(1.13);opacity:.2}}
+.site-header,main,.site-footer{position:relative;z-index:1}
+.site-header{z-index:100}
+@media(max-width:760px){
+  .ambient-haze{width:76vw;height:76vw;filter:blur(66px);opacity:.13}
+  .ambient-haze-one{left:-45vw;bottom:-10vh}
+  .ambient-haze-two{right:-48vw;top:16vh}
+  .ambient-bolt{stroke-width:1.8}
+  #ambient-embers{opacity:.78}
+}
+@media(prefers-reduced-motion:reduce){
+  .ambient-haze,.ambient-bolt-a,.ambient-bolt-b,.ambient-bolt-c,.ambient-bolt-d{animation:none!important}
+  .ambient-lightning{display:none}
+  #ambient-embers{opacity:.32}
+}

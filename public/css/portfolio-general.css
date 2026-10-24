@@ -1123,3 +1123,21 @@ body:before{z-index:-1!important}
  .site-preloader__cinematic-bg{animation-duration:16s!important}
 }
 @media(prefers-reduced-motion:reduce){.site-preloader__cinematic-bg{animation:none!important;filter:none!important}}
+
+
+/* v3.4.29 — refinamento de qualidade após inspeção visual do loader. */
+.site-preloader__embers{display:none!important}
+.site-preloader__lightning{display:none!important}
+.site-preloader__cinematic-bg{
+ background-image:
+  radial-gradient(ellipse at 50% 48%,rgba(2,4,10,.88) 0%,rgba(2,4,10,.62) 23%,rgba(2,4,10,.12) 48%,transparent 66%),
+  linear-gradient(180deg,rgba(0,0,0,.1),transparent 22%,transparent 74%,rgba(0,0,0,.4)),
+  url("/img/loader-cinematic-4k.svg?v=2")!important;
+ background-size:cover,cover,cover!important;
+ filter:saturate(1.04) contrast(1.08)!important;
+ animation:loader-4k-atmosphere 18s ease-in-out infinite alternate!important;
+}
+.site-preloader__visual{width:min(36vw,174px)!important;margin-bottom:16px!important}
+.site-preloader__official-logo{filter:drop-shadow(0 0 8px rgba(255,196,82,.42)) drop-shadow(0 0 22px rgba(255,92,24,.25))!important}
+@media(max-width:760px){.site-preloader__visual{width:min(42vw,128px)!important;margin-bottom:13px!important}}
+@media(prefers-reduced-motion:reduce){.site-preloader__cinematic-bg{animation:none!important}}

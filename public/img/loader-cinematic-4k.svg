@@ -10,22 +10,74 @@
  <linearGradient id="boltFire" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff0a0"/><stop offset=".4" stop-color="#ff791e"/><stop offset="1" stop-color="#ff2e10" stop-opacity=".1"/></linearGradient>
  <filter id="glowFire" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="18" result="b"/><feColorMatrix in="b" values="1 0 0 0 .5 0 .35 0 0 .08 0 0 .1 0 0 0 0 0 .8 0" result="c"/><feMerge><feMergeNode in="c"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
  <filter id="glowBlue" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="15" result="b"/><feColorMatrix in="b" values=".1 0 0 0 0 0 .5 0 0 .2 0 0 1 0 .8 0 0 0 .85 0" result="c"/><feMerge><feMergeNode in="c"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
- <filter id="smoke"><feGaussianBlur stdDeviation="65"/></filter>
+ <filter id="smoke" x="-25%" y="-25%" width="150%" height="150%">
+  <feTurbulence type="fractalNoise" baseFrequency=".006 .014" numOctaves="3" seed="17" result="noise"/>
+  <feDisplacementMap in="SourceGraphic" in2="noise" scale="125" xChannelSelector="R" yChannelSelector="G" result="wisps"/>
+  <feGaussianBlur in="wisps" stdDeviation="44" result="soft"/>
+  <feColorMatrix in="soft" values="1.2 0 0 0 .04 0 .65 0 0 .01 0 0 .5 0 .01 0 0 0 .72 0"/>
+</filter>
+<filter id="smokeFine" x="-30%" y="-30%" width="160%" height="160%">
+  <feTurbulence type="fractalNoise" baseFrequency=".009 .025" numOctaves="2" seed="29" result="noise"/>
+  <feDisplacementMap in="SourceGraphic" in2="noise" scale="72" result="wisps"/>
+  <feGaussianBlur in="wisps" stdDeviation="19"/>
+</filter>
+<radialGradient id="fireCore" cx="0" cy="0" r="1" gradientTransform="matrix(970 180 -260 920 0 1180)" gradientUnits="userSpaceOnUse">
+ <stop stop-color="#ff8a27" stop-opacity=".46"/><stop offset=".2" stop-color="#f53b13" stop-opacity=".32"/><stop offset=".55" stop-color="#8d190e" stop-opacity=".16"/><stop offset="1" stop-color="#16050b" stop-opacity="0"/>
+</radialGradient>
+<radialGradient id="blueCore" cx="0" cy="0" r="1" gradientTransform="matrix(-900 180 180 860 3840 780)" gradientUnits="userSpaceOnUse">
+ <stop stop-color="#126cff" stop-opacity=".48"/><stop offset=".28" stop-color="#1748d5" stop-opacity=".27"/><stop offset=".65" stop-color="#37218a" stop-opacity=".12"/><stop offset="1" stop-color="#03040c" stop-opacity="0"/>
+</radialGradient>
+<filter id="boltCoreBlue" x="-80%" y="-80%" width="260%" height="260%">
+ <feGaussianBlur stdDeviation="28" result="wide"/><feGaussianBlur stdDeviation="7" in="SourceGraphic" result="near"/>
+ <feMerge><feMergeNode in="wide"/><feMergeNode in="near"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="boltCoreFire" x="-80%" y="-80%" width="260%" height="260%">
+ <feGaussianBlur stdDeviation="24" result="wide"/><feGaussianBlur stdDeviation="6" in="SourceGraphic" result="near"/>
+ <feMerge><feMergeNode in="wide"/><feMergeNode in="near"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
  <pattern id="microgrid" width="64" height="64" patternUnits="userSpaceOnUse"><path d="M64 0H0V64" stroke="#4d78a8" stroke-opacity=".09" stroke-width="1"/></pattern>
 </defs>
 <rect width="3840" height="2160" fill="url(#base)"/>
 <rect width="3840" height="2160" fill="url(#fire)"/><rect width="3840" height="2160" fill="url(#blue)"/>
-<g filter="url(#smoke)" opacity=".62"><ellipse cx="180" cy="1050" rx="680" ry="500" fill="#c62913"/><ellipse cx="560" cy="1560" rx="570" ry="250" fill="#f04a13"/><ellipse cx="3600" cy="800" rx="570" ry="520" fill="#073dba"/><ellipse cx="3290" cy="1520" rx="610" ry="280" fill="#3d1b99"/></g>
+<rect width="3840" height="2160" fill="url(#fireCore)"/><rect width="3840" height="2160" fill="url(#blueCore)"/>
+<g filter="url(#smoke)" opacity=".78">
+ <ellipse cx="90" cy="850" rx="660" ry="620" fill="#c62913"/>
+ <ellipse cx="440" cy="1370" rx="720" ry="360" fill="#f04a13"/>
+ <ellipse cx="130" cy="1710" rx="540" ry="330" fill="#802014"/>
+ <ellipse cx="3730" cy="690" rx="640" ry="590" fill="#073dba"/>
+ <ellipse cx="3400" cy="1310" rx="720" ry="390" fill="#3d1b99"/>
+ <ellipse cx="3770" cy="1740" rx="480" ry="330" fill="#063e9a"/>
+</g>
+<g filter="url(#smokeFine)" opacity=".34">
+ <path d="M-120 560C220 400 340 690 520 580S800 650 990 840 1160 960 1270 1100 1000 1300 740 1200 490 1470 220 1390-60 1550-140 1320Z" fill="#ff5625"/>
+ <path d="M3950 300C3600 250 3550 510 3350 470S3090 650 2940 780 2770 890 2630 1040 2860 1210 3090 1110 3350 1380 3570 1300 3900 1500 3980 1200Z" fill="#247bff"/>
+</g>
 <rect width="3840" height="2160" fill="url(#center)"/><rect width="3840" height="2160" fill="url(#microgrid)" opacity=".55"/>
 <g stroke-linecap="round" stroke-linejoin="round">
- <g filter="url(#glowFire)" stroke="url(#boltFire)"><path d="M-80 940 180 1010 250 890 390 1020 510 970 640 1110 790 1060 900 1230 1050 1190 1160 1330 1330 1280" stroke-width="9" opacity=".9"/><path d="M20 1340 180 1290 270 1410 410 1340 500 1480 690 1400 820 1510 980 1460 1110 1570" stroke-width="5" opacity=".65"/><path d="M100 610 280 700 350 620 470 770 610 700 720 840 890 790" stroke-width="4" opacity=".5"/></g>
- <g filter="url(#glowBlue)" stroke="url(#boltBlue)"><path d="M3920 500 3690 600 3590 500 3450 680 3330 630 3180 810 3040 760 2900 930 2750 880 2620 1030" stroke-width="9" opacity=".95"/><path d="M3880 1220 3690 1140 3570 1290 3430 1200 3280 1380 3130 1300 2990 1460 2820 1400 2680 1550" stroke-width="5" opacity=".68"/><path d="M3780 220 3650 300 3590 240 3500 390 3380 360" stroke-width="4" opacity=".6"/></g>
+ <g filter="url(#boltCoreFire)" stroke-linecap="round" stroke-linejoin="round">
+ <path d="M-40 870 170 940 245 820 320 890 395 760 475 835 548 720 625 810 710 690 790 770 875 660 958 724 1040 620 1130 665" stroke="#ff7a27" stroke-width="15" opacity=".42"/>
+ <path d="M-80 1020 160 1090 245 970 340 1035 420 930 510 1010 600 890 690 980 790 870 875 935 960 830 1050 885 1140 790" stroke="#ff4d1b" stroke-width="8" opacity=".75"/>
+ <path d="M-20 1010 210 1075 260 990 350 1040 420 970 500 1030 570 950 650 1005 725 925" stroke="#ffd47a" stroke-width="4" opacity=".95"/>
+ <path d="M70 1280 245 1200 320 1320 430 1250 510 1370 625 1300 710 1410 825 1350 900 1460 1020 1405" stroke="#ff6a24" stroke-width="7" opacity=".46"/>
+ <path d="M320 520 385 630 470 570 515 675M600 760 665 820 745 790M820 1060 900 1115 955 1090" stroke="#ffb85d" stroke-width="4" opacity=".8"/>
+</g>
+ <g filter="url(#boltCoreBlue)" stroke-linecap="round" stroke-linejoin="round">
+ <path d="M3920 440 3740 520 3670 455 3590 560 3505 520 3425 640 3350 600 3270 720 3185 680 3110 800 3020 755 2940 875 2855 835 2770 955 2685 910" stroke="#148bff" stroke-width="18" opacity=".42"/>
+ <path d="M3890 500 3725 565 3650 505 3580 600 3500 555 3420 665 3340 625 3260 745 3175 705 3090 830 3010 790 2930 910 2845 870 2760 990" stroke="#2bb7ff" stroke-width="8" opacity=".9"/>
+ <path d="M3725 565 3710 670 3645 725 3690 790M3580 600 3515 695 3435 700 3395 785M3340 625 3320 725 3255 775 3290 850M3090 830 3025 900 2960 890 2920 980M2845 870 2800 945 2735 950" stroke="#8edfff" stroke-width="4" opacity=".9"/>
+ <path d="M3890 1220 3740 1150 3655 1250 3575 1195 3495 1300 3410 1240 3325 1355 3240 1300 3150 1415 3065 1365 2980 1485 2895 1435 2810 1550 2725 1500" stroke="#1a75ff" stroke-width="9" opacity=".65"/>
+ <path d="M3670 455 3695 385 3650 345 3700 290M3420 665 3470 735 3450 795M3150 1415 3120 1490 3065 1520" stroke="#65caff" stroke-width="4" opacity=".7"/>
+</g>
 </g>
 <g fill="url(#ember)" filter="url(#glowFire)">
  <circle cx="170" cy="360" r="8"/><circle cx="420" cy="610" r="10"/><circle cx="650" cy="280" r="6"/><circle cx="790" cy="480" r="9"/><circle cx="320" cy="930" r="7"/><circle cx="1050" cy="340" r="6"/><circle cx="960" cy="710" r="8"/><circle cx="1300" cy="520" r="5"/><circle cx="110" cy="1530" r="10"/><circle cx="420" cy="1760" r="7"/><circle cx="740" cy="1630" r="6"/><circle cx="1180" cy="1850" r="8"/><circle cx="1470" cy="1720" r="5"/><circle cx="3300" cy="420" r="7"/><circle cx="3550" cy="720" r="9"/><circle cx="3710" cy="980" r="6"/><circle cx="3420" cy="1550" r="8"/><circle cx="3100" cy="1800" r="6"/><circle cx="2860" cy="1660" r="9"/><circle cx="2700" cy="360" r="5"/><circle cx="2280" cy="260" r="6"/><circle cx="2500" cy="460" r="4"/>
 </g>
 <g fill="#ff9b3d" opacity=".82"><circle cx="230" cy="480" r="3"/><circle cx="550" cy="790" r="3"/><circle cx="880" cy="360" r="2.5"/><circle cx="1020" cy="970" r="3"/><circle cx="190" cy="1190" r="2.5"/><circle cx="680" cy="1280" r="3"/><circle cx="920" cy="1780" r="2.5"/><circle cx="1390" cy="1420" r="3"/><circle cx="3540" cy="550" r="3"/><circle cx="3290" cy="970" r="2.5"/><circle cx="3700" cy="1320" r="3"/><circle cx="3160" cy="1710" r="2.5"/><circle cx="2820" cy="1880" r="3"/></g>
 <g opacity=".45" stroke-width="2"><ellipse cx="1920" cy="1870" rx="1510" ry="210" stroke="#ff7b27"/><ellipse cx="1920" cy="1870" rx="1280" ry="170" stroke="#208bff"/><ellipse cx="1920" cy="1870" rx="980" ry="125" stroke="#d95d34"/><path d="M0 1900H3840" stroke="#0f8dff" stroke-opacity=".3"/><path d="M0 1980H3840" stroke="#ff6526" stroke-opacity=".22"/></g>
-<g fill="url(#ember)" filter="url(#glowFire)"><path d="M300 520l110-130-45 180 110-65-165 210 42-133z"/><path d="M810 1160l85-112-20 130 70-50-120 175 20-105z"/><path d="M3380 1120l85-120-20 130 75-48-125 165 20-105z"/><path d="M3540 1680l60-90-12 100 55-38-85 120 12-75z"/></g>
+<g filter="url(#boltCoreFire)" stroke-linecap="round" stroke-linejoin="round">
+ <path d="M420 220 345 385 410 365 315 555 340 435 280 450Z" fill="#ffb044" opacity=".95"/>
+ <path d="M790 1120 725 1250 780 1230 690 1410 710 1290 655 1300Z" fill="#ff7a2d" opacity=".8"/>
+ <path d="M3410 940 3345 1070 3400 1050 3310 1230 3330 1110 3275 1120Z" fill="#ff9c35" opacity=".9"/>
+</g>
 <rect x="2" y="2" width="3836" height="2156" rx="22" stroke="#5d82b3" stroke-opacity=".16" stroke-width="4"/>
 </svg>

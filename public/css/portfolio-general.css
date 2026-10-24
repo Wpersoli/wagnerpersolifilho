@@ -650,3 +650,8 @@
 @media(max-width:760px){.brand .brand-logo-motion{width:138px;max-width:42vw}.brand .brand-logo-motion::before{inset:-12% -4%;filter:blur(7px)}.brand .brand-logo-lightning{inset:-7% -2%}}
 @media(max-width:380px){.brand .brand-logo-motion{width:min(132px,40vw)}}
 @media(prefers-reduced-motion:reduce){.brand .brand-full-logo,.brand .brand-logo-motion::before{animation:none!important}.brand .brand-full-logo{filter:drop-shadow(0 0 3px rgba(255,155,35,.55))}.brand .brand-logo-lightning{display:none!important}}
+
+
+/* Layout guard: the site's generic .brand span rules must not stack the animated mark. */
+.brand .brand-logo-motion{flex-direction:row;align-items:center;align-self:center}
+.brand .brand-logo-motion .brand-logo-lightning{display:block;flex-direction:row}

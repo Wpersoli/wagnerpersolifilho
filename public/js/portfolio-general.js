@@ -65,8 +65,8 @@
   function appendRichText(target,text,allowBold){
     var source=String(text||'');
     var pattern=allowBold
-      ? /\\[([^\\]]+)\\]\\(((?:https?:\\/\\/|mailto:|tel:)[^)]+)\\)|\\*\\*([^*\\n]+)\\*\\*|(https?:\\/\\/[^\\s<>()]+|www\\.[^\\s<>()]+)|([A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,})|(\\+?55\\s*\\(?11\\)?\\s*9\\d{4}[-\\s]?\\d{4}|\\(?11\\)?\\s*9\\d{4}[-\\s]?\\d{4})/gi
-      : /\\[([^\\]]+)\\]\\(((?:https?:\\/\\/|mailto:|tel:)[^)]+)\\)|(https?:\\/\\/[^\\s<>()]+|www\\.[^\\s<>()]+)|([A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,})|(\\+?55\\s*\\(?11\\)?\\s*9\\d{4}[-\\s]?\\d{4}|\\(?11\\)?\\s*9\\d{4}[-\\s]?\\d{4})/gi;
+      ? /\[([^\]]+)\]\(((?:https?:\/\/|mailto:|tel:)[^)]+)\)|\*\*([^*\n]+)\*\*|(https?:\/\/[^\s<>()]+|www\.[^\s<>()]+)|([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,})|(\+?55\s*\(?11\)?\s*9\d{4}[-\s]?\d{4}|\(?11\)?\s*9\d{4}[-\s]?\d{4})/gi
+      : /\[([^\]]+)\]\(((?:https?:\/\/|mailto:|tel:)[^)]+)\)|(https?:\/\/[^\s<>()]+|www\.[^\s<>()]+)|([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,})|(\+?55\s*\(?11\)?\s*9\d{4}[-\s]?\d{4}|\(?11\)?\s*9\d{4}[-\s]?\d{4})/gi;
     var cursor=0;
     for(var match of source.matchAll(pattern)){
       if(match.index>cursor)target.appendChild(document.createTextNode(source.slice(cursor,match.index)));
@@ -84,23 +84,23 @@
         var raw=match[allowBold?4:3];
         var suffix=raw.match(/[.,!?;:]+$/);
         if(suffix){trailing=suffix[0];raw=raw.slice(0,-trailing.length);}
-        label=raw;href=/^www\\./i.test(raw)?'https://'+raw:raw;
+        label=raw;href=/^www\./i.test(raw)?'https://'+raw:raw;
       }else if(match[allowBold?5:4]!==undefined){
         label=match[allowBold?5:4];href='mailto:'+label;
       }else if(match[allowBold?6:5]!==undefined){
         label=match[allowBold?6:5];
-        var digits=label.replace(/\\D/g,'');
+        var digits=label.replace(/\D/g,'');
         if(digits.length===11&&digits.indexOf('11')===0)digits='55'+digits;
         href='tel:+'+digits;
       }
-      if(!href||! /^(https?:\\/\\/|mailto:|tel:)/i.test(href)){
+      if(!href||!/^(https?:\/\/|mailto:|tel:)/i.test(href)){
         target.appendChild(document.createTextNode(match[0]));
       }else{
         var link=document.createElement('a');
         link.href=href;
         link.textContent=label;
         link.setAttribute('data-chat-link','');
-        if(/^https?:\\/\\//i.test(href)){link.target='_blank';link.rel='noopener noreferrer';}
+        if(/^https?:\/\//i.test(href)){link.target='_blank';link.rel='noopener noreferrer';}
         target.appendChild(link);
         if(trailing)target.appendChild(document.createTextNode(trailing));
       }

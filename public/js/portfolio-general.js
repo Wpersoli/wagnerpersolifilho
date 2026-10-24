@@ -415,7 +415,49 @@
       if (!del && c === word.length) { del = true; t = 1700; }
       else if (del && c === 0) { del = false; w = (w + 1) % words.length; t = 380; }
       window.setTimeout(tick, t);
-    })();
+    
+  /* Brasas atmosféricas em canvas: leve, decorativo e sem capturar interações. */
+  (function(){
+    var canvas=document.getElementById('ambient-embers');
+    if(!canvas)return;
+    var ctx=canvas.getContext('2d');
+    if(!ctx)return;
+    var motion=window.matchMedia('(prefers-reduced-motion: reduce)');
+    var dpr=1,w=0,h=0,embers=[],raf=0,last=0,alive=true;
+    var palette=['255,91,38','255,139,52','255,63,31','255,191,94','255,76,55'];
+    function resize(){
+      dpr=Math.min(window.devicePixelRatio||1,1.5);w=window.innerWidth;h=window.innerHeight;
+      canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);
+      canvas.style.width=w+'px';canvas.style.height=h+'px';ctx.setTransform(dpr,0,0,dpr,0,0);
+      var count=Math.min(76,Math.max(24,Math.round(w*h/18000)));
+      embers=Array.from({length:count},function(){return makeEmber(true);});
+    }
+    function makeEmber(initial){return{x:Math.random()*w,y:initial?Math.random()*h:h+Math.random()*30,r:.6+Math.random()*1.8,v:.18+Math.random()*.6,drift:(Math.random()-.5)*.32,alpha:.18+Math.random()*.56,phase:Math.random()*6.28,twinkle:.012+Math.random()*.025,color:palette[Math.floor(Math.random()*palette.length)]};}
+    function draw(now){
+      raf=0;if(!alive||document.hidden)return;
+      if(now-last<30){raf=requestAnimationFrame(draw);return;}last=now;
+      ctx.clearRect(0,0,w,h);
+      for(var i=0;i<embers.length;i++){
+        var p=embers[i];p.y-=p.v;p.x+=p.drift+Math.sin(now*.00045+p.phase)*.18;p.phase+=p.twinkle;
+        if(p.y<-12||p.x<-20||p.x>w+20){embers[i]=makeEmber(false);continue;}
+        var a=p.alpha*(.72+.28*Math.sin(p.phase));
+        var glow=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*4.8);
+        glow.addColorStop(0,'rgba('+p.color+','+(a*.9)+')');glow.addColorStop(.35,'rgba('+p.color+','+(a*.28)+')');glow.addColorStop(1,'rgba('+p.color+',0)');
+        ctx.fillStyle=glow;ctx.beginPath();ctx.arc(p.x,p.y,p.r*4.8,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle='rgba('+p.color+','+Math.min(1,a)+')';ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();
+      }
+      raf=requestAnimationFrame(draw);
+    }
+    function start(){if(motion.matches||document.hidden||raf)return;alive=true;last=0;raf=requestAnimationFrame(draw);}
+    function stop(){alive=false;if(raf){cancelAnimationFrame(raf);raf=0;}}
+    resize();if(!motion.matches)start();
+    window.addEventListener('resize',resize,{passive:true});
+    document.addEventListener('visibilitychange',function(){if(document.hidden)stop();else start();});
+    if(motion.addEventListener)motion.addEventListener('change',function(){if(motion.matches)stop();else start();});
+    else if(motion.addListener)motion.addListener(function(){if(motion.matches)stop();else start();});
+  })();
+
+})();
   }
 
   /* ---------- Contador animado (ex.: "12+ anos") ---------- */

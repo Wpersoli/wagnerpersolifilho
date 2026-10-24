@@ -100,8 +100,8 @@ test('timer do formulário recupera sessões antigas e o WhatsApp mantém navega
 });
 
 test('HTML usa versões atuais dos assets e tem fallback de conteúdo sem JavaScript', function () {
-  assert.match(html, /portfolio-general\\.css\\?v=3\\.4\\.13/);
-  assert.match(html, /portfolio-general\.js\?v=3\.4\.12/);
+  assert.match(html, /portfolio-general\.css\?v=3\.4\.13/);
+  assert.match(html, /portfolio-general\.css\?v=3\.4\.13/);
   assert.match(html, /chat-client\.js\?v=3\.4\.12/);
   assert.match(html, /<noscript><link rel="stylesheet" href="\/css\/no-js\.css"><\/noscript>/);
 });

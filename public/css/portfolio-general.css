@@ -659,3 +659,19 @@
 
 /* Header: fundo preto sólido em todo o container flexível. */
 .site-header .container.header-inner{background-color:#000!important}
+
+
+/* Logo unificado no cabeçalho e rodapé, sem molduras ou bordas. */
+.site-header .container.header-inner{background-color:#000!important}
+.brand .brand-logo-motion{border:0!important;outline:0!important;box-shadow:none;overflow:visible}
+.footer-brand{min-width:0;flex:0 1 auto}
+.footer-brand .footer-logo-motion{width:clamp(170px,22vw,270px);max-width:58vw}
+.footer-brand .brand-full-logo{width:100%;height:auto;object-fit:contain;border:0!important;border-radius:0!important}
+.footer-brand .brand-logo-lightning{inset:-7% -2%}
+@media(max-width:760px){
+ .footer-brand .footer-logo-motion{width:clamp(150px,48vw,230px);max-width:62vw}
+ .footer-main{gap:18px}
+}
+@media(max-width:420px){
+ .footer-brand .footer-logo-motion{width:min(190px,58vw)}
+}

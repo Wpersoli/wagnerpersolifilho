@@ -758,3 +758,27 @@
   .site-header .brand .brand-logo-motion{width:min(142px,40vw)}
   .footer-brand .footer-logo-motion{width:min(170px,58vw)}
 }
+
+
+/* Correção da moldura retangular aparente: permitir que o fundo preto do bitmap
+   se funda ao fundo escuro do site, sem criar caixas/bordas em torno do logo. */
+.brand .brand-logo-motion{
+  isolation:auto!important;
+  transform:none!important;
+  background:transparent!important;
+  border:0!important;
+  outline:0!important;
+  box-shadow:none!important;
+}
+.brand .brand-logo-motion .brand-full-logo{
+  mix-blend-mode:screen!important;
+  background:transparent!important;
+  border:0!important;
+  outline:0!important;
+  box-shadow:none!important;
+}
+.brand .brand-logo-motion::after,
+.brand .brand-logo-motion .brand-full-logo::after{
+  content:none!important;
+  display:none!important;
+}

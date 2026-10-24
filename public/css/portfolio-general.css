@@ -861,3 +861,70 @@
   .ambient-lightning{display:none}
   #ambient-embers{opacity:.32}
 }
+
+
+/* Correção de regressão visual após a atmosfera premium — v3.4.25 */
+html,body{
+  margin:0!important;
+  padding:0!important;
+  min-height:100%;
+  background-color:#070912!important;
+}
+body{position:relative;isolation:isolate}
+body:before{z-index:-1!important}
+.site-header{
+  position:sticky!important;
+  top:0!important;
+  z-index:100!important;
+  width:100%;
+  margin:0!important;
+  background:rgba(5,7,14,.97)!important;
+  border-bottom:1px solid rgba(110,155,215,.2)!important;
+  box-shadow:0 8px 28px rgba(0,0,0,.24)!important;
+  backdrop-filter:blur(18px);
+}
+.site-header .container.header-inner{
+  min-height:82px;
+  background:transparent!important;
+}
+.site-header .brand{flex-shrink:0;min-width:0}
+.site-header .brand .brand-logo-motion{
+  width:clamp(190px,20vw,230px)!important;
+  max-width:45vw!important;
+  min-height:60px;
+  opacity:1!important;
+  overflow:visible!important;
+  background:transparent!important;
+}
+.site-header .brand .brand-logo-motion .brand-full-logo{
+  display:block!important;
+  width:100%!important;
+  height:auto!important;
+  max-width:100%!important;
+  max-height:66px;
+  opacity:1!important;
+  visibility:visible!important;
+  mix-blend-mode:normal!important;
+  filter:brightness(1.22) contrast(1.18) saturate(1.12) drop-shadow(0 0 3px rgba(255,178,65,.46))!important;
+  animation:none!important;
+}
+.site-header .brand .brand-logo-motion::before{
+  inset:-10% -5%!important;
+  opacity:.22!important;
+  animation:none!important;
+}
+.ambient-atmosphere{
+  z-index:0!important;
+  pointer-events:none!important;
+}
+.site-header,main,.site-footer{z-index:1}
+.site-header{z-index:100!important}
+@media(max-width:760px){
+  .site-header .container.header-inner{min-height:72px}
+  .site-header .brand .brand-logo-motion{
+    width:clamp(150px,40vw,184px)!important;
+    max-width:43vw!important;
+    min-height:44px;
+  }
+  .site-header .brand .brand-logo-motion .brand-full-logo{max-height:54px}
+}

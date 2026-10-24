@@ -61,7 +61,54 @@
   var toggle=$('#chat-toggle'),panel=$('#chat-panel'),close=$('#chat-close'),chatForm=$('#chat-form'),input=$('#chat-input'),messages=$('#chat-messages'),history=[],busy=false;
   function setChatOpen(open){if(!panel||!toggle)return;panel.classList.toggle('is-open',open);panel.setAttribute('aria-hidden',String(!open));toggle.setAttribute('aria-expanded',String(open));if(open&&input)window.setTimeout(function(){input.focus();},100);}
   if(toggle)toggle.addEventListener('click',function(){setChatOpen(!panel.classList.contains('is-open'));});if(close)close.addEventListener('click',function(){setChatOpen(false);toggle.focus();});document.addEventListener('keydown',function(e){if(e.key==='Escape'&&panel&&panel.classList.contains('is-open'))setChatOpen(false);});
-  function addMessage(text,kind){var bubble=document.createElement('div');bubble.className='chat-bubble '+(kind==='user'?'user-bubble':'bot-bubble');bubble.textContent=text;messages.appendChild(bubble);messages.scrollTop=messages.scrollHeight;return bubble;}
+  document.addEventListener('pointerdown',function(e){if(!panel||!toggle||!panel.classList.contains('is-open'))return;var widget=$('#chat-widget');if(widget&&!widget.contains(e.target))setChatOpen(false);});
+  function appendRichText(target,text,allowBold){
+    var source=String(text||'');
+    var pattern=allowBold
+      ? /\\[([^\\]]+)\\]\\(((?:https?:\\/\\/|mailto:|tel:)[^)]+)\\)|\\*\\*([^*\\n]+)\\*\\*|(https?:\\/\\/[^\\s<>()]+|www\\.[^\\s<>()]+)|([A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,})|(\\+?55\\s*\\(?11\\)?\\s*9\\d{4}[-\\s]?\\d{4}|\\(?11\\)?\\s*9\\d{4}[-\\s]?\\d{4})/gi
+      : /\\[([^\\]]+)\\]\\(((?:https?:\\/\\/|mailto:|tel:)[^)]+)\\)|(https?:\\/\\/[^\\s<>()]+|www\\.[^\\s<>()]+)|([A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,})|(\\+?55\\s*\\(?11\\)?\\s*9\\d{4}[-\\s]?\\d{4}|\\(?11\\)?\\s*9\\d{4}[-\\s]?\\d{4})/gi;
+    var cursor=0;
+    for(var match of source.matchAll(pattern)){
+      if(match.index>cursor)target.appendChild(document.createTextNode(source.slice(cursor,match.index)));
+      if(allowBold&&match[3]!==undefined){
+        var strong=document.createElement('strong');
+        appendRichText(strong,match[3],false);
+        target.appendChild(strong);
+        cursor=match.index+match[0].length;
+        continue;
+      }
+      var label='',href='',trailing='';
+      if(match[1]!==undefined&&match[2]!==undefined){
+        label=match[1];href=match[2];
+      }else if(match[allowBold?4:3]!==undefined){
+        var raw=match[allowBold?4:3];
+        var suffix=raw.match(/[.,!?;:]+$/);
+        if(suffix){trailing=suffix[0];raw=raw.slice(0,-trailing.length);}
+        label=raw;href=/^www\\./i.test(raw)?'https://'+raw:raw;
+      }else if(match[allowBold?5:4]!==undefined){
+        label=match[allowBold?5:4];href='mailto:'+label;
+      }else if(match[allowBold?6:5]!==undefined){
+        label=match[allowBold?6:5];
+        var digits=label.replace(/\\D/g,'');
+        if(digits.length===11&&digits.indexOf('11')===0)digits='55'+digits;
+        href='tel:+'+digits;
+      }
+      if(!href||! /^(https?:\\/\\/|mailto:|tel:)/i.test(href)){
+        target.appendChild(document.createTextNode(match[0]));
+      }else{
+        var link=document.createElement('a');
+        link.href=href;
+        link.textContent=label;
+        link.setAttribute('data-chat-link','');
+        if(/^https?:\\/\\//i.test(href)){link.target='_blank';link.rel='noopener noreferrer';}
+        target.appendChild(link);
+        if(trailing)target.appendChild(document.createTextNode(trailing));
+      }
+      cursor=match.index+match[0].length;
+    }
+    if(cursor<source.length)target.appendChild(document.createTextNode(source.slice(cursor)));
+  }
+  function addMessage(text,kind){var bubble=document.createElement('div');bubble.className='chat-bubble '+(kind==='user'?'user-bubble':'bot-bubble');if(kind==='bot')appendRichText(bubble,text,true);else bubble.textContent=text;messages.appendChild(bubble);messages.scrollTop=messages.scrollHeight;return bubble;}
   async function ask(text){text=String(text||'').trim();if(!text||busy||!messages)return;setChatOpen(true);addMessage(text,'user');history.push({role:'user',content:text});if(history.length>20)history=history.slice(-20);if(input)input.value='';busy=true;var loading=document.createElement('div');loading.className='chat-loading';loading.textContent='Preparando resposta…';messages.appendChild(loading);messages.scrollTop=messages.scrollHeight;try{if(!window.WagnerChatClient||typeof window.WagnerChatClient.request!=='function')throw new Error('Assistente temporariamente indisponível.');var result=await window.WagnerChatClient.request(history);var answer=String(result.text||'').trim()||'Não consegui formular uma resposta agora. Você pode falar comigo pelo WhatsApp ou LinkedIn.';history.push({role:'assistant',content:answer});addMessage(answer,'bot');}catch(_){addMessage('Não consegui responder neste momento. Você pode entrar em contato pelo WhatsApp: +55 11 98150-4061.','bot');}finally{loading.remove();busy=false;if(input)input.focus();}}
   if(chatForm)chatForm.addEventListener('submit',function(event){event.preventDefault();ask(input&&input.value);});$$('.chat-suggestions [data-prompt]').forEach(function(button){button.addEventListener('click',function(){ask(button.getAttribute('data-prompt'));});});
 })();

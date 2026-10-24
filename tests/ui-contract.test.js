@@ -55,6 +55,10 @@ test('assistente virtual tem controles acessíveis e integra o cliente de chat e
   assert.match(html, /aria-live="polite"/);
   assert.match(js, /window\.WagnerChatClient/);
   assert.match(js, /WagnerChatClient\.request\(history\)/);
+  assert.match(js, /function appendRichText/);
+  assert.match(js, /data-chat-link/);
+  assert.match(js, /noopener noreferrer/);
+  assert.match(css, /\.bot-bubble a\{/);
   assert.match(js, /data-prompt/);
 });
 
@@ -99,10 +103,10 @@ test('timer do formulário recupera sessões antigas e o WhatsApp mantém navega
   assert.doesNotMatch(js, /window\.open\(href/);
 });
 
-test('HTML usa versões atuais dos assets e tem fallback de conteúdo sem JavaScript', function () {
-  assert.match(html, /portfolio-general\.css\?v=3\.4\.13/);
-  assert.match(html, /portfolio-general\.css\?v=3\.4\.13/);
-  assert.match(html, /chat-client\.js\?v=3\.4\.12/);
+test('HTML usa versões atualizadas dos assets e tem fallback de conteúdo sem JavaScript', function () {
+  assert.match(html, /portfolio-general\.css\?v=3\.4\.14/);
+  assert.match(html, /portfolio-general\.js\?v=3\.4\.15/);
+  assert.match(html, /chat-client\.js\?v=3\.4\.15/);
   assert.match(html, /<noscript><link rel="stylesheet" href="\/css\/no-js\.css"><\/noscript>/);
 });
 

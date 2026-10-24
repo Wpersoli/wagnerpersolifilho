@@ -629,3 +629,6 @@
 }
 
 /* Animações decorativas reduzidas são desligadas pelo contrato global de acessibilidade. */
+
+/* Chat responses: accessible, safe, actionable links. */
+.bot-bubble a{color:#56e8f7;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px;overflow-wrap:anywhere;cursor:pointer}.bot-bubble a:hover,.bot-bubble a:focus-visible{color:#f4cb65;outline-offset:3px}.bot-bubble a:focus-visible{outline:2px solid #f4cb65;border-radius:2px}

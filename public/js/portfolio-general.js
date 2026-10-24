@@ -580,15 +580,31 @@
       dpr=Math.min(window.devicePixelRatio||1,1.5);w=window.innerWidth;h=window.innerHeight;
       canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);
       canvas.style.width=w+'px';canvas.style.height=h+'px';ctx.setTransform(dpr,0,0,dpr,0,0);
-      var count=Math.min(76,Math.max(24,Math.round(w*h/18000)));
+      var count=Math.min(92,Math.max(30,Math.round(w*h/14500)));
       embers=Array.from({length:count},function(){return makeEmber(true);});
       rainDrops=Array.from({length:Math.min(84,Math.max(28,Math.round(w*h/26000)))},function(){return{x:Math.random()*w,y:Math.random()*h,len:8+Math.random()*17,speed:1.1+Math.random()*2.4,alpha:.035+Math.random()*.07};});
     }
-    function makeEmber(initial){return{x:Math.random()*w,y:initial?Math.random()*h:h+Math.random()*30,r:.6+Math.random()*1.8,v:.18+Math.random()*.6,drift:(Math.random()-.5)*.32,alpha:.18+Math.random()*.56,phase:Math.random()*6.28,twinkle:.012+Math.random()*.025,color:palette[Math.floor(Math.random()*palette.length)]};}
+    function makeEmber(initial){return{x:Math.random()*w,y:initial?Math.random()*h:h+Math.random()*30,r:.65+Math.random()*2.1,v:.22+Math.random()*.72,drift:(Math.random()-.5)*.38,alpha:.22+Math.random()*.62,phase:Math.random()*6.28,twinkle:.012+Math.random()*.025,color:palette[Math.floor(Math.random()*palette.length)]};}
     function draw(now){
       raf=0;if(!alive||document.hidden)return;
       if(now-last<30){raf=requestAnimationFrame(draw);return;}last=now;
       ctx.clearRect(0,0,w,h);
+      /* Chuva fina azulada em plano distante; baixo contraste para não competir com o conteúdo. */
+      ctx.save();
+      ctx.lineCap='round';
+      for(var r=0;r<rainDrops.length;r++){
+        var drop=rainDrops[r];
+        drop.y+=drop.speed;
+        drop.x-=drop.speed*.34;
+        if(drop.y>h+24||drop.x<-24){drop.x=Math.random()*(w+40);drop.y=-Math.random()*80;}
+        ctx.beginPath();
+        ctx.moveTo(drop.x,drop.y);
+        ctx.lineTo(drop.x-2.2,drop.y+drop.len);
+        ctx.strokeStyle='rgba(91,164,255,'+drop.alpha+')';
+        ctx.lineWidth=.65;
+        ctx.stroke();
+      }
+      ctx.restore();
       for(var i=0;i<embers.length;i++){
         var p=embers[i];p.y-=p.v;p.x+=p.drift+Math.sin(now*.00045+p.phase)*.18;p.phase+=p.twinkle;
         if(p.y<-12||p.x<-20||p.x>w+20){embers[i]=makeEmber(false);continue;}

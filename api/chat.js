@@ -10,14 +10,14 @@ var http = require('./_shared/http');
 var rateLimiter = require('./_shared/rate-limit');
 
 var SAO_PAULO_TIME_ZONE = 'America/Sao_Paulo';
-var MODEL_KNOWLEDGE_CUTOFF = 'janeiro de 2025';
+var MODEL_KNOWLEDGE_CUTOFF = 'não confirmado pelo provedor';
 var MAX_MESSAGES = 24;
 var MAX_CONTENT_LENGTH = 2000;
 var MAX_KNOWLEDGE_CHARS = 18000;
 var MAX_BODY_BYTES = http.positiveInt(process.env.CHAT_MAX_BODY_BYTES, 65536, 4096, 131072);
 
-var PRIMARY_MODEL = String(process.env.GEMINI_MODEL || 'gemini-3.5-flash').trim();
-var SECONDARY_MODEL = String(process.env.GEMINI_FALLBACK_MODEL || 'gemini-3.1-flash-lite').trim();
+var PRIMARY_MODEL = String(process.env.GEMINI_MODEL || 'gemini-3.8-flash').trim();
+var SECONDARY_MODEL = String(process.env.GEMINI_FALLBACK_MODEL || 'gemini-3.5-flash-lite').trim();
 var RETRYABLE_HTTP_STATUS = { 408: true, 429: true, 500: true, 502: true, 503: true, 504: true };
 var RETRY_BASE_MS = positiveInt(process.env.CHAT_RETRY_BASE_MS, 750, 50, 5000);
 var MODEL_SWITCH_DELAY_MS = positiveInt(process.env.CHAT_MODEL_SWITCH_DELAY_MS, 400, 0, 3000);
@@ -28,7 +28,7 @@ var RATE_LIMIT_WINDOW_MS = 60000;
 var RATE_LIMIT_MAX_REQ = positiveInt(process.env.CHAT_RATE_LIMIT_MAX, 8, 2, 30);
 
 var FALLBACK_RESPONSES = {
-  greeting: 'Olá! Posso responder sobre a experiência, projetos, stack, disponibilidade e contato do Wagner. Para perguntas gerais, a IA pode tentar novamente em instantes.',
+  greeting: "Olá! Posso responder sobre a experiência, competências, tecnologias, os quatro projetos em destaque, links de demonstração e formas de contato do Wagner.",
   fullName: 'O nome completo é Wagner Persoli Filho.',
   age: 'A idade não é divulgada no portfólio profissional.',
   civilStatus: 'O portfólio não divulga estado civil ou informações familiares.',
@@ -39,15 +39,15 @@ var FALLBACK_RESPONSES = {
   hobbies: 'O portfólio prioriza informações profissionais; interesses pessoais não estão publicados.',
   leavingReason: 'O motivo de saída do último emprego não está documentado na base pública do portfólio. Wagner pode esclarecer esse ponto diretamente em uma entrevista.',
   hiring: 'Wagner reúne experiência em suporte e infraestrutura corporativa com desenvolvimento Full-Stack, automação e IA. O diferencial documentado é a capacidade de diagnosticar incidentes, organizar a operação e também construir soluções digitais de ponta a ponta.',
-  interview: 'Wagner está disponível para processos seletivos. Contato: WhatsApp +55 11 98150-4061, e-mail wagnerpersoli@hotmail.com e LinkedIn linkedin.com/in/wagner-persoli-f-3004bb91.',
+  interview: "Wagner está disponível para conversar sobre oportunidades profissionais. Contato: [WhatsApp](https://wa.me/5511981504061), [telefone +55 11 98150-4061](tel:+5511981504061), [e-mail](mailto:wagnerpersoli@hotmail.com) e [LinkedIn](https://linkedin.com/in/wagner-persoli-f-3004bb91).",
   experience: 'Wagner possui mais de 12 anos de experiência em TI corporativa, com passagens por Infoplus, Apple, ConnectCom, IT2B e TIVIT, além de atuação autônoma em desenvolvimento Full-Stack e IA desde 2018.',
   infrastructure: 'A experiência de infraestrutura inclui suporte N1/N2/N3, Windows Server, Active Directory, Microsoft 365, Azure, redes, DNS, VPN, virtualização, gestão de incidentes, SLA e práticas ITIL.',
-  projects: 'Os projetos documentados incluem WAGNER.OS e os conceitos Automate OS, Nexus Dashboard e Data Pulse.',
+  projects: "Os quatro projetos em destaque no portfólio são:\n- **Tamoio Pet Shop** — website institucional para estética pet, hospedagem, creche e táxi pet. [Visitar site](https://tamoio-petshop.vercel.app/)\n- **SÓGM Grandes Mecânicos** — landing page automotiva com serviços e caminhos de contato para orçamento. [Visitar site](https://lpgrandesmecanicosogm.vercel.app/)\n- **:upd8** — projeto empresarial de tecnologia e presença digital. [Visitar site](https://upd8.com.br/)\n- **TroteBox** — aplicação web com demonstração online. [Abrir aplicação](https://trotebox-web.vercel.app/)\n\nO **WAGNER.OS** é o próprio portfólio profissional com assistente contextual. [Abrir portfólio](https://wagnerpersoli.vercel.app/). **Automate OS, Nexus Dashboard e Data Pulse** estão documentados como conceitos, não como projetos entregues.",
   stack: 'A stack documentada inclui HTML, CSS, JavaScript, React, Node.js, Python, APIs REST, Git, Docker, CI/CD, automação, LLMs, Windows Server, Active Directory, Azure e Microsoft 365.',
-  contact: 'Contato do Wagner: WhatsApp +55 11 98150-4061, e-mail wagnerpersoli@hotmail.com, LinkedIn linkedin.com/in/wagner-persoli-f-3004bb91 e GitHub github.com/Wpersoli.',
+  contact: "Canais de contato do Wagner: [WhatsApp](https://wa.me/5511981504061), [ligar para +55 11 98150-4061](tel:+5511981504061), [e-mail wagnerpersoli@hotmail.com](mailto:wagnerpersoli@hotmail.com), [LinkedIn](https://linkedin.com/in/wagner-persoli-f-3004bb91) e [GitHub](https://github.com/Wpersoli).",
   certifications: 'A base lista conhecimentos e certificações em ITIL, Segurança da Informação, Lógica de Programação (ICS), Fundamentos de Redes, Microsoft Certified (MCP) e Client Support Analyst (UOL).',
   education: 'Wagner cursou Análise e Desenvolvimento de Sistemas no Centro Universitário ENIAC, de 2012 a 2015.',
-  offlineGeneral: 'A IA geral está temporariamente indisponível. Para evitar uma resposta imprecisa, tente novamente em alguns instantes. As informações profissionais do Wagner continuam disponíveis pelo modo local.'
+  offlineGeneral: "A IA para perguntas gerais complexas está temporariamente indisponível neste momento. Posso responder com a base local sobre o perfil, competências, projetos e contato. Para falar diretamente com Wagner: [WhatsApp](https://wa.me/5511981504061), [telefone](tel:+5511981504061) ou [LinkedIn](https://linkedin.com/in/wagner-persoli-f-3004bb91).",
 };
 
 function positiveInt(value, fallback, min, max) {
@@ -67,7 +67,7 @@ function normalizeQuestion(value) {
 
 function isProfileQuestion(question) {
   var q = normalizeQuestion(question);
-  return /\b(wagner|persoli|ele|seu perfil|seu curriculo|seu currículo|contratar|contratacao|experiencia|carreira|emprego|empresa|projeto|portfolio|portfólio|stack|habilidade|competencia|certific|formacao|salario|remuneracao|pretensao|home office|presencial|clt|pj|idade|solteiro|filhos|whatsapp|contato|linkedin|github|onde mora|localizacao|disponibilidade|turno|hobby|hobbie|lazer|ultimo emprego|último emprego)\b/i.test(q);
+  return /\b(wagner|persoli|ele|seu perfil|seu curriculo|seu currículo|contratar|contratacao|experiencia|carreira|emprego|empresa|projeto|portfolio|portfólio|stack|habilidade|competencia|certific|formacao|salario|remuneracao|pretensao|home office|presencial|clt|pj|idade|solteiro|filhos|whatsapp|contato|linkedin|github|onde mora|localizacao|disponibilidade|turno|hobby|hobbie|lazer|ultimo emprego|último emprego|tamoio|sogm|upd8|trotebox|wagner\.os|automate os|nexus dashboard|data pulse)\b/i.test(q);
 }
 
 function isCreativeQuestion(question) {
@@ -81,7 +81,7 @@ function getGenerationConfig(question) {
   else if (isCreativeQuestion(question)) temperature = 0.7;
 
   return {
-    maxOutputTokens: 1600,
+    maxOutputTokens: 2400,
     temperature: temperature,
     topP: 0.9
   };
@@ -159,7 +159,7 @@ function getFallbackResponse(question) {
   if (/entrevista|processo seletivo|agendar|senioridade|nivel profissional|nível profissional/i.test(q)) return FALLBACK_RESPONSES.interview;
   if (/infraestrutura|active directory|windows server|azure|itil|\bdns\b|redes corporativas|service desk|help ?desk/i.test(q)) return FALLBACK_RESPONSES.infrastructure;
   if (/stack|tecnolog|linguagem|framework|react|python|node|docker|ferramenta|automacao|automação|inteligencia artificial|inteligência artificial|\bia\b/i.test(q)) return FALLBACK_RESPONSES.stack;
-  if (/projeto|sistema|deploy|portfolio|portfólio|emulador|dashboard/i.test(q)) return FALLBACK_RESPONSES.projects;
+  if (/projeto|sistema|deploy|portfolio|portfólio|emulador|dashboard|tamoio|sogm|upd8|trotebox|wagner\.os|automate os|nexus dashboard|data pulse/i.test(q)) return FALLBACK_RESPONSES.projects;
   if (/contato|contatar|contactar|e-?mail|whatsapp|linkedin|github|telefone|celular/i.test(q)) return FALLBACK_RESPONSES.contact;
   if (/certific|microsoft|\bmcp\b/i.test(q)) return FALLBACK_RESPONSES.certifications;
   if (/formacao|formação|faculdade|universidade|eniac|graduacao|graduação|curso/i.test(q)) return FALLBACK_RESPONSES.education;
@@ -240,6 +240,7 @@ function selectKnowledge(question) {
     certifications_and_courses: source.certifications_and_courses,
     languages: source.languages,
     projects: source.projects,
+    featured_projects: source.featured_projects,
     not_documented: source.not_documented
   };
 
@@ -269,7 +270,7 @@ function buildSystemPrompt(now, question) {
     'Hora em São Paulo: ' + runtime.saoPauloTime,
     'Ano atual em São Paulo: ' + runtime.year,
     'Fuso horário: ' + SAO_PAULO_TIME_ZONE,
-    'Limite de conhecimento nativo do modelo: ' + MODEL_KNOWLEDGE_CUTOFF + '.',
+    'Limite de conhecimento nativo do modelo: ' + MODEL_KNOWLEDGE_CUTOFF + '; não presuma cobertura de fatos recentes.',
     'Você não possui navegação web nem acesso a notícias, preços, clima, cotações ou bancos de dados ao vivo.',
     '</runtime_context>',
     '',
@@ -299,6 +300,9 @@ function buildSystemPrompt(now, question) {
     '- Responda em português do Brasil por padrão. Se o usuário escrever claramente em outro idioma, responda no mesmo idioma.',
     '- Dê a resposta principal primeiro e depois a explicação necessária.',
     '- Ajuste a profundidade à pergunta: conciso para perguntas simples; detalhado para temas técnicos ou comparativos.',
+    '- Para perguntas complexas, organize a resposta em etapas, explique premissas e inclua exemplos práticos quando forem úteis; evite respostas genéricas que não resolvam a pergunta.',
+    '- Ao citar projetos, diferencie projetos publicados/demonstrações de conceitos e use apenas URLs documentadas na base.',
+    '- Quando fornecer canais de contato ou links de projetos, use links Markdown no formato [rótulo](URL), sem inventar destinos.',
     '- Em assuntos médicos, jurídicos ou financeiros, forneça informação geral, explicite limites e recomende validação profissional quando houver risco relevante.',
     '- Para fatos posteriores ao limite de conhecimento ou que dependam de atualização ao vivo, não improvise números ou acontecimentos.',
     '- Em cálculos simples, confira o resultado antes de responder e mostre apenas os passos úteis.',
@@ -362,7 +366,7 @@ function geminiErrorMessage(data) {
 }
 
 async function callGeminiModel(model, apiKey, requestBody, timeoutMs) {
-  var safeModel = safeModelName(model, 'gemini-3.5-flash');
+  var safeModel = safeModelName(model, 'gemini-3.8-flash');
   var url = 'https://generativelanguage.googleapis.com/v1beta/models/' +
     encodeURIComponent(safeModel) + ':generateContent';
   var controller = new AbortController();
@@ -522,8 +526,8 @@ async function handler(req, res) {
       generationConfig: getGenerationConfig(lastUserMsg)
     };
 
-    var primary = safeModelName(PRIMARY_MODEL, 'gemini-3.5-flash');
-    var secondary = safeModelName(SECONDARY_MODEL, 'gemini-3.1-flash-lite');
+    var primary = safeModelName(PRIMARY_MODEL, 'gemini-3.8-flash');
+    var secondary = safeModelName(SECONDARY_MODEL, 'gemini-3.5-flash-lite');
     var plan = buildModelPlan(primary, secondary);
     var data = null;
     var selectedModel = '';

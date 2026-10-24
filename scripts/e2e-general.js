@@ -89,7 +89,7 @@ async function run() {
   await cdp.send('Emulation.setDeviceMetricsOverride',{width:1440,height:900,deviceScaleFactor:1,mobile:false});
   await setPage(cdp,html,js);
   var desktop=await cdp.evaluate("({overflow:document.documentElement.scrollWidth<=innerWidth+2,hero:!!document.querySelector('.hero h1'),projects:document.querySelectorAll('.project-card:not([data-clone])').length,form:!!document.getElementById('contact-form'),chat:!!document.getElementById('chat-toggle'),cv:!!document.querySelector('a[href=\"/curriculo.html\"]')})");
-  assert(desktop.overflow,'Overflow horizontal no desktop.'); assert(desktop.hero&&desktop.projects===2&&desktop.form&&desktop.chat&&desktop.cv,'Elementos principais do portfólio ausentes.');
+  assert(desktop.overflow,'Overflow horizontal no desktop.'); assert(desktop.hero&&desktop.projects===4&&desktop.form&&desktop.chat&&desktop.cv,'Elementos principais do portfólio ausentes.');
   if(process.env.PORTFOLIO_SCREENSHOTS==='1')await screenshot(cdp,'portfolio-desktop.png');
   var widths=[320,360,390,430,760,761,1024,1280,1919,2560];
   for(var i=0;i<widths.length;i++){

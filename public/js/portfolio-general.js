@@ -477,35 +477,87 @@
 }());
 
 
-/* Logo animation: irregular electrical bursts; pauses in background tabs. */
-(()=> {
-  const logo = document.querySelector('[data-logo-motion]');
-  if (!logo) return;
-  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (reduced) return;
-  let timer = 0;
-  let alive = true;
-  const schedule = (min, max) => {
-    window.clearTimeout(timer);
-    timer = window.setTimeout(flash, min + Math.random() * (max - min));
-  };
-  const flash = () => {
-    if (!alive) return;
-    if (document.hidden) return schedule(1400, 2600);
-    logo.classList.remove('is-striking');
-    void logo.offsetWidth;
-    logo.classList.add('is-striking');
-    schedule(4800, 8200);
-  };
-  const onVisibility = () => {
-    if (document.hidden) window.clearTimeout(timer);
-    else schedule(900, 2200);
-  };
-  document.addEventListener('visibilitychange', onVisibility);
-  schedule(1800, 3600);
-  window.addEventListener('pagehide', () => {
+/* Logo animation: efficient ember glow + randomized lightning, for header and footer. */
+(function initBrandLogoEffects() {
+  'use strict';
+  var logos = Array.prototype.slice.call(document.querySelectorAll('[data-logo-motion]'));
+  if (!logos.length) return;
+
+  var motionQuery = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+  var smallScreen = window.matchMedia ? window.matchMedia('(max-width: 760px)') : null;
+  var reduced = !!(motionQuery && motionQuery.matches);
+  var timers = new Map();
+  var visible = new WeakMap();
+  var alive = true;
+  var observer = 'IntersectionObserver' in window ? new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      visible.set(entry.target, entry.isIntersecting);
+      if (!entry.isIntersecting) {
+        clearTimer(entry.target);
+        entry.target.classList.remove('is-striking');
+      } else if (!document.hidden && !reduced) {
+        schedule(entry.target, smallScreen && smallScreen.matches ? 7000 : 4200, smallScreen && smallScreen.matches ? 12000 : 8500);
+      }
+    });
+  }, { rootMargin: '80px 0px', threshold: 0.05 }) : null;
+
+  function clearTimer(logo) {
+    var id = timers.get(logo);
+    if (id) window.clearTimeout(id);
+    timers.delete(logo);
+  }
+
+  function schedule(logo, min, max) {
+    clearTimer(logo);
+    if (!alive || reduced || document.hidden || visible.get(logo) === false) return;
+    var delay = min + Math.random() * (max - min);
+    timers.set(logo, window.setTimeout(function () {
+      timers.delete(logo);
+      if (!alive || document.hidden || reduced || visible.get(logo) === false) return;
+      logo.classList.remove('is-striking');
+      /* Restart only the lightning opacity animation; avoid layout reads/reflow. */
+      void logo.offsetWidth;
+      logo.classList.add('is-striking');
+      schedule(logo, smallScreen && smallScreen.matches ? 8500 : 5200, smallScreen && smallScreen.matches ? 14000 : 9800);
+    }, delay));
+  }
+
+  function setReducedMotion() {
+    reduced = !!(motionQuery && motionQuery.matches);
+    logos.forEach(function (logo) {
+      clearTimer(logo);
+      logo.classList.remove('is-striking');
+      if (!reduced && !document.hidden) schedule(logo, 1200, 3000);
+    });
+  }
+
+  logos.forEach(function (logo) {
+    visible.set(logo, !observer);
+    if (observer) observer.observe(logo);
+    else schedule(logo, 1800, 3600);
+  });
+
+  function onVisibilityChange() {
+    logos.forEach(function (logo) {
+      clearTimer(logo);
+      if (document.hidden) logo.classList.remove('is-striking');
+      else if (!reduced) schedule(logo, 1400, 3200);
+    });
+  }
+
+  document.addEventListener('visibilitychange', onVisibilityChange);
+  if (motionQuery) {
+    if (motionQuery.addEventListener) motionQuery.addEventListener('change', setReducedMotion);
+    else if (motionQuery.addListener) motionQuery.addListener(setReducedMotion);
+  }
+  window.addEventListener('pagehide', function () {
     alive = false;
-    window.clearTimeout(timer);
-    document.removeEventListener('visibilitychange', onVisibility);
+    logos.forEach(clearTimer);
+    document.removeEventListener('visibilitychange', onVisibilityChange);
+    if (observer) observer.disconnect();
+    if (motionQuery) {
+      if (motionQuery.removeEventListener) motionQuery.removeEventListener('change', setReducedMotion);
+      else if (motionQuery.removeListener) motionQuery.removeListener(setReducedMotion);
+    }
   }, { once: true });
-})();
+}());

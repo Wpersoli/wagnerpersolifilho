@@ -29,7 +29,7 @@ test('portfólio geral mantém todas as seções e navegação principal', funct
   assert.match(html, /src="\/js\/portfolio-general\.js(?:\?[^"]*)?" defer/);
   assert.equal((html.match(/class="project-card/g) || []).length, 4);
   assert.match(html, /<span>03<\/span><\/div><h3>:upd8<\/h3>/);
-  assert.match(html, /<span>04<\/span><\/div><h3>Trotebox<\/h3>/);
+  assert.match(html, /<span>04<\/span><\/div><h3>TroteBox<\/h3>/);
   assert.match(html, /project-image-label">PET CARE · WEBSITE/);
   assert.match(html, /project-image-label">AUTOMOTIVO · LANDING PAGE/);
 });
@@ -99,8 +99,8 @@ test('timer do formulário recupera sessões antigas e o WhatsApp mantém navega
   assert.doesNotMatch(js, /window\.open\(href/);
 });
 
-test('HTML usa assets versionados v3.4.10 e tem fallback de conteúdo sem JavaScript', function () {
-  assert.match(html, /portfolio-general\.css\?v=3\.4\.12/);
+test('HTML usa versões atuais dos assets e tem fallback de conteúdo sem JavaScript', function () {
+  assert.match(html, /portfolio-general\\.css\\?v=3\\.4\\.13/);
   assert.match(html, /portfolio-general\.js\?v=3\.4\.12/);
   assert.match(html, /chat-client\.js\?v=3\.4\.12/);
   assert.match(html, /<noscript><link rel="stylesheet" href="\/css\/no-js\.css"><\/noscript>/);

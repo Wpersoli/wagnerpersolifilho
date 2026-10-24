@@ -675,3 +675,58 @@
 @media(max-width:420px){
  .footer-brand .footer-logo-motion{width:min(190px,58vw)}
 }
+
+
+/* Performance refinement: keep the golden ember effect subtle and animate opacity/transform,
+   not costly per-frame filters. No borders, outlines or frames are added around the mark. */
+.brand .brand-logo-motion,
+.brand .brand-logo-motion *{border:0!important;outline:0!important;box-shadow:none}
+.brand .brand-logo-motion{isolation:isolate;contain:layout style;transform:translateZ(0)}
+.brand .brand-logo-motion .brand-full-logo{
+  animation:wpLogoEmberOptimized 5.6s ease-in-out infinite;
+  filter:drop-shadow(0 0 2px rgba(255,174,54,.62)) drop-shadow(0 0 6px rgba(255,75,12,.22));
+  will-change:opacity,transform;
+}
+.brand .brand-logo-motion::before{
+  inset:-12% -5%;
+  filter:none!important;
+  background:radial-gradient(ellipse at 30% 56%,rgba(255,76,8,.16),transparent 42%),radial-gradient(ellipse at 57% 44%,rgba(255,177,41,.15),transparent 49%);
+  animation:wpLogoHeatOptimized 4.2s ease-in-out infinite alternate;
+  will-change:opacity,transform;
+}
+.brand .brand-logo-motion .brand-logo-lightning{
+  opacity:0;
+  will-change:opacity;
+  filter:drop-shadow(0 0 3px rgba(255,255,255,.8)) drop-shadow(0 0 7px rgba(85,185,255,.65));
+}
+.brand .brand-logo-motion.is-striking .brand-logo-lightning{animation:wpLogoLightningOptimized .48s steps(1,end) both}
+@keyframes wpLogoEmberOptimized{
+  0%,100%{opacity:1;transform:scale(1)}
+  42%{opacity:1;transform:scale(1.008)}
+  46%{opacity:.96;transform:scale(1)}
+  51%{opacity:1;transform:scale(1.003)}
+}
+@keyframes wpLogoHeatOptimized{
+  from{opacity:.34;transform:scale(.99)}
+  to{opacity:.72;transform:scale(1.025)}
+}
+@keyframes wpLogoLightningOptimized{
+  0%,100%{opacity:0}
+  8%{opacity:.95}
+  14%{opacity:.08}
+  21%{opacity:.88}
+  29%{opacity:0}
+  43%{opacity:.7}
+  49%{opacity:0}
+}
+@media(max-width:760px){
+  .brand .brand-logo-motion::before{inset:-9% -3%}
+  .brand .brand-logo-motion .brand-full-logo{animation-duration:6.8s}
+  .brand .brand-logo-motion .brand-logo-lightning{filter:drop-shadow(0 0 2px rgba(255,255,255,.7)) drop-shadow(0 0 4px rgba(85,185,255,.5))}
+}
+@media(prefers-reduced-motion:reduce){
+  .brand .brand-logo-motion .brand-full-logo,
+  .brand .brand-logo-motion::before{animation:none!important;will-change:auto!important}
+  .brand .brand-logo-motion .brand-full-logo{filter:drop-shadow(0 0 3px rgba(255,155,35,.5))}
+  .brand .brand-logo-motion .brand-logo-lightning{display:none!important}
+}

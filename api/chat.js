@@ -67,7 +67,7 @@ function normalizeQuestion(value) {
 
 function isProfileQuestion(question) {
   var q = normalizeQuestion(question);
-  return /\b(wagner|persoli|ele|seu perfil|seu curriculo|seu currículo|contratar|contratacao|experiencia|carreira|emprego|empresa|projeto|portfolio|portfólio|stack|habilidade|competencia|certific|formacao|salario|remuneracao|pretensao|home office|presencial|clt|pj|idade|solteiro|filhos|whatsapp|contato|linkedin|github|onde mora|localizacao|disponibilidade|turno|hobby|hobbie|lazer|ultimo emprego|último emprego|tamoio|sogm|upd8|trotebox|wagner\.os|automate os|nexus dashboard|data pulse)\b/i.test(q);
+  return /\b(wagner|persoli|ele|seu perfil|seu curriculo|seu currículo|contratar|contratacao|experiencia|carreira|emprego|empresa|projetos?|portfolio|portfólio|stack|habilidade|competencia|certific|formacao|salario|remuneracao|pretensao|home office|presencial|clt|pj|idade|solteiro|filhos|whatsapp|contato|linkedin|github|onde mora|localizacao|disponibilidade|turno|hobby|hobbie|lazer|ultimo emprego|último emprego|tamoio|sogm|upd8|trotebox|wagner\.os|automate os|nexus dashboard|data pulse)\b/i.test(q);
 }
 
 function isCreativeQuestion(question) {

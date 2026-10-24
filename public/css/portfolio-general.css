@@ -790,3 +790,24 @@
   background:transparent!important;
   image-rendering:auto;
 }
+
+
+/* Atmosfera premium: brasas, névoa cromática e relâmpagos discretos. */
+.ambient-atmosphere{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;isolation:isolate;background:transparent;contain:strict}
+#ambient-embers{position:absolute;inset:0;width:100%;height:100%;opacity:.82}
+.ambient-lightning{position:absolute;inset:0;width:100%;height:100%;opacity:0;overflow:visible}
+.ambient-bolt{fill:none;stroke:#ff6238;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;opacity:0;filter:drop-shadow(0 0 5px #ff4b2b) drop-shadow(0 0 17px #ff2c177a)}
+.ambient-bolt-a{animation:ambientFlashA 13s linear infinite}
+.ambient-bolt-b{stroke:#9f91ff;filter:drop-shadow(0 0 6px #8c70ff) drop-shadow(0 0 18px #5c48ff80);animation:ambientFlashB 17s linear infinite;animation-delay:-7s}
+.ambient-bolt-c{stroke:#ffb35c;filter:drop-shadow(0 0 5px #ff9a42) drop-shadow(0 0 15px #ff4b2b66);animation:ambientFlashC 19s linear infinite;animation-delay:-11s}
+.ambient-haze{position:absolute;display:block;width:45vw;height:45vw;max-width:760px;max-height:760px;border-radius:50%;filter:blur(90px);opacity:.09;mix-blend-mode:screen}
+.ambient-haze-one{left:-22vw;bottom:-20vw;background:radial-gradient(circle,#ff4c1d 0%,#8c172d 32%,transparent 70%);animation:ambientHazeDrift 28s ease-in-out infinite alternate}
+.ambient-haze-two{right:-24vw;top:8vh;background:radial-gradient(circle,#7860ff 0%,#263f9e 38%,transparent 72%);animation:ambientHazeDrift 34s ease-in-out infinite alternate-reverse}
+.site-header,main,.site-footer{position:relative;z-index:1}
+.site-header{z-index:100}
+@keyframes ambientFlashA{0%,67%,68%,69%,100%{opacity:0}67.15%{opacity:.9}67.3%{opacity:.05}67.55%{opacity:.75}67.8%{opacity:0}}
+@keyframes ambientFlashB{0%,43%,44%,45%,100%{opacity:0}43.12%{opacity:.65}43.28%{opacity:0}43.5%{opacity:.85}43.75%{opacity:0}}
+@keyframes ambientFlashC{0%,79%,80%,81%,100%{opacity:0}79.12%{opacity:.75}79.28%{opacity:0}79.5%{opacity:.55}79.72%{opacity:0}}
+@keyframes ambientHazeDrift{from{transform:translate3d(-2vw,1vh,0) scale(.92)}to{transform:translate3d(4vw,-3vh,0) scale(1.12)}}
+@media(max-width:700px){.ambient-haze{filter:blur(65px);opacity:.075}.ambient-bolt{stroke-width:3}}
+@media(prefers-reduced-motion:reduce){.ambient-haze,.ambient-bolt-a,.ambient-bolt-b,.ambient-bolt-c{animation:none!important}.ambient-lightning{display:none}#ambient-embers{opacity:.35}}

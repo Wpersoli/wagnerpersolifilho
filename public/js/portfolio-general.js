@@ -515,9 +515,11 @@
       timers.delete(logo);
       if (!alive || document.hidden || reduced || visible.get(logo) === false) return;
       logo.classList.remove('is-striking');
-      /* Restart only the lightning opacity animation; avoid layout reads/reflow. */
-      void logo.offsetWidth;
-      logo.classList.add('is-striking');
+      /* Restart on the next frame without forcing a synchronous layout/reflow. */
+      window.requestAnimationFrame(function () {
+        if (!alive || document.hidden || reduced || visible.get(logo) === false) return;
+        logo.classList.add('is-striking');
+      });
       schedule(logo, smallScreen && smallScreen.matches ? 8500 : 5200, smallScreen && smallScreen.matches ? 14000 : 9800);
     }, delay));
   }

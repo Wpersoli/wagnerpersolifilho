@@ -782,3 +782,11 @@
   content:none!important;
   display:none!important;
 }
+
+
+/* O PNG novo tem canal alfa real: não usar screen, que altera as cores do fogo e do branco. */
+.brand .brand-logo-motion .brand-full-logo{
+  mix-blend-mode:normal!important;
+  background:transparent!important;
+  image-rendering:auto;
+}

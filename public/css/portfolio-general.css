@@ -1147,3 +1147,7 @@ body:before{z-index:-1!important}
 .site-preloader__cinematic-bg{background-image:radial-gradient(ellipse at 50% 48%,rgba(2,4,10,.88) 0%,rgba(2,4,10,.60) 23%,rgba(2,4,10,.10) 49%,transparent 67%),linear-gradient(180deg,rgba(0,0,0,.10),transparent 22%,transparent 74%,rgba(0,0,0,.4)),url("/img/loader-cinematic-4k.svg?v=3")!important;background-size:cover,cover,cover!important;animation:loader-4k-atmosphere 22s ease-in-out infinite alternate!important}
 .site-preloader__embers,.site-preloader__lightning{display:none!important}
 @media(prefers-reduced-motion:reduce){.site-preloader__cinema-canvas{display:none!important}.site-preloader__cinematic-bg{animation:none!important}}
+
+
+/* v3.4.31 — loader limpo: remover somente os anéis de contorno ao redor da marca. */
+.site-preloader__orbit,.site-preloader__orbit--outer,.site-preloader__orbit--inner{display:none!important;visibility:hidden!important;animation:none!important;border:0!important;box-shadow:none!important}

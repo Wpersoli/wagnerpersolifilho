@@ -475,3 +475,37 @@
     try { fn(); } catch (err) { if (window.console) console.warn('[v3.4.0]', fn.name, err); }
   });
 }());
+
+
+/* Logo animation: irregular electrical bursts; pauses in background tabs. */
+(()=> {
+  const logo = document.querySelector('[data-logo-motion]');
+  if (!logo) return;
+  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced) return;
+  let timer = 0;
+  let alive = true;
+  const schedule = (min, max) => {
+    window.clearTimeout(timer);
+    timer = window.setTimeout(flash, min + Math.random() * (max - min));
+  };
+  const flash = () => {
+    if (!alive) return;
+    if (document.hidden) return schedule(1400, 2600);
+    logo.classList.remove('is-striking');
+    void logo.offsetWidth;
+    logo.classList.add('is-striking');
+    schedule(4800, 8200);
+  };
+  const onVisibility = () => {
+    if (document.hidden) window.clearTimeout(timer);
+    else schedule(900, 2200);
+  };
+  document.addEventListener('visibilitychange', onVisibility);
+  schedule(1800, 3600);
+  window.addEventListener('pagehide', () => {
+    alive = false;
+    window.clearTimeout(timer);
+    document.removeEventListener('visibilitychange', onVisibility);
+  }, { once: true });
+})();

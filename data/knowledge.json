@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "schema_version": "2.0",
-    "last_updated": "2026-07-17",
+    "schema_version": "2.1",
+    "last_updated": "2026-10-23",
     "language": "pt-BR",
     "purpose": "Base pública do assistente profissional WAGNER.OS",
     "source_policy": "Responder sobre Wagner somente com fatos explicitamente registrados nesta base."
@@ -18,10 +18,11 @@
     "contact": {
       "phone": "+55 11 98150-4061",
       "whatsapp": "https://wa.me/5511981504061",
-      "email": "[PREENCHER: e-mail do domínio próprio]",
+      "email": "wagnerpersoli@hotmail.com",
       "linkedin": "https://linkedin.com/in/wagner-persoli-f-3004bb91",
       "github": "https://github.com/Wpersoli",
-      "website": "https://wagnerpersoli.vercel.app"
+      "website": "https://wagnerpersoli.vercel.app",
+      "phone_link": "tel:+5511981504061"
     }
   },
   "summary": "Profissional de Tecnologia da Informação com mais de 12 anos de experiência em ambientes corporativos, suporte técnico N1/N2/N3, infraestrutura, administração de sistemas Microsoft, desenvolvimento, automação e integração de Inteligência Artificial.",
@@ -236,5 +237,72 @@
       "WhatsApp",
       "LinkedIn"
     ]
-  }
+  },
+  "featured_projects": [
+    {
+      "name": "Tamoio Pet Shop",
+      "portfolio_number": "01",
+      "type": "Website institucional",
+      "status": "Publicado",
+      "url": "https://tamoio-petshop.vercel.app/",
+      "description": "Experiência digital para centro estético pet, hospedagem, creche e táxi pet, com comunicação acolhedora e acesso rápido ao atendimento.",
+      "focus": [
+        "Web design responsivo",
+        "Identidade visual",
+        "Navegação e contato"
+      ],
+      "image_assets": [
+        "/img/projeto-tamoio-836.webp",
+        "/img/projeto-tamoio-1672.webp"
+      ]
+    },
+    {
+      "name": "SÓGM Grandes Mecânicos",
+      "portfolio_number": "02",
+      "type": "Landing page automotiva",
+      "status": "Publicado",
+      "url": "https://lpgrandesmecanicosogm.vercel.app/",
+      "description": "Apresentação digital para oficina automotiva, destacando serviços, confiança, diferenciais e contato direto para solicitar orçamento.",
+      "focus": [
+        "Landing page",
+        "Conversão",
+        "Serviços e contato"
+      ],
+      "image_assets": [
+        "/img/projeto-sogm-836.webp",
+        "/img/projeto-sogm-1672.webp"
+      ]
+    },
+    {
+      "name": ":upd8",
+      "portfolio_number": "03",
+      "type": "Projeto empresarial",
+      "status": "Site externo destacado no portfólio",
+      "url": "https://upd8.com.br/",
+      "description": "Projeto para empresa de tecnologia, com identidade digital própria e apresentação institucional orientada à inovação e a soluções digitais.",
+      "focus": [
+        "Tecnologia",
+        "Presença digital",
+        "Identidade visual"
+      ],
+      "visual_asset": "Arte tipográfica construída em CSS no card do portfólio."
+    },
+    {
+      "name": "TroteBox",
+      "portfolio_number": "04",
+      "type": "Aplicação web",
+      "status": "Demonstração online",
+      "url": "https://trotebox-web.vercel.app/",
+      "description": "Aplicação web publicada, apresentada como projeto digital com acesso direto à demonstração online.",
+      "focus": [
+        "Desenvolvimento web",
+        "Aplicação web",
+        "Demonstração online"
+      ],
+      "image_assets": [
+        "/img/projeto-trotebox-836.webp",
+        "/img/projeto-trotebox-1672.webp"
+      ]
+    }
+  ]
 }

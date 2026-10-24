@@ -27,7 +27,9 @@ test('portfólio geral mantém todas as seções e navegação principal', funct
   assert.match(html, /href="docs\/curriculo-wagner-persoli-filho\.pdf" download/);
   assert.match(html, /href="\/css\/portfolio-general\.css(?:\?[^"]*)?"/);
   assert.match(html, /src="\/js\/portfolio-general\.js(?:\?[^"]*)?" defer/);
-  assert.equal((html.match(/class="project-card/g) || []).length, 2);
+  assert.equal((html.match(/class="project-card/g) || []).length, 4);
+  assert.match(html, /project-meta">[^<]*<span>03<\/span>[\s\S]*?<h3>:upd8<\/h3>/);
+  assert.match(html, /project-meta">[^<]*<span>04<\/span>[\s\S]*?<h3>Trotebox<\/h3>/);
   assert.match(html, /project-image-label">PET CARE · WEBSITE/);
   assert.match(html, /project-image-label">AUTOMOTIVO · LANDING PAGE/);
 });

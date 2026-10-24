@@ -1151,3 +1151,9 @@ body:before{z-index:-1!important}
 
 /* v3.4.31 — loader limpo: remover somente os anéis de contorno ao redor da marca. */
 .site-preloader__orbit,.site-preloader__orbit--outer,.site-preloader__orbit--inner{display:none!important;visibility:hidden!important;animation:none!important;border:0!important;box-shadow:none!important}
+
+
+/* v3.4.32 — corrigir manchas/auréolas no fundo imediato da marca do loader. */
+.site-preloader::before,.site-preloader__visual::before,.site-preloader__scan{display:none!important;content:none!important;animation:none!important;filter:none!important;box-shadow:none!important}
+.site-preloader__visual{background:transparent!important;filter:none!important;box-shadow:none!important;isolation:auto!important}
+.site-preloader__official-logo{background:transparent!important;mix-blend-mode:normal!important;filter:none!important;box-shadow:none!important;animation:site-preloader-logo-reveal .95s cubic-bezier(.2,.7,.2,1) both!important}

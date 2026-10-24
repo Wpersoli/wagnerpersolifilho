@@ -1090,3 +1090,36 @@ body:before{z-index:-1!important}
  .site-preloader__embers{opacity:.45}
  .site-preloader__lightning{display:none!important}
 }
+
+
+/* v3.4.28 — Modelo 1: atmosfera cinematográfica vetorial 4K, exclusiva do loader. */
+.site-preloader__cinematic-bg{
+  inset:0!important;z-index:-3!important;overflow:hidden!important;
+  background-color:#02040a!important;
+  background-image:
+    radial-gradient(ellipse at 50% 48%,rgba(2,4,10,.92) 0%,rgba(2,4,10,.72) 24%,rgba(2,4,10,.16) 47%,transparent 65%),
+    linear-gradient(180deg,rgba(0,0,0,.12),transparent 25%,transparent 70%,rgba(0,0,0,.5)),
+    url("/img/loader-cinematic-4k.svg?v=1")!important;
+  background-position:center,center,center!important;
+  background-size:cover,cover,cover!important;background-repeat:no-repeat!important;
+  opacity:1!important;filter:saturate(1.12) contrast(1.06)!important;
+  animation:loader-4k-atmosphere 12s ease-in-out infinite alternate!important;
+}
+.site-preloader__embers{opacity:.74!important;mix-blend-mode:screen!important}
+.site-preloader__lightning{mix-blend-mode:screen!important}
+.site-preloader__visual{width:min(32vw,150px)!important;aspect-ratio:4/3!important;margin-bottom:17px!important}
+.site-preloader__official-logo{filter:drop-shadow(0 0 9px rgba(255,183,65,.36)) drop-shadow(0 0 25px rgba(255,89,25,.2))!important}
+.site-preloader__orbit--outer{border-top-color:rgba(255,217,135,.9)!important;border-right-color:rgba(55,171,255,.85)!important;box-shadow:0 0 19px rgba(255,112,37,.15),0 0 26px rgba(35,137,255,.1)!important}
+.site-preloader__orbit--inner{border-bottom-color:rgba(255,154,65,.8)!important;border-left-color:rgba(63,169,255,.42)!important}
+.site-preloader__caption{color:#e9edf7!important;text-shadow:0 2px 12px #000,0 0 16px rgba(5,8,18,.95)!important}
+.site-preloader__caption::before{color:#ffd27a!important;text-shadow:0 0 12px rgba(255,125,35,.35)!important}
+.site-preloader__track{width:min(220px,58vw)!important;height:3px!important;background:rgba(148,174,211,.25)!important;box-shadow:0 0 18px rgba(35,147,255,.13)!important}
+.site-preloader__track span{background:linear-gradient(90deg,#ff6322 0%,#ffb343 36%,#ffe7a0 49%,#28aaff 70%,#1669ff 100%)!important;box-shadow:0 0 12px rgba(255,132,42,.65),0 0 22px rgba(36,158,255,.38)!important}
+.site-preloader__copyright{color:rgba(240,244,255,.78)!important;text-shadow:0 1px 8px #000!important}
+@keyframes loader-4k-atmosphere{0%{transform:scale(1);filter:saturate(1.04) contrast(1.04) brightness(.88)}100%{transform:scale(1.045);filter:saturate(1.2) contrast(1.1) brightness(1.05)}}
+@media(max-width:760px){
+ .site-preloader__cinematic-bg{background-position:center,center,center!important}
+ .site-preloader__visual{width:min(39vw,118px)!important;margin-bottom:13px!important}
+ .site-preloader__cinematic-bg{animation-duration:16s!important}
+}
+@media(prefers-reduced-motion:reduce){.site-preloader__cinematic-bg{animation:none!important;filter:none!important}}

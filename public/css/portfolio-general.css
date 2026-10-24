@@ -655,3 +655,7 @@
 /* Layout guard: the site's generic .brand span rules must not stack the animated mark. */
 .brand .brand-logo-motion{flex-direction:row;align-items:center;align-self:center}
 .brand .brand-logo-motion .brand-logo-lightning{display:block;flex-direction:row}
+
+
+/* Header: fundo preto sólido em todo o container flexível. */
+.site-header .container.header-inner{background-color:#000!important}

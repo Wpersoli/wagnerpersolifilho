@@ -730,3 +730,31 @@
   .brand .brand-logo-motion .brand-full-logo{filter:drop-shadow(0 0 3px rgba(255,155,35,.5))}
   .brand .brand-logo-motion .brand-logo-lightning{display:none!important}
 }
+
+
+/* Ajuste visual seguro da marca: integra fundos escuros ao header/footer sem moldura. */
+.brand .brand-logo-motion{
+  background:transparent!important;
+  border:0!important;
+  outline:0!important;
+  box-shadow:none!important;
+}
+.brand .brand-logo-motion .brand-full-logo{
+  display:block;
+  height:auto;
+  aspect-ratio:1000 / 310;
+  object-fit:contain;
+  border:0!important;
+  border-radius:0!important;
+  mix-blend-mode:screen;
+}
+.site-header .brand .brand-logo-motion{width:clamp(164px,19vw,210px);max-width:45vw}
+.footer-brand .footer-logo-motion{width:clamp(180px,24vw,270px);max-width:62vw}
+@media(max-width:760px){
+  .site-header .brand .brand-logo-motion{width:clamp(142px,39vw,178px);max-width:43vw}
+  .footer-brand .footer-logo-motion{width:clamp(150px,48vw,220px);max-width:62vw}
+}
+@media(max-width:380px){
+  .site-header .brand .brand-logo-motion{width:min(142px,40vw)}
+  .footer-brand .footer-logo-motion{width:min(170px,58vw)}
+}

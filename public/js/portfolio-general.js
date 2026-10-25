@@ -654,3 +654,41 @@
  if(motion.addEventListener)motion.addEventListener('change',function(){if(motion.matches)stop();else start();});else if(motion.addListener)motion.addListener(function(){if(motion.matches)stop();else start();});
  window.addEventListener('pagehide',function(){disposed=true;stop();window.removeEventListener('resize',resizeCanvas);document.removeEventListener('visibilitychange',visibility);if(observer)observer.disconnect();},{once:true});
 }());
+
+
+/* v3.7.0 — animações progressivas e resposta neon ao ponteiro */
+(function(){
+  'use strict';
+  var doc=document, root=doc.documentElement;
+  var reduce=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce) return;
+  // Realce neon acompanha o ponteiro apenas em links e controles dourados.
+  var targets=doc.querySelectorAll('.eyebrow,.section-label,.nav-link,.text-link,.button-primary,.button-secondary,.nav-cta,.line-icon,.mini-icon,.contact-link-icon,.project-footer a,.footer-social a,.gold-glow');
+  targets.forEach(function(el){
+    el.classList.add('gold-interactive');
+    el.addEventListener('pointermove',function(e){
+      if(e.pointerType==='touch') return;
+      var rect=el.getBoundingClientRect();
+      el.style.setProperty('--wp-pointer-x',(e.clientX-rect.left)+'px');
+      el.style.setProperty('--wp-pointer-y',(e.clientY-rect.top)+'px');
+    },{passive:true});
+  });
+  // Entrada suave por rolagem; conteúdo permanece visível se IntersectionObserver não existir.
+  var reveal=doc.querySelectorAll('.section-heading,.value-card,.skill-panel,.project-card,.contact-form,.contact-copy,.intro-strip-inner,.hero-copy,.hero-visual');
+  if(!('IntersectionObserver' in window)) return;
+  doc.body.classList.add('wp-reveal-ready');
+  var observer=new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.classList.add('wp-visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  },{threshold:0.12,rootMargin:'0px 0px -35px 0px'});
+  reveal.forEach(function(el,i){
+    el.classList.add('wp-reveal');
+    el.style.setProperty('--wp-reveal-delay',Math.min(i%4,3)*85+'ms');
+    observer.observe(el);
+  });
+  window.addEventListener('pagehide',function(){observer.disconnect();},{once:true});
+})();

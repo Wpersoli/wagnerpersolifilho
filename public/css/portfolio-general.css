@@ -1608,3 +1608,99 @@ body:after{
 @media(prefers-reduced-motion:reduce){
  body:after{animation:none!important;transform:translateY(-76px)!important}
 }
+
+
+/* v3.6.5 — identidade global WAGNER.OS: preto + dourado.
+   Corrige o background anterior (z-index negativo e fundo opaco do body)
+   e neutraliza a paleta ciano/violeta/rosa que sobrescrevia as seções. */
+:root {
+  color-scheme: dark;
+  --bg: #050505;
+  --panel: rgba(10, 10, 10, .88);
+  --line: rgba(218, 174, 67, .22);
+  --text: #f7f4ec;
+  --muted: #b6b0a2;
+  --cyan: #e8bd54;
+  --violet: #d6a83f;
+  --gold: #f4cb65;
+  --shadow: 0 28px 90px rgba(0,0,0,.55);
+}
+html { background: #050505; }
+body {
+  background: transparent !important;
+  color: var(--text);
+}
+body:before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(3,3,3,.92) 0%, rgba(3,3,3,.77) 42%, rgba(3,3,3,.38) 100%),
+    radial-gradient(ellipse at 78% 28%, rgba(218,174,67,.15), transparent 34%),
+    url('/img/hero-fidelity-master.webp') center top / cover fixed no-repeat,
+    #050505;
+}
+body:after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: .22;
+  background-image:
+    repeating-linear-gradient(0deg, transparent 0 39px, rgba(218,174,67,.09) 40px, transparent 41px),
+    repeating-linear-gradient(90deg, transparent 0 39px, rgba(218,174,67,.07) 40px, transparent 41px);
+  mask-image: linear-gradient(90deg, #000, transparent 85%);
+}
+.site-header { background: rgba(5,5,5,.84); border-bottom-color: rgba(218,174,67,.22); }
+.nav-link.is-active:after { background: var(--gold); }
+.nav-cta, .button-secondary { border-color: rgba(218,174,67,.38); background: rgba(218,174,67,.07); }
+.nav-cta span, .eyebrow, .section-label, .text-link, .project-footer a, .card-bottom b { color: var(--gold); }
+.button-primary { color: #171006; background: linear-gradient(110deg,#f4d77e,#b88422); box-shadow: 0 10px 32px rgba(218,174,67,.18); }
+.button-primary:hover { box-shadow: 0 14px 38px rgba(218,174,67,.32); }
+.hero h1 span, .section-heading h2 span, .contact-copy h2 span {
+  background: linear-gradient(100deg,#fff0b8,#e7bd50 55%,#9d6c18);
+  background-clip: text; -webkit-background-clip: text;
+}
+.hero-visual:before { background: radial-gradient(circle,rgba(218,174,67,.2),rgba(110,75,15,.09) 45%,transparent 70%); }
+.profile-frame { background: linear-gradient(145deg,#fff0b8,#c9952d 48%,#5f4212); box-shadow: 0 0 70px rgba(218,174,67,.18),0 0 0 14px rgba(218,174,67,.04); }
+.orbit { border-color: rgba(218,174,67,.2); }
+.visual-tag, .floating-card, .skill-panel, .value-card, .project-card, .contact-form {
+  background: linear-gradient(145deg,rgba(17,15,10,.91),rgba(5,5,5,.88));
+  border-color: rgba(218,174,67,.2);
+  backdrop-filter: blur(12px);
+}
+.value-card:hover, .project-card:hover { border-color: rgba(244,203,101,.58); }
+.value-card:before { background: rgba(218,174,67,.08); }
+.line-icon, .mini-icon, .contact-link-icon { color: var(--gold); border-color: rgba(218,174,67,.32); background: rgba(218,174,67,.09); }
+.mini-icon-purple, .line-icon-purple { color: #e2bf6a; }
+.line-icon-gold { color: #ffe6a0; }
+.intro-strip, .skills-section, .projects-section, .contact-section, .site-footer {
+  background: transparent !important;
+  border-color: rgba(218,174,67,.16);
+}
+.intro-strip-inner, .section, .section-shell, .projects-section, .skills-section, .about-section, .contact-section {
+  background-color: transparent;
+}
+.skill-tags span { border-color: rgba(218,174,67,.18); background: rgba(8,8,7,.7); }
+.skill-tags span:hover, .contact-links>a:hover { border-color: rgba(244,203,101,.6); }
+.projects-section { background-image: radial-gradient(ellipse at 75% 15%,rgba(218,174,67,.09),transparent 58%) !important; }
+.contact-section { background-image: linear-gradient(135deg,rgba(10,9,6,.65),rgba(5,5,5,.5)) !important; }
+.contact-backdrop, .panel-orb { background: rgba(218,174,67,.08); }
+.scroll-progress { background: linear-gradient(90deg,#8f641b,#f4cb65,#fff0b8); box-shadow: 0 0 14px rgba(244,203,101,.45); }
+.skip-link { background: var(--gold); color: #171006; }
+.button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible { outline-color: var(--gold); }
+.whatsapp-fab { border-color: rgba(218,174,67,.45); }
+.back-to-top { border-color: rgba(218,174,67,.4); background: #100d06; color: var(--gold); }
+.footer-social a:hover, .footer-bottom a:hover { color: var(--gold); }
+@media (max-width: 760px) {
+  body:before {
+    background:
+      linear-gradient(180deg,rgba(3,3,3,.82),rgba(3,3,3,.94) 68%),
+      url('/img/hero-fidelity-master.webp') 64% top / auto 75vh no-repeat,
+      #050505;
+  }
+  body:after { opacity: .12; }
+}

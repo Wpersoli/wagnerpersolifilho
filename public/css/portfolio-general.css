@@ -1559,3 +1559,52 @@ body:after{
 @media(prefers-reduced-motion:reduce){
  body:after{animation:none !important;transform:translateY(-30px)}
 }
+
+
+/* v3.6.4 — posição do background com prioridade explícita sobre regras legadas */
+body:before{
+  z-index:-1!important;
+  background:
+    radial-gradient(ellipse 52% 68% at 4% 8%,rgba(255,66,20,.44),transparent 72%),
+    radial-gradient(ellipse 42% 54% at 20% 19%,rgba(173,38,20,.24),transparent 76%),
+    radial-gradient(ellipse 46% 64% at 98% 5%,rgba(0,78,255,.39),transparent 73%),
+    radial-gradient(ellipse 34% 48% at 82% 13%,rgba(16,63,174,.25),transparent 74%),
+    linear-gradient(112deg,#100a0b 0%,#08090f 43%,#050916 69%,#070a14 100%)!important;
+  background-size:100% 100%!important;
+  background-position:center top!important;
+}
+body:after{
+  animation:model-one-particles-up-v364 14s ease-in-out infinite alternate!important;
+  will-change:transform;
+}
+@keyframes model-one-particles-up-v364{
+  from{transform:translateY(-64px);opacity:.68}
+  to{transform:translateY(-88px);opacity:.92}
+}
+.hero{
+  background:
+    radial-gradient(ellipse 62% 94% at 0% 18%,rgba(255,69,17,.37),transparent 74%),
+    radial-gradient(ellipse 54% 86% at 100% 7%,rgba(0,81,255,.36),transparent 72%),
+    radial-gradient(ellipse 28% 48% at 48% 25%,rgba(13,19,35,.16),transparent 80%),
+    linear-gradient(105deg,rgba(24,10,11,.36) 0%,rgba(7,8,14,.3) 48%,rgba(5,10,27,.34) 100%)!important;
+  background-position:center top!important;
+}
+@media(max-width:760px){
+ body:before{
+  background:
+    radial-gradient(ellipse 82% 42% at 0% 5%,rgba(255,65,18,.34),transparent 76%),
+    radial-gradient(ellipse 78% 42% at 100% 9%,rgba(0,78,255,.3),transparent 76%),
+    linear-gradient(112deg,#100a0b 0%,#08090f 48%,#050916 100%)!important;
+  background-position:center top!important;
+ }
+ body:after{animation-duration:18s!important}
+ .hero{
+  background:
+    radial-gradient(ellipse 90% 52% at 0% 10%,rgba(255,69,17,.3),transparent 74%),
+    radial-gradient(ellipse 82% 50% at 100% 8%,rgba(0,81,255,.26),transparent 72%),
+    linear-gradient(105deg,rgba(24,10,11,.3),rgba(5,10,27,.3))!important;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ body:after{animation:none!important;transform:translateY(-76px)!important}
+}

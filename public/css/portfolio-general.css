@@ -1518,3 +1518,44 @@ body:after{
   .hero-visual{transform:translateY(-6px);margin-bottom:-4px}
   .floating-card-top{top:26px}
 }
+
+
+/* v3.6.3 — corrige o FUNDO em si: luzes e partículas elevadas, não o conteúdo do hero */
+body:before{
+  background:
+    radial-gradient(ellipse 44% 62% at 7% 24%,rgba(255,65,18,.38),transparent 72%),
+    radial-gradient(ellipse 38% 54% at 18% 36%,rgba(176,37,20,.2),transparent 76%),
+    radial-gradient(ellipse 44% 62% at 94% 18%,rgba(0,78,255,.34),transparent 72%),
+    radial-gradient(ellipse 34% 48% at 80% 16%,rgba(16,63,174,.22),transparent 74%),
+    linear-gradient(112deg,#100a0b 0%,#08090f 43%,#050916 69%,#070a14 100%);
+  background-size:100% calc(100% + 70px);
+  background-position:center -35px;
+  opacity:1;
+}
+body:after{
+  animation:model-one-particles-up 14s ease-in-out infinite alternate !important;
+}
+@keyframes model-one-particles-up{
+  0%{transform:translate3d(0,-24px,0);opacity:.58}
+  100%{transform:translate3d(0,-38px,0);opacity:.86}
+}
+.hero{
+  background:
+    radial-gradient(ellipse 56% 88% at 0% 39%,rgba(255,69,17,.32),transparent 74%),
+    radial-gradient(ellipse 49% 78% at 100% 21%,rgba(0,81,255,.3),transparent 72%),
+    radial-gradient(ellipse 26% 45% at 48% 36%,rgba(13,19,35,.2),transparent 80%),
+    linear-gradient(105deg,rgba(24,10,11,.48) 0%,rgba(7,8,14,.42) 48%,rgba(5,10,27,.46) 100%);
+}
+@media(max-width:760px){
+ body:before{
+  background:
+    radial-gradient(ellipse 76% 35% at 0% 12%,rgba(255,65,18,.28),transparent 76%),
+    radial-gradient(ellipse 72% 36% at 100% 22%,rgba(0,78,255,.24),transparent 76%),
+    linear-gradient(112deg,#100a0b 0%,#08090f 48%,#050916 100%);
+  background-size:100% calc(100% + 42px);
+  background-position:center -21px;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ body:after{animation:none !important;transform:translateY(-30px)}
+}

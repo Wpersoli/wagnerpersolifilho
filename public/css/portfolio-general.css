@@ -1439,3 +1439,59 @@ body:after{
 @media(prefers-reduced-motion:reduce){
  .hero h1 span{animation:none}
 }
+
+
+/* v3.6.1 — acabamento final: área segura do hero e cartões fora da área facial */
+.hero{
+  min-height:clamp(650px,calc(100svh - 80px),820px);
+  padding-bottom:clamp(64px,6vw,88px);
+}
+.hero-grid{align-items:center}
+.hero-copy{padding-block:8px 12px}
+.hero h1{max-width:660px;text-wrap:balance}
+.hero-description{max-width:500px}
+.hero-visual{isolation:isolate}
+.floating-card-top{
+  right:clamp(-2px,1vw,14px);
+  top:clamp(36px,5vw,72px);
+  transform:translateX(4%);
+}
+.floating-card-bottom{
+  left:clamp(-4px,1vw,12px);
+  bottom:clamp(32px,4.5vw,62px);
+}
+.visual-tag{left:clamp(-2px,1vw,12px)}
+/* A área inferior fica livre para os botões e o início da próxima seção. */
+.hero-actions{position:relative;z-index:2;margin-bottom:8px}
+.hero-proof{position:relative;z-index:2}
+@media(min-width:1121px){
+ .hero-grid{grid-template-columns:minmax(0,1.12fr) minmax(190px,.54fr) minmax(300px,.9fr);gap:clamp(22px,2.15vw,32px)}
+ .hero-visual{min-height:clamp(400px,35vw,470px)}
+ .profile-frame{width:min(100%,340px)}
+}
+@media(max-width:1120px) and (min-width:761px){
+ .hero{padding-bottom:62px}
+ .hero-visual{min-height:370px}
+ .floating-card-top{right:0;top:42px;transform:none}
+ .floating-card-bottom{left:0;bottom:28px}
+}
+@media(max-width:760px){
+ .hero{min-height:0;padding-top:36px;padding-bottom:48px}
+ .hero-copy{padding-block:0}
+ .hero h1{max-width:600px;text-wrap:pretty}
+ .hero-visual{overflow:visible;margin-top:6px}
+ .floating-card-top{right:0;top:42px;transform:none}
+ .floating-card-bottom{left:0;bottom:26px}
+ .hero-actions{margin-bottom:4px}
+}
+@media(max-width:420px){
+ .hero{padding-top:28px;padding-bottom:40px}
+ .hero h1{font-size:clamp(30px,8.1vw,35px)}
+ .floating-card-top{right:-1px;top:36px}
+ .floating-card-bottom{left:-1px;bottom:22px}
+ .floating-card{max-width:74%;gap:7px}
+ .visual-tag{max-width:62%;font-size:6px}
+}
+@media(prefers-reduced-motion:reduce){
+ .floating-card-top,.floating-card-bottom{transform:none}
+}

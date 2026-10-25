@@ -1243,3 +1243,65 @@ body:before{background:radial-gradient(ellipse at 18% 40%,rgba(255,83,18,.22),tr
 }
 @media(max-width:420px){.hero-skill-rail{grid-template-columns:1fr}.hero-visual{min-height:340px}.floating-card-top{right:-2px;top:55px}.floating-card-bottom{left:-2px;bottom:36px}}
 @media(prefers-reduced-motion:reduce){.profile-frame,.floating-card{animation:none!important}}
+
+
+/* v3.5.1 — Fundo Modelo 1: contraste térmico laranja/vermelho à esquerda e azul profundo à direita, com partículas discretas. */
+body:before{
+  background:
+    radial-gradient(ellipse 44% 62% at 7% 42%,rgba(255,65,18,.38),transparent 72%),
+    radial-gradient(ellipse 38% 54% at 18% 54%,rgba(176,37,20,.2),transparent 76%),
+    radial-gradient(ellipse 44% 62% at 94% 35%,rgba(0,78,255,.34),transparent 72%),
+    radial-gradient(ellipse 34% 48% at 80% 30%,rgba(16,63,174,.22),transparent 74%),
+    linear-gradient(112deg,#100a0b 0%,#08090f 43%,#050916 69%,#070a14 100%);
+  opacity:1;
+}
+body:after{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  opacity:.76;
+  background-image:
+    radial-gradient(circle at 7.2% 15%,rgba(255,111,45,.95) 0 2px,rgba(255,111,45,.25) 3px,transparent 7px),
+    radial-gradient(circle at 14.1% 29%,rgba(255,153,66,.95) 0 1.5px,rgba(255,153,66,.2) 3px,transparent 6px),
+    radial-gradient(circle at 21% 18%,rgba(255,100,39,.9) 0 2px,rgba(255,100,39,.2) 3px,transparent 7px),
+    radial-gradient(circle at 28.7% 42%,rgba(255,126,47,.85) 0 1.5px,rgba(255,126,47,.2) 3px,transparent 6px),
+    radial-gradient(circle at 38.4% 24%,rgba(255,106,37,.9) 0 2px,rgba(255,106,37,.18) 3px,transparent 7px),
+    radial-gradient(circle at 45.6% 34%,rgba(255,148,55,.8) 0 1.5px,rgba(255,148,55,.2) 3px,transparent 6px),
+    radial-gradient(circle at 50.1% 16%,rgba(255,104,42,.8) 0 2px,rgba(255,104,42,.18) 3px,transparent 7px),
+    radial-gradient(circle at 58.3% 27%,rgba(255,134,53,.8) 0 1.5px,rgba(255,134,53,.18) 3px,transparent 6px),
+    radial-gradient(circle at 65.2% 41%,rgba(255,106,37,.8) 0 2px,rgba(255,106,37,.18) 3px,transparent 7px),
+    radial-gradient(circle at 71.8% 18%,rgba(255,151,59,.8) 0 1.5px,rgba(255,151,59,.18) 3px,transparent 6px),
+    radial-gradient(circle at 79.4% 31%,rgba(255,107,39,.8) 0 2px,rgba(255,107,39,.18) 3px,transparent 7px),
+    radial-gradient(circle at 88.5% 16%,rgba(255,132,49,.8) 0 1.5px,rgba(255,132,49,.18) 3px,transparent 6px),
+    radial-gradient(circle at 94% 44%,rgba(255,105,40,.8) 0 2px,rgba(255,105,40,.18) 3px,transparent 7px);
+  background-size:100% 100%;
+  animation:model-one-particles 14s ease-in-out infinite alternate;
+}
+.hero{
+  position:relative;
+  background:
+    radial-gradient(ellipse 56% 88% at 0% 57%,rgba(255,69,17,.32),transparent 74%),
+    radial-gradient(ellipse 49% 78% at 100% 39%,rgba(0,81,255,.3),transparent 72%),
+    radial-gradient(ellipse 26% 45% at 48% 54%,rgba(13,19,35,.2),transparent 80%),
+    linear-gradient(105deg,rgba(24,10,11,.48) 0%,rgba(7,8,14,.42) 48%,rgba(5,10,27,.46) 100%);
+}
+@keyframes model-one-particles{
+  0%{transform:translate3d(0,0,0);opacity:.56}
+  100%{transform:translate3d(0,-8px,0);opacity:.86}
+}
+@media(prefers-reduced-motion:reduce){body:after{animation:none}}
+@media(max-width:760px){
+  body:before{
+    background:
+      radial-gradient(ellipse 76% 35% at 0% 18%,rgba(255,65,18,.28),transparent 76%),
+      radial-gradient(ellipse 72% 36% at 100% 33%,rgba(0,78,255,.24),transparent 76%),
+      linear-gradient(112deg,#100a0b 0%,#08090f 48%,#050916 100%);
+  }
+  body:after{opacity:.42}
+  .hero{background:
+    radial-gradient(ellipse 90% 48% at 0% 28%,rgba(255,69,17,.26),transparent 76%),
+    radial-gradient(ellipse 85% 45% at 100% 58%,rgba(0,81,255,.22),transparent 74%),
+    linear-gradient(105deg,rgba(24,10,11,.42),rgba(5,10,27,.42))}
+}

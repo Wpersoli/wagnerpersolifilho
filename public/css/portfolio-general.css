@@ -1704,3 +1704,138 @@ body:after {
   }
   body:after { opacity: .12; }
 }
+
+
+/* v3.6.6 — composição global definitiva: WAGNER.OS preto, ouro e monograma.
+   A causa principal era a cascata: regras v3.6.3/v3.6.4 voltavam a pintar
+   body e .hero com vermelho/azul depois dos estilos anteriores. */
+:root {
+  --bg: #050505 !important;
+  --panel: rgba(8,8,8,.88) !important;
+  --line: rgba(218,174,67,.22) !important;
+  --cyan: #e7bd50 !important;
+  --violet: #c99a35 !important;
+  --gold: #f4cb65 !important;
+  --text: #f7f4ec !important;
+  --muted: #b6b0a2 !important;
+}
+html, body {
+  background: #050505 !important;
+  background-color: #050505 !important;
+}
+body {
+  isolation: isolate;
+  position: relative;
+  color: #f7f4ec !important;
+}
+/* Desativa os raios/brasas responsáveis pelas manchas azul e vermelha. */
+.ambient-atmosphere,
+#ambient-atmosphere,
+.ambient-haze,
+.ambient-lightning,
+#ambient-embers {
+  display: none !important;
+  opacity: 0 !important;
+  animation: none !important;
+}
+/* Fundo fixo de página: monograma oficial como arte de marca, não como logotipo solto. */
+body::before {
+  content: "" !important;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: -1 !important;
+  display: block !important;
+  pointer-events: none !important;
+  opacity: 1 !important;
+  background-color: #050505 !important;
+  background-image:
+    linear-gradient(90deg,rgba(4,4,4,.98) 0%,rgba(4,4,4,.92) 36%,rgba(4,4,4,.66) 70%,rgba(4,4,4,.82) 100%),
+    radial-gradient(ellipse at 79% 24%,rgba(224,177,58,.16),transparent 34%),
+    url('/img/logo-wp-oficial.webp'),
+    repeating-linear-gradient(0deg,transparent 0 47px,rgba(218,174,67,.055) 48px,transparent 49px),
+    repeating-linear-gradient(90deg,transparent 0 47px,rgba(218,174,67,.045) 48px,transparent 49px) !important;
+  background-repeat: no-repeat,no-repeat,no-repeat,repeat,repeat !important;
+  background-size: cover,cover,min(58vw,760px) auto,auto,auto !important;
+  background-position: center,center, right 4vw top 9vh,center,center !important;
+  background-attachment: fixed,fixed,fixed,fixed,fixed !important;
+}
+body::after {
+  content: "" !important;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: -1 !important;
+  pointer-events: none !important;
+  opacity: .35 !important;
+  background: radial-gradient(ellipse at 82% 25%,rgba(218,174,67,.13),transparent 38%) !important;
+  mask-image: none !important;
+  animation: none !important;
+}
+/* Todas as seções deixam aparecer o mesmo fundo; sem ilhas coloridas. */
+.hero,
+.intro-strip,
+.intro-strip-inner,
+.section,
+.section-shell,
+.about-section,
+.skills-section,
+.projects-section,
+.contact-section,
+.site-footer {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+.hero {
+  background: linear-gradient(90deg,rgba(5,5,5,.12),rgba(5,5,5,.05)) !important;
+}
+.site-header {
+  background: rgba(4,4,4,.94) !important;
+  border-bottom: 1px solid rgba(218,174,67,.22) !important;
+}
+.site-footer { background: rgba(4,4,4,.72) !important; }
+.skill-panel,.value-card,.project-card,.contact-form,.floating-card,.visual-tag {
+  background: linear-gradient(145deg,rgba(17,15,10,.94),rgba(5,5,5,.92)) !important;
+  border-color: rgba(218,174,67,.24) !important;
+  box-shadow: 0 18px 48px rgba(0,0,0,.24) !important;
+}
+.hero h1 span,.section-heading h2 span,.contact-copy h2 span {
+  color: #f0c85d !important;
+  background: linear-gradient(100deg,#fff0b8,#e7bd50 55%,#9d6c18) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+}
+.eyebrow,.section-label,.text-link,.project-footer a,.card-bottom b,
+.nav-link.is-active,.nav-cta span {
+  color: #f4cb65 !important;
+}
+.button-primary {
+  color: #171006 !important;
+  background: linear-gradient(110deg,#f4d77e,#b88422) !important;
+}
+.profile-frame {
+  border-color: #d8ad3f !important;
+  box-shadow: 0 0 0 8px rgba(218,174,67,.06),0 0 50px rgba(218,174,67,.18) !important;
+}
+.orbit { border-color: rgba(218,174,67,.25) !important; }
+.line-icon,.mini-icon,.contact-link-icon {
+  color: #f4cb65 !important;
+  border-color: rgba(218,174,67,.35) !important;
+  background: rgba(218,174,67,.08) !important;
+}
+.scroll-progress { background: linear-gradient(90deg,#8f641b,#f4cb65,#fff0b8) !important; }
+@media (max-width: 760px) {
+  body::before {
+    background-image:
+      linear-gradient(180deg,rgba(4,4,4,.91),rgba(4,4,4,.97) 65%,#050505 100%),
+      radial-gradient(ellipse at 72% 15%,rgba(224,177,58,.12),transparent 38%),
+      url('/img/logo-wp-oficial.webp'),
+      repeating-linear-gradient(0deg,transparent 0 39px,rgba(218,174,67,.045) 40px,transparent 41px) !important;
+    background-repeat: no-repeat,no-repeat,no-repeat,repeat !important;
+    background-size: cover,cover,min(92vw,520px) auto,auto !important;
+    background-position: center,center,right -14vw top 10vh,center !important;
+    background-attachment: fixed,fixed,fixed,fixed !important;
+  }
+  .hero { background: transparent !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body::before,body::after { animation: none !important; }
+}

@@ -692,3 +692,26 @@
   });
   window.addEventListener('pagehide',function(){observer.disconnect();},{once:true});
 })();
+
+
+/* v3.8.0 — rolagem total ao topo + microanimação das cinco áreas */
+(function(){
+ 'use strict';
+ var top=document.getElementById('back-to-top');
+ if(top){
+   top.addEventListener('click',function(e){
+     e.preventDefault();
+     window.scrollTo({top:0,left:0,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+     if(history.replaceState) history.replaceState(null,'',location.pathname+location.search);
+   });
+ }
+ var terms=['infraestrutura','desenvolvimento','automação','inteligência artificial','experiência digital'];
+ var nodes=document.querySelectorAll('h1,h2,h3,h4,p,a,button,span,strong,li');
+ nodes.forEach(function(el){
+   if(el.children.length>3) return;
+   var txt=(el.textContent||'').trim().toLocaleLowerCase('pt-BR');
+   if(terms.some(function(t){return txt===t || (txt.length<70 && txt.indexOf(t)!==-1 && el.children.length<=2);})){
+     el.classList.add('capability-kinetic');
+   }
+ });
+})();

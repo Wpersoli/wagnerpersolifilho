@@ -1839,3 +1839,27 @@ body::after {
 @media (prefers-reduced-motion: reduce) {
   body::before,body::after { animation: none !important; }
 }
+
+
+/* v3.6.7 — usa a arte tecnológica de fundo fornecida para o hero e o site inteiro */
+body::before {
+  background-image:
+    linear-gradient(90deg,rgba(3,4,5,.88) 0%,rgba(3,4,5,.72) 42%,rgba(3,4,5,.24) 72%,rgba(3,4,5,.55) 100%),
+    url('/img/hero-fidelity-master.webp'),
+    repeating-linear-gradient(0deg,transparent 0 47px,rgba(218,174,67,.045) 48px,transparent 49px),
+    repeating-linear-gradient(90deg,transparent 0 47px,rgba(218,174,67,.035) 48px,transparent 49px) !important;
+  background-repeat:no-repeat,no-repeat,repeat,repeat !important;
+  background-size:cover,cover,auto,auto !important;
+  background-position:center,center,center,center !important;
+}
+@media(max-width:760px) {
+  body::before {
+    background-image:
+      linear-gradient(180deg,rgba(3,4,5,.86),rgba(3,4,5,.94) 72%,#050505),
+      url('/img/hero-fidelity-master.webp'),
+      repeating-linear-gradient(0deg,transparent 0 39px,rgba(218,174,67,.04) 40px,transparent 41px) !important;
+    background-repeat:no-repeat,no-repeat,repeat !important;
+    background-size:cover,cover,auto !important;
+    background-position:center,center,center !important;
+  }
+}

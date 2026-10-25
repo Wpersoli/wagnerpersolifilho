@@ -1157,3 +1157,89 @@ body:before{z-index:-1!important}
 .site-preloader::before,.site-preloader__visual::before,.site-preloader__scan{display:none!important;content:none!important;animation:none!important;filter:none!important;box-shadow:none!important}
 .site-preloader__visual{background:transparent!important;filter:none!important;box-shadow:none!important;isolation:auto!important}
 .site-preloader__official-logo{background:transparent!important;mix-blend-mode:normal!important;filter:none!important;box-shadow:none!important;animation:site-preloader-logo-reveal .95s cubic-bezier(.2,.7,.2,1) both!important}
+
+
+/* v3.5.0 — Modelo visual 1: terminal premium preto/dourado. Mantém animações e funcionalidades existentes. */
+:root{--bg:#050608;--panel:#0b0d12;--line:rgba(214,180,95,.2);--text:#f8f7f3;--muted:#b5b5bd;--cyan:#ffe000;--violet:#ffc64d;--gold:#f7b928;--green:#24d18a;--shadow:0 28px 90px rgba(0,0,0,.48)}
+body:before{background:radial-gradient(ellipse at 18% 40%,rgba(255,83,18,.22),transparent 35%),radial-gradient(ellipse at 82% 34%,rgba(255,190,0,.16),transparent 34%),linear-gradient(180deg,#050608,#07080b 55%,#040507)}
+.site-header{background:rgba(4,5,8,.94);border-bottom-color:rgba(255,210,82,.2)}
+.nav-link.is-active:after,.scroll-progress{background:linear-gradient(90deg,#ff8c00,#ffe000,#f7b928)}
+.nav-cta{border-color:#ffe00070;background:#ffe0000d}
+.nav-cta span,.eyebrow,.section-label,.text-link,.project-footer a,.project-meta,.chat-toggle-arrow{color:#ffe000}
+.nav-link.is-active,.nav-link:hover{color:#ffe000}
+.hero{min-height:660px;padding:60px 0 70px;background:linear-gradient(90deg,rgba(0,0,0,.24),transparent 55%),radial-gradient(ellipse at 7% 55%,rgba(255,69,15,.16),transparent 42%),radial-gradient(ellipse at 90% 32%,rgba(0,87,255,.17),transparent 38%)}
+.hero-grid{grid-template-columns:minmax(0,1.05fr) minmax(205px,.58fr) minmax(300px,.95fr);gap:28px}
+.hero h1 span,.section-heading h2 span,.contact-copy h2 span{background:linear-gradient(100deg,#ffe000,#ffbd38 76%,#ff8d24);background-clip:text;-webkit-background-clip:text}
+.eyebrow{border-color:#ffe00040;background:#ffe0000b}
+.hero-description{color:#c3c6ce}
+.button-primary{background:linear-gradient(110deg,#ffe000,#ffb81f);color:#080808;box-shadow:0 10px 32px #ffc40022}
+.button-primary:hover{box-shadow:0 14px 38px #ffc40042}
+.button-secondary{border-color:#bba66d55}
+.hero-proof{border-color:rgba(255,220,105,.2)}
+.hero-visual{min-height:500px}
+.hero-visual:before{width:95%;background:radial-gradient(circle,#ffc00026,#ff7a0010 45%,transparent 70%)}
+.profile-frame{width:min(390px,100%);background:conic-gradient(from 20deg,#ffe000,#ff5c25,#ffe000,#19c77a,#ffe000);box-shadow:0 0 80px #ffb00026,0 0 0 12px #ffc0000c}
+.profile-frame:after{border-color:#ffc84b42}
+.hero-visual:after{content:"WP";position:absolute;z-index:-1;right:-8%;top:14%;font-size:clamp(100px,14vw,205px);font-weight:950;letter-spacing:-.12em;line-height:1;color:transparent;-webkit-text-stroke:1px rgba(255,196,43,.32);text-shadow:0 0 55px #ffb30014;pointer-events:none}
+.orbit{border-color:#ffc84b26}
+.visual-tag,.floating-card{background:rgba(7,9,14,.92);border-color:#e7c45c42}
+.mini-icon{background:#ffe00018;color:#ffe000}
+.mini-icon-purple{background:#ffbe2818;color:#ffca53}
+.visual-caption span{color:#ffe000}
+.hero-bottom-glow{background:radial-gradient(ellipse,#ffad0019,transparent 68%)}
+.hero-skill-rail{position:relative;z-index:2;display:flex;flex-direction:column;justify-content:center;gap:24px;padding:22px 0 22px 24px;border-left:1px solid rgba(255,212,82,.2)}
+.skill-rail-item{display:grid;grid-template-columns:34px minmax(0,1fr);align-items:center;gap:12px}
+.skill-rail-icon{display:grid;place-items:center;width:32px;height:32px;border:1px solid #ffe00065;border-radius:9px;color:#ffe000;font-size:19px;background:#ffe0000b}
+.skill-rail-item strong,.skill-rail-item small{display:block}
+.skill-rail-item strong{font-size:11px;line-height:1.4;color:#f4f3ef;font-weight:750}
+.skill-rail-item small{font-size:9px;line-height:1.5;margin-top:3px;color:#9da5b4}
+.intro-strip{background:#090a0d;border-color:#d2ad4b24}
+.intro-strip span{color:#b8b1a0}
+.intro-strip i{background:#ffe000}
+.value-card,.skill-panel,.project-card,.contact-form{background:linear-gradient(145deg,#111216f2,#08090dfa);border-color:rgba(214,180,95,.18)}
+.value-card:before{background:#ffe0000a}
+.value-card:hover,.project-card:hover{border-color:#ffe00062}
+.line-icon{border-color:#ffe00047;background:#ffe00010;color:#ffe000}
+.line-icon-purple{color:#ffc64d;border-color:#ffc64d47;background:#ffc64d10}
+.line-icon-gold{color:#ffe000;border-color:#ffe00047;background:#ffe00010}
+.skill-tags span{border-color:#c5a64b2b;background:#ffffff04}
+.skill-tags span:hover{border-color:#ffe00085}
+.project-art-upd8{background:radial-gradient(ellipse at 15% 10%,#57400b 0,transparent 55%),linear-gradient(135deg,#090a0c,#17130a 65%,#211704)}
+.project-art-upd8:before{background:repeating-linear-gradient(135deg,transparent 0 34px,#e9b51c18 35px 36px,transparent 37px 68px)}
+.project-art-logo{color:#ffe000;text-shadow:0 5px 24px #ffb70030}
+.project-art-logo span:first-child,.project-art-logo span:last-child{color:#ffe000}
+.project-art-rule{background:linear-gradient(90deg,#ff8c00,#ffe000)}
+.project-meta{color:#ffe000}
+.project-footer a:hover,.text-link:hover{color:#fff0a0}
+.contact-section{background:linear-gradient(135deg,#0a0b0e,#08090d 65%,#151006)}
+.contact-backdrop{background:#ffc0000e}
+.contact-link-icon{background:#ffe00012;color:#ffe000}
+.contact-links>a:hover{border-color:#ffe00055}
+.contact-form input:focus,.contact-form textarea:focus{border-color:#ffe00099;box-shadow:0 0 0 3px #ffe0000e}
+.form-status-dot{background:var(--green)}
+.whatsapp-fab{border-color:#38dc9673}
+.chat-toggle{border-color:#ffe00055;background:#090b10f5}
+.chat-toggle:hover{border-color:#ffe000}
+.chat-toggle-icon{background:linear-gradient(135deg,#ffe000,#ff9f24);color:#080808}
+.back-to-top{border-color:#ffe00055;color:#ffe000}
+@media(max-width:1050px){
+ .hero-grid{grid-template-columns:minmax(0,1.05fr) minmax(270px,.9fr);gap:34px}
+ .hero-skill-rail{grid-column:1/-1;grid-row:2;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;padding:18px 0 0;border-left:0;border-top:1px solid rgba(255,212,82,.2)}
+ .hero-visual{grid-column:2;grid-row:1}
+ .hero-copy{grid-column:1;grid-row:1}
+}
+@media(max-width:760px){
+ .hero{padding:46px 0 48px}
+ .hero-grid{grid-template-columns:1fr;gap:18px}
+ .hero-copy,.hero-visual,.hero-skill-rail{grid-column:1;grid-row:auto}
+ .hero-visual{min-height:380px;grid-row:2}
+ .profile-frame{width:min(300px,72vw)}
+ .hero-visual:after{right:8%;top:13%;font-size:140px}
+ .hero-skill-rail{grid-row:3;grid-template-columns:1fr 1fr;gap:16px;padding-top:20px}
+ .hero-proof{gap:16px}
+ .hero-proof div{padding:0 12px}
+ .hero-proof strong{font-size:12px}
+ .hero-proof span{font-size:9px}
+}
+@media(max-width:420px){.hero-skill-rail{grid-template-columns:1fr}.hero-visual{min-height:340px}.floating-card-top{right:-2px;top:55px}.floating-card-bottom{left:-2px;bottom:36px}}
+@media(prefers-reduced-motion:reduce){.profile-frame,.floating-card{animation:none!important}}
